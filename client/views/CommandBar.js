@@ -1,8 +1,8 @@
-Template.TmplCommandBar.ConfigsArr = function() {
+Template.CommandBar.ConfigsArr = function() {
 	return Configs.find({}, {sort: {Name: 1}});
 };
 
-Template.TmplCommandBar.events = {
+Template.CommandBar.events = {
 	"click button.add-custom-ticket": function() {
 		$("#addTickets").toggle();
 	},
