@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
-
-</body>
-</html>
+<template name="TmplTickets">
+	{{#each TicketArr}}
+	<div class="ticket">
+		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		<div>{{Description}}</div>
+	</div>
+	{{/each}}
+</template>

@@ -1,1 +1,7 @@
 /* CSS declarations go here */
+.group
+{
+	background-color: #dddddd;
+	margin: 3px;
+	padding: 3px;
+}
