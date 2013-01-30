@@ -1,0 +1,14 @@
+<template name="Config">
+	<div>
+		<input type="text" id="name" class="input-medium" placeholder="Name"/>
+		<input type="text" id="value" class="input-xlarge" placeholder="Value"/>
+		<button type="button" class="add-config btn">Add</button>
+	</div>
+	<ul>
+		{{#each ConfigsArr}}
+		<li class="config-item">
+			{{Name}} : {{Value}}
+		</li>
+		{{/each}}
+	</ul>
+</template>
