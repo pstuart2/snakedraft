@@ -3,13 +3,20 @@
 </head>
 
 <body>
-  {{> TmplTickets}}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="user well span4">User area</div>
+			<div class="tickets well span8">
+        {{> TmplTickets}}
+			</div>
+		</div>
+	</div>
 </body>
 
 <template name="TmplTickets">
   {{#each TicketArr}}
 		<div class="ticket">
-			<h2>{{Id}} - {{Title}}</h2>
+			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
 			<div>{{Description}}</div>
 		</div>
 	{{/each}}
