@@ -1,8 +1,24 @@
 <template name="TmplCommandBar">
 	<form class="group form-horizontal" id="CommandForm" name="CommandForm">
 		<div class="commands span12">
+			<button type="button" class="config btn">Config</button>
 			<button type="button" class="add-custom-ticket btn">Add Custom Ticket</button>
 		</div>
+		<div id="configs" style="display: none;">
+			<div>
+				<input type="text" id="name" class="input-medium" placeholder="Name"/>
+				<input type="text" id="value" class="input-xlarge" placeholder="Value"/>
+				<button type="button" class="add-config btn">Add</button>
+			</div>
+			<ul>
+				{{#each ConfigsArr}}
+				<li class="config-item">
+					{{Name}} : {{Value}}
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+
 		<div id="addTickets" style="display: none;">
 			<div class="control-group">
 				<label class="control-label" for="ticket">Ticket</label>
