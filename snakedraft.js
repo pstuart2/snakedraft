@@ -1,19 +1,15 @@
+// Added outside the "if" statement because it is for both the client and server.
+var Tickets = new Meteor.Collection("Tickets");
+
 if (Meteor.isClient) {
-  Template.hello.greeting = function () {
-    return "Welcome to snakedraft.";
-  };
 
-  Template.hello.events({
-    'click input' : function () {
-      // template data, if any, is available in 'this'
-      if (typeof console !== 'undefined')
-        console.log("You pressed the button");
-    }
-  });
-}
+	Template.TmplTickets.TicketArr = function() {
+		return Tickets.find({}, {sort: {Id: 1}});
+	};
 
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
+	Template.TmplTickets.events = {
+		"click .ticket": function() {
+			alert("You just got ticket: " + this.Id);
+		}
+	};
 }
