@@ -9,3 +9,6 @@ preserve-inputs
 accounts-ui
 bootstrap
 jquery
+accounts-password
+email
+less

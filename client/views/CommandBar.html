@@ -1,8 +1,10 @@
 <template name="CommandBar">
+	{{#if currentUser.profile.isAdmin}}
 	<form class="group form-horizontal" id="CommandForm" name="CommandForm">
 		<div class="commands span12">
 			<button type="button" class="config btn">Config</button>
 			<button type="button" class="add-custom-ticket btn">Add Custom Ticket</button>
+			<div class="pull-right">{{loginButtons align="right"}}</div>
 		</div>
 		<div style="clear: both"></div>
 		<div id="configs" style="display: none;">
@@ -14,4 +16,7 @@
 		</div>
 		<div style="clear: both"></div>
 	</form>
+	{{else}}
+	<div class="pull-right">{{loginButtons align="right"}}</div>
+	{{/if}}
 </template>

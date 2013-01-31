@@ -1,0 +1,17 @@
+<template name="Users">
+	<ul class="active-users">
+	{{#each ActiveUserArr}}
+		<li>
+			{{username}}
+		</li>
+	{{/each}}
+	</ul>
+	<hr />
+	<ul class="inactive-users">
+		{{#each InactiveUserArr}}
+		<li>
+			{{username}}
+		</li>
+		{{/each}}
+	</ul>
+</template>
