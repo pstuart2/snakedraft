@@ -1,7 +1,42 @@
 /* CSS declarations go here */
 .group
 {
-	background-color: #dddddd;
-	margin: 3px;
+	/*background-color: #dddddd;*/
 	padding: 3px;
+	margin: 3px;
+}
+
+li {
+	list-style-type: none;
+}
+
+div.command-bar {
+	border-bottom: solid 1px #ddd;
+}
+
+div.ticket-area {
+	border-left: solid 1px #ddd;
+	padding: 5px;
+	margin-top: 0px;
+}
+
+div.user-area {
+
+}
+
+div.ticket {
+	padding: 5px;
+	border-bottom: solid 1px #eee;
+}
+
+.inline-edit {
+	cursor:pointer;
+	padding: 5px 0px 0px 5px;
+}
+
+.hover-visible i {
+	visibility:hidden;
+}
+.hover-visible:hover i {
+	visibility:visible;
 }

@@ -1,14 +1,15 @@
 <template name="Config">
-	<div>
-		<input type="text" id="name" class="input-medium" placeholder="Name"/>
-		<input type="text" id="value" class="input-xlarge" placeholder="Value"/>
-		<button type="button" class="add-config btn">Add</button>
+	{{#each ConfigsArr}}
+	<div class="config-item control-group hover-visible">
+		<label class="control-label">{{Name}}</label>
+		<i style="float: left; margin-top: 7px; margin-left: 2px;" class="icon-edit"></i>
+		<div class="controls">
+			{{#if editing}}
+			<input type="text" id="value-input" class="value-input input-xlarge" placeholder="Value" value="{{Value}}"/>
+			{{else}}
+			<div class="inline-edit">{{Value}}</div>
+			{{/if}}
+		</div>
 	</div>
-	<ul>
-		{{#each ConfigsArr}}
-		<li class="config-item">
-			{{Name}} : {{Value}}
-		</li>
-		{{/each}}
-	</ul>
+	{{/each}}
 </template>
