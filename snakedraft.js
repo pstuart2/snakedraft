@@ -2,8 +2,6 @@
 var Configs = new Meteor.Collection("Configs");
 var Tickets = new Meteor.Collection("Tickets");
 
-var Devs = Meteor.users.find({}).fetch();
-
 /*if (Meteor.isClient) {
 	Accounts.ui.config({
 		passwordSignupFields: 'USERNAME_AND_EMAIL'
