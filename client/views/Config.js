@@ -1,3 +1,5 @@
+Meteor.subscribe("Configs");
+
 // When editing a list name, ID of the list
 Session.set('editing_config', null);
 

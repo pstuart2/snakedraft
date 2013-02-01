@@ -1,3 +1,5 @@
+Meteor.subscribe("Tickets");
+
 Template.Tickets.TicketArr = function() {
 	return Tickets.find({}, {sort: {Id: 1}});
 };
