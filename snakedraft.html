@@ -3,10 +3,8 @@
 </head>
 
 <body>
+{{> CommandBar}}
 	<div class="container">
-		<div class="row command-bar">
-			{{> CommandBar}}
-		</div>
 		<div class="row">
 			{{#if currentUser}}
 			<div class="group user-area span4 well">
@@ -18,4 +16,6 @@
 			{{/if}}
 		</div>
 	</div>
+	{{> Config}}
+	{{> CustomTicket}}
 </body>

@@ -1,24 +1,40 @@
 <template name="CommandBar">
-	{{#if currentUser.profile.isAdmin}}
-	<form class="group form-horizontal" id="CommandForm" name="CommandForm">
-		<div class="commands span12">
-			<button type="button" class="config btn">Config</button>
-			<button type="button" class="add-custom-ticket btn">Add Custom Ticket</button>
-			<div class="pull-right">{{loginButtons align="right"}}</div>
-		</div>
-		<div style="clear: both;"></div>
-		<div class="form-area">
-		<div id="configs" style="display: none;">
-			{{> Config}}
-		</div>
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container">
 
-		<div id="addTickets" style="display: none;">
-			{{> CustomTicket}}
+				<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+
+				<!-- Be sure to leave the brand out there if you want it shown -->
+				<a class="brand" href="#">Snake Draft</a>
+
+				<!-- Everything you want hidden at 940px or less, place within here -->
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li><a href="#">Profile</a></li>
+						{{#if currentUser.profile.isAdmin}}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								Admin
+								<b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="#" data-toggle="modal" data-target="#configModal">Config</a></li>
+								<li><a href="#" data-toggle="modal" data-target="#customTicketModal">Tickets</a></li>
+							</ul>
+						</li>
+						{{/if}}
+					</ul>
+					<ul class="nav pull-right">
+						<li><a href="#">{{loginButtons align="right"}}</a></li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		<div style="clear: both"></div>
-		</div>
-	</form>
-	{{else}}
-	<div class="pull-right">{{loginButtons align="right"}}</div>
-	{{/if}}
+	</div>
 </template>

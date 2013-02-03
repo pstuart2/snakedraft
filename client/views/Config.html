@@ -1,15 +1,26 @@
 <template name="Config">
-	{{#each ConfigsArr}}
-	<div class="config-item control-group hover-visible">
-		<label class="control-label">{{Name}}</label>
-		<i style="float: left; margin-top: 7px; margin-left: 2px;" class="icon-edit"></i>
-		<div class="controls">
-			{{#if editing}}
-			<input type="text" id="value-input" class="value-input input-xlarge" placeholder="Value" value="{{Value}}"/>
-			{{else}}
-			<div class="inline-edit">{{Value}}</div>
-			{{/if}}
+	<div id="configModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Configuration</h3>
+		</div>
+		<div class="modal-body">
+			{{#each ConfigsArr}}
+			<div class="config-item control-group hover-visible">
+				<label class="control-label">{{Name}}</label>
+				<i style="float: left; margin-top: 7px; margin-left: 2px;" class="icon-edit"></i>
+				<div class="controls">
+					{{#if editing}}
+					<input type="text" id="value-input" class="value-input input-xlarge" placeholder="Value" value="{{Value}}"/>
+					{{else}}
+					<div class="inline-edit">{{Value}}</div>
+					{{/if}}
+				</div>
+			</div>
+			{{/each}}
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
-	{{/each}}
 </template>

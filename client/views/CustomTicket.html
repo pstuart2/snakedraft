@@ -1,37 +1,42 @@
 <template name="CustomTicket">
-	<div class="control-group">
-		<label class="control-label" for="ticket">Ticket</label>
-		<div class="controls">
-			<input type="text" id="ticket" class="input-large" placeholder="Ticket"/>
+	<div id="customTicketModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Add Custom Ticket</h3>
 		</div>
-	</div>
+		<div class="modal-body">
+			<div class="control-group">
+				<label class="control-label" for="ticket">Ticket</label>
+				<div class="controls">
+					<input type="text" id="ticket" class="input-large" placeholder="Ticket"/>
+				</div>
+			</div>
 
-	<div class="control-group">
-		<label class="control-label" for="days">Time</label>
-		<div class="controls">
-			<input type="text" id="days" class="input-small" placeholder="Days"/>
-			<input type="text" id="hours" class="input-small" placeholder="Hours"/>
+			<div class="control-group">
+				<label class="control-label" for="days">Time</label>
+				<div class="controls">
+					<input type="text" id="days" class="input-small" placeholder="Days"/>
+					<input type="text" id="hours" class="input-small" placeholder="Hours"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="title">Title</label>
+				<div class="controls">
+					<input type="text" id="title" class="input-large" placeholder="Title"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="description">Description</label>
+				<div class="controls">
+					<textarea id="description" style="width: 400px; height: 100px;"></textarea>
+				</div>
+			</div>
 		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label" for="title">Title</label>
-		<div class="controls">
-			<input type="text" id="title" class="input-large" placeholder="Title"/>
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label" for="description">Description</label>
-		<div class="controls">
-			<textarea id="description"></textarea>
-		</div>
-	</div>
-
-	<div class="control-group">
-		<label class="control-label">&nbsp;</label>
-		<div class="controls">
-			<button type="button" class="save-custom-ticket btn">Add</button>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button class="btn btn-primary save-custom-ticket">Add</button>
 		</div>
 	</div>
 </template>

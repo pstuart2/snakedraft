@@ -4,6 +4,7 @@ Meteor.startup(function () {
 		{Name: "JiraUrl", Value: "http://someurl.com"},
 		{Name: "EmailDomain", Value: ""},
 		{Name: "ScrumMaster", Value: ""},
+		{Name: "HoursPerDay", Value: "6"},
 		{Name: "SecondsPerChoice", Value: 60}
 	];
 

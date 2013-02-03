@@ -3,10 +3,5 @@ Template.CommandBar.ConfigsArr = function() {
 };
 
 Template.CommandBar.events({
-	"click button.add-custom-ticket": function() {
-		$("#addTickets").toggle();
-	},
-	"click button.config": function() {
-		$("#configs").toggle();
-	}
+
 });
