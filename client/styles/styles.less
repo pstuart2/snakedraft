@@ -1,0 +1,73 @@
+/////////////////////////////////////////////////////////
+// Common
+
+// Colors
+@white: #fff;
+@lightGray: #eee;
+@gray: #ddd;
+@darkGray: #999;
+
+// Functions
+.rounded-corners (@radius: 5px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  -o-border-radius: @radius;
+  border-radius: @radius;
+}
+
+/* CSS declarations go here */
+.group
+{
+
+}
+
+li {
+  list-style-type: none;
+}
+
+div.command-bar {
+  div.commands {
+	margin-top: 5px;
+  }
+
+  div.form-area {
+	margin: 5px;
+  }
+}
+
+div.ticket-area {
+  border-left: solid 1px @gray;
+  padding: 5px;
+  margin-top: 0px;
+}
+
+div.user-area {
+  padding: 5px;
+  	ul.users {
+	  margin: 3px;
+	  padding: 5px;
+	  background-color: @white;
+	  .rounded-corners;
+	}
+}
+
+div.ticket {
+  padding: 5px;
+  margin: 3px;
+  //border: solid 1px @darkGray;
+  background-color: @white;
+  .rounded-corners;
+}
+
+.inline-edit {
+  cursor:pointer;
+  padding: 5px 0px 0px 5px;
+}
+
+.hover-visible i {
+  visibility:hidden;
+}
+.hover-visible:hover i {
+  visibility:visible;
+}

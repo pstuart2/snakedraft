@@ -38,6 +38,7 @@ Accounts.onCreateUser(function(options, user) {
 	user.profile.isAdmin = (userCount == 0 || user.profile.isScrumMaster);
 	user.profile.totalHoursAvailable = 0;
 	user.profile.hoursAssigned = 0;
+	user.profile.hoursLeft = 0;
 
 	return user;
 });

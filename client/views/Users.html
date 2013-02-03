@@ -1,13 +1,15 @@
 <template name="Users">
-	<ul class="active-users">
+	<h4>Active Users</h4>
+	<ul class="users active-users">
 	{{#each ActiveUserArr}}
 		<li>
-			{{username}} - {{profile.totalHoursAvailable}}
+			<span class="badge">{{profile.totalHoursAvailable}}</span> {{username}}
 		</li>
 	{{/each}}
 	</ul>
 	<hr />
-	<ul class="inactive-users">
+	<h4>Inactive Users</h4>
+	<ul class="users inactive-users">
 		{{#each InactiveUserArr}}
 		<li>
 			{{username}}
