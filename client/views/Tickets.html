@@ -1,13 +1,25 @@
 <template name="Tickets">
-	{{#each TicketArr}}
+
+	<h4>Available Tickets</h4>
+	{{#each AvailableTicketArr}}
 	<div class="ticket">
 		<div class="pull-right">
 			{{#if canChoose Hours}}
-			<button class="btn btn-small take-ticket"><i class="icon-lock"></i> Take</button>
+			<button type="button" class="btn btn-small take-ticket"><i class="icon-lock"></i> Take</button>
 			<span class="label">{{Hours}} Hours</span>
 			{{else}}
 			<span class="label label-important">{{Hours}} Hours</span>
 			{{/if}}
+		</div>
+		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		<div>{{Description}}</div>
+	</div>
+	{{/each}}
+	<h4>My Tickets <span class="pull-right label">Total Hours</span></h4>
+	{{#each MyTicketArr}}
+	<div class="ticket">
+		<div class="pull-right">
+			<span class="label label-info">{{Hours}} Hours</span>
 		</div>
 		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
 		<div>{{Description}}</div>

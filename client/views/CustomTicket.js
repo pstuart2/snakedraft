@@ -6,11 +6,12 @@ Template.CustomTicket.events = {
 				hours = $("#hours"),
 				desc = $("#description"),
 				hourEstimate = parseInt(hours.val()),
-				//dayEstimate,
+				dayEstimate = parseInt(days.val()),
 				hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value);
 
 		if (!hourEstimate) { hourEstimate = 0; }
-		hourEstimate += parseInt(days.val()) * parseInt(hoursInDay);
+		if (!dayEstimate) { dayEstimate = 0; }
+		hourEstimate += dayEstimate * hoursInDay;
 		//dayEstimate = parseInt(hourEstimate / hoursInDay);
 		//hourEstimate = hourEstimate - (dayEstimate * hoursInDay);
 

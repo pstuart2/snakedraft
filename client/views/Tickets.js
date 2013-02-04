@@ -1,7 +1,11 @@
 Meteor.subscribe("Tickets");
 
-Template.Tickets.TicketArr = function() {
-	return Tickets.find({}, {sort: {Id: 1}});
+Template.Tickets.AvailableTicketArr = function() {
+	return Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Id: 1}});
+};
+
+Template.Tickets.MyTicketArr = function() {
+	return Tickets.find({AssignedUserId: Meteor.userId()}, {sort: {Id: 1}});
 };
 
 Template.Tickets.canChoose = function (hours) {
@@ -10,7 +14,9 @@ Template.Tickets.canChoose = function (hours) {
 };
 
 Template.Tickets.events = {
-	"click .ticket": function() {
-		alert("You just got ticket: " + this.Id);
+	"click button.take-ticket": function(e) {
+		e.preventDefault();
+
+		Meteor.call("takeTicket", Meteor.userId(), this._id);
 	}
 };
