@@ -6,6 +6,7 @@
 @lightGray: #eee;
 @gray: #ddd;
 @darkGray: #999;
+@infoBackground: #d9edf7;
 
 // Functions
 .rounded-corners (@radius: 5px) {
@@ -49,6 +50,16 @@ div.user-area {
 	  padding: 5px;
 	  background-color: @white;
 	  .rounded-corners;
+
+		li.user-item {
+		  .rounded-corners;
+		  padding: 5px;
+		  cursor: pointer;
+
+		  &:hover {
+			background-color: @infoBackground;
+		  }
+		}
 	}
 }
 

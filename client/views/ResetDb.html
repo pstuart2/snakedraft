@@ -1,0 +1,33 @@
+<template name="ResetDb">
+	<div id="resetDbModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Reset the Database</h3>
+		</div>
+		<div class="modal-body">
+			<div class="control-group">
+				&nbsp;
+				<div class="controls">
+					<div class="alert">
+						This will reset the database. All tickets and messages will be removed. Users
+						will remain but will be reset to 0 hours.
+						<br /><br />
+						<b>Are you sure?</b>
+					</div>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="resetDb-days">Sprint Time</label>
+				<div class="controls">
+					<input type="text" id="resetDb-days" class="input-small" placeholder="Days"/>
+					<input type="text" id="resetDb-hours" class="input-small" placeholder="Hours"/>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-danger yes-reset-db" data-dismiss="modal">Yes</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+		</div>
+	</div>
+</template>

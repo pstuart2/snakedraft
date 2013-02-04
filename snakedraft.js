@@ -6,6 +6,22 @@ function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
+function hoursToDaysHours(totalHours) {
+	var hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value),
+			result = {days: 0, hours: 0};
+
+	result.hours = parseInt(totalHours);
+	result.days = parseInt(result.hours / hoursInDay);
+	result.hours = result.hours - (result.days * hoursInDay);
+
+	return result;
+}
+
+function hoursDaysToTotalHours(hours, days) {
+	var hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value);
+	return (parseInt(hours) + (parseInt(days) * hoursInDay));
+}
+
 Configs.allow({
 	insert: function (userId, doc) {
 		// No inserts.

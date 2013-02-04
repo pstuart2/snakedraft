@@ -1,0 +1,38 @@
+<template name="EditUser">
+	<div id="editUserModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		{{#if EditingUser}}
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Edit User: {{User.username}}</h3>
+		</div>
+		<div class="modal-body">
+			<div class="control-group">
+				<label class="control-label" for="editUser-available-days">Available Time</label>
+				<div class="controls">
+					<input type="text" id="editUser-available-days" class="input-small" value="{{User.availableDays}}" placeholder="Days"/>
+					<input type="text" id="editUser-available-hours" class="input-small" value="{{User.availableHours}}" placeholder="Hours"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="editUser-assigned-days">Assigned Time</label>
+				<div class="controls">
+					<input type="text" id="editUser-assigned-days" class="input-small" value="{{User.assignedDays}}" placeholder="Days"/>
+					<input type="text" id="editUser-assigned-hours" class="input-small" value="{{User.assignedHours}}" placeholder="Hours"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="editUser-is-admin">Is Admin</label>
+				<div class="controls">
+					<input id="editUser-is-admin" type="checkbox" selected="" />
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary edit-user-save" data-dismiss="modal">Save</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		</div>
+	</div>
+	{{/if}}
+</template>
