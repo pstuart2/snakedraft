@@ -49,5 +49,20 @@ Meteor.methods({
 						'profile.hoursAssigned': 0
 					}
 				}, {multi: true});
+	},
+
+	editUser: function(userId, fields) {
+		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+
+		if (!(currentUser.profile.isAdmin || currentUser._id == userId)) {
+			throw new Meteor.Error(404, "You cannot edit this user.");
+		}
+
+		console.log("Editing user: " + userId);
+		Meteor.users.update({_id: userId},
+				{
+					$set: fields
+				},
+				{multi: false});
 	}
 });

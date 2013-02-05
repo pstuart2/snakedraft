@@ -10,7 +10,6 @@ Template.Users.InactiveUserArr = function() {
 
 Template.Users.events({
 	"dblclick li.user-item": function() {
-		Session.set("editUserId", this._id);
-		Template.EditUser.Show();
+		Template.EditUser.Show(this._id);
 	}
 });

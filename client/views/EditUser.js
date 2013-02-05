@@ -1,8 +1,8 @@
 Session.set("editUserId", null);
 
-Template.EditUser.Show = function() {
-	var editId = Session.get("editUserId");
+Template.EditUser.Show = function(editId) {
 	if (editId) {
+		Session.set("editUserId", editId);
 		Meteor.flush();
 		$("#editUserModal").modal("show");
 	}
@@ -10,7 +10,6 @@ Template.EditUser.Show = function() {
 
 Template.EditUser.User = function() {
 	var user = Meteor.users.findOne({_id: Session.get("editUserId")}),
-			hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value),
 			tmp;
 	if (user) {
 		tmp = hoursToDaysHours(user.profile.hoursAssigned);
@@ -25,7 +24,7 @@ Template.EditUser.User = function() {
 };
 
 Template.EditUser.checkChecked = function(isTrue) {
-	return isTrue ? "checked" : "";
+	return isTrue ? 'checked="checked"' : "";
 };
 
 // We need the toggle so that it will re-render.
@@ -34,35 +33,25 @@ Template.EditUser.EditingUser = function() {
 };
 
 Template.EditUser.events = {
-	"click button.save-custom-ticket": function() {
-		var ticket = $("#ticket"),
-				title = $("#title"),
-				days = $("#days"),
-				hours = $("#hours"),
-				desc = $("#description"),
-				hourEstimate = parseInt(hours.val()),
-				dayEstimate = parseInt(days.val()),
-				hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value);
+	"click button.edit-user-save": function() {
+		var availableDays = $("#editUser-available-days"),
+				availableHours = $("#editUser-available-hours"),
+				assignedDays = $("#editUser-assigned-days"),
+				assignedHours = $("#editUser-assigned-hours"),
+				isAdmin = ($("#editUser-is-admin").attr("checked") == "checked"),
+				totalAssignedHours,
+				totalAvailableHours;
 
-		if (!hourEstimate) { hourEstimate = 0; }
-		if (!dayEstimate) { dayEstimate = 0; }
-		hourEstimate += dayEstimate * hoursInDay;
-		//dayEstimate = parseInt(hourEstimate / hoursInDay);
-		//hourEstimate = hourEstimate - (dayEstimate * hoursInDay);
+		totalAssignedHours = hoursDaysToTotalHours(assignedHours.val(), assignedDays.val());
+		totalAvailableHours = hoursDaysToTotalHours(availableHours.val(), availableDays.val());
 
-		Tickets.insert({
-			Id: ticket.val(),
-			Title: title.val(),
-			//Days: dayEstimate,
-			Hours: hourEstimate,
-			Description: desc.val()
-		});
-
-		ticket.val(null);
-		title.val(null);
-		days.val(null);
-		hours.val(null);
-		desc.val(null);
+		Meteor.call("editUser", Session.get("editUserId"),
+				{
+					'profile.isAdmin': isAdmin,
+					'profile.totalHoursAvailable': totalAvailableHours,
+					'profile.hoursAssigned': totalAssignedHours
+				}
+		);
 
 		Session.set("editUserId", null);
 	}

@@ -5,21 +5,15 @@ Template.CustomTicket.events = {
 				days = $("#days"),
 				hours = $("#hours"),
 				desc = $("#description"),
-				hourEstimate = parseInt(hours.val()),
-				dayEstimate = parseInt(days.val()),
-				hoursInDay = parseInt(Configs.findOne({Name: "HoursPerDay"}).Value);
+				totalHours;
 
-		if (!hourEstimate) { hourEstimate = 0; }
-		if (!dayEstimate) { dayEstimate = 0; }
-		hourEstimate += dayEstimate * hoursInDay;
-		//dayEstimate = parseInt(hourEstimate / hoursInDay);
-		//hourEstimate = hourEstimate - (dayEstimate * hoursInDay);
+		totalHours = hoursDaysToTotalHours(hours.val(), days.val());
 
 		Tickets.insert({
 			Id: ticket.val(),
 			Title: title.val(),
 			//Days: dayEstimate,
-			Hours: hourEstimate,
+			Hours: totalHours,
 			Description: desc.val()
 		});
 
