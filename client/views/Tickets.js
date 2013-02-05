@@ -5,7 +5,17 @@ Template.Tickets.AvailableTicketArr = function() {
 };
 
 Template.Tickets.MyTicketArr = function() {
-	return Tickets.find({AssignedUserId: Meteor.userId()}, {sort: {Id: 1}});
+	var selectedUserId = Session.get('selectedUserId');
+	if(!selectedUserId) { selectedUserId = Meteor.userId(); }
+	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
+};
+
+Template.Tickets.userSelected = function() {
+	return !Session.equals('selectedUserId', null);
+};
+
+Template.Tickets.formatTotalHours = function(totalHours) {
+	return formatTotalHours(totalHours);
 };
 
 Template.Tickets.canChoose = function (hours) {

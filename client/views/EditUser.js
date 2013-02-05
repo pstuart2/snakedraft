@@ -49,7 +49,8 @@ Template.EditUser.events = {
 				{
 					'profile.isAdmin': isAdmin,
 					'profile.totalHoursAvailable': totalAvailableHours,
-					'profile.hoursAssigned': totalAssignedHours
+					'profile.hoursAssigned': totalAssignedHours,
+					'profile.hoursLeft': totalAvailableHours - totalAssignedHours
 				}
 		);
 

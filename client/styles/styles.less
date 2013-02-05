@@ -7,6 +7,7 @@
 @gray: #ddd;
 @darkGray: #999;
 @infoBackground: #d9edf7;
+@successBackground: #dff0d8;
 
 // Functions
 .rounded-corners (@radius: 5px) {
@@ -41,6 +42,16 @@ div.ticket-area {
   border-left: solid 1px @gray;
   padding: 5px;
   margin-top: 0px;
+
+  div.ticket {
+	&:hover {
+	  background-color: @infoBackground;
+	}
+
+	div.ticket-buttons {
+	  margin: 10px 0px 5px 0px;
+	}
+  }
 }
 
 div.user-area {
@@ -59,6 +70,14 @@ div.user-area {
 		  &:hover {
 			background-color: @infoBackground;
 		  }
+		}
+
+		li.user-turn {
+		  background-color: @successBackground;
+		}
+
+		li.user-selected {
+		  background-color: @infoBackground;
 		}
 	}
 }

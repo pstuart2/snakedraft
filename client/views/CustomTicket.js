@@ -2,12 +2,18 @@ Template.CustomTicket.events = {
 	"click button.save-custom-ticket": function() {
 		var ticket = $("#ticket"),
 				title = $("#title"),
-				days = $("#days"),
-				hours = $("#hours"),
+				days = $("#custom-ticket-days"),
+				hours = $("#custom-ticket-hours"),
 				desc = $("#description"),
-				totalHours;
+				totalHours, hoursVal, daysVal;
 
-		totalHours = hoursDaysToTotalHours(hours.val(), days.val());
+		hoursVal = hours.val();
+		if(!hoursVal) { hoursVal = 0; }
+
+		daysVal = days.val();
+		if(!daysVal) { daysVal = 0; }
+
+		totalHours = hoursDaysToTotalHours(hoursVal, daysVal);
 
 		Tickets.insert({
 			Id: ticket.val(),
