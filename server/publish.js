@@ -9,3 +9,7 @@ Meteor.publish("Tickets", function() {
 Meteor.publish("Configs", function() {
 	return Configs.find({});
 });
+
+Meteor.publish("DraftTimer", function() {
+	return DraftTimer;
+});

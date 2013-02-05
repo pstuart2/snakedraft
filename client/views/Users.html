@@ -5,7 +5,8 @@
 		<li class="user-item {{selected}}">
 			{{username}}
 			<div class="pull-right">
-				<span class="label">{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}}</span>
+				<span title="Assigned" class="label label-info">{{formatTotalHours profile.hoursAssigned}}</span>
+				<span title="Available" class="label label-success">{{formatTotalHours profile.totalHoursAvailable}}</span>
 			</div>
 		</li>
 	{{/each}}
@@ -16,6 +17,9 @@
 		{{#each InactiveUserArr}}
 		<li class="user-item {{selected}}">
 			{{username}}
+			<div class="pull-right">
+				<span class="label label-info">{{formatTotalHours profile.hoursAssigned}}</span>
+			</div>
 		</li>
 		{{/each}}
 	</ul>

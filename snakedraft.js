@@ -1,6 +1,7 @@
 // This is executed in both client and server
 var Configs = new Meteor.Collection("Configs");
 var Tickets = new Meteor.Collection("Tickets");
+var DraftTimer = 30;
 
 function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;

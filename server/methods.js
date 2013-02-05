@@ -1,3 +1,5 @@
+var draftTimerInterval = null;
+
 Meteor.methods({
 	takeTicket: function (userId, ticketId) {
 		var ticket, assignee, currentUser,  hours;
@@ -64,5 +66,22 @@ Meteor.methods({
 					$set: fields
 				},
 				{multi: false});
+	},
+
+	startDraft: function() {
+		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+
+		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
+			throw new Meteor.Error(404, "You cannot start the draft.");
+		}
+
+		DraftTimer = 30;
+		draftTimerInterval = Meteor.setInterval(function() {
+			console.log(DraftTimer);
+			DraftTimer--;
+			if (DraftTimer == 0) {
+				DraftTimer = 30;
+			}
+		}, 1000);
 	}
 });
