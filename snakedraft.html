@@ -7,9 +7,17 @@
 	<div class="container">
 		<div class="row">
 			{{#if currentUser}}
-			<div class="group user-area span4 well">
-				{{> Users}}
+			<div class="group span4">
+				{{#if currentUser.profile.isAdmin}}
+				<div class="group draft-control well">
+					{{> DraftControl}}
+				</div>
+				{{/if}}
+				<div class="group user-area well">
+					{{> Users}}
+				</div>
 			</div>
+
 			<div class="group ticket-area span7 well">
         {{> Tickets}}
 			</div>

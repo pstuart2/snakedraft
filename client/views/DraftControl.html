@@ -1,0 +1,9 @@
+<template name="DraftControl">
+	{{#if isDraftRunning}}
+	<button type="button" class="btn btn-small" id="draft-stop"><i class="icon-stop"></i> Stop</button>
+	{{else}}
+	<button type="button" class="btn btn-small" id="draft-start"><i class="icon-play"></i> Start</button>
+	{{/if}}
+	<button type="button" class="btn btn-small {{RunningClass}}" id="draft-pause"><i class="icon-pause"></i> Pause</button>
+	<button type="button" class="btn btn-small {{RunningClass}}" id="draft-skip"><i class="icon-fast-forward"></i> Skip</button>
+</template>

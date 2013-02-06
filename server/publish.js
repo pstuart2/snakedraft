@@ -10,6 +10,6 @@ Meteor.publish("Configs", function() {
 	return Configs.find({});
 });
 
-Meteor.publish("DraftTimer", function() {
-	return DraftTimer;
+Meteor.publish("Drafts", function() {
+	return Drafts.find({});
 });

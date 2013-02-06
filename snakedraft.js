@@ -1,7 +1,7 @@
 // This is executed in both client and server
 var Configs = new Meteor.Collection("Configs");
 var Tickets = new Meteor.Collection("Tickets");
-var DraftTimer = 30;
+var Drafts = new Meteor.Collection("Drafts");
 
 function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -69,5 +69,20 @@ Tickets.allow({
 	remove: function (userId, docs) {
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		return user.profile.isAdmin;
+	}
+});
+
+Drafts.allow({
+	insert: function (userId, doc) {
+		// No inserts.
+		return false;
+	},
+	update: function (userId, docs, fields, modifier) {
+		// Only allow admins to update configs.
+		return false;
+	},
+	remove: function (userId, docs) {
+		// No deletes.
+		return false;
 	}
 });

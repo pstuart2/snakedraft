@@ -23,6 +23,13 @@
 			</div>
 
 			<div class="control-group">
+				<label class="control-label" for="editUser-assigned-days">Draft Position</label>
+				<div class="controls">
+					<input type="text" id="editUser-draft-position" class="input-small" value="{{User.profile.draftPosition}}" placeholder="Draft Position"/>
+				</div>
+			</div>
+
+			<div class="control-group">
 				<label class="control-label" for="editUser-is-admin">Is Admin</label>
 				<div class="controls">
 					<input id="editUser-is-admin" type="checkbox" {{checkChecked User.profile.isAdmin}} />

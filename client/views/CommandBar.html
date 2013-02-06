@@ -24,12 +24,6 @@
 								<b class="caret"></b>
 							</a>
 							<ul class="dropdown-menu">
-								{{#if isDraftRunning}}
-								<li><a href="#" class="pause-draft">Pause Draft</a></li>
-								{{else}}
-								<li><a href="#" class="start-draft">Start Draft</a></li>
-								{{/if}}
-								<li class="divider"></li>
 								<li><a href="#" data-toggle="modal" data-target="#configModal">Config</a></li>
 								<li><a href="#" data-toggle="modal" data-target="#customTicketModal">Manual Add Ticket</a></li>
 								<li class="divider"></li>
@@ -37,7 +31,6 @@
 							</ul>
 						</li>
 						{{/if}}
-						<li><a href="#">{{DraftTimer}}</a></li>
 					</ul>
 					<ul class="nav pull-right">
 						<li><a href="#">{{loginButtons align="right"}}</a></li>

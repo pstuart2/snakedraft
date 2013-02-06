@@ -1,9 +1,11 @@
 <template name="Users">
-	<h4>Active Users</h4>
+	<h4>Active Users
+		: {{DraftTimer.currentTime}}
+	</h4>
 	<ul class="users active-users">
 	{{#each ActiveUserArr}}
 		<li class="user-item {{selected}}">
-			{{username}}
+			<span class="badge">{{profile.draftPosition}}</span> {{username}}
 			<div class="pull-right">
 				<span title="Assigned" class="label label-info">{{formatTotalHours profile.hoursAssigned}}</span>
 				<span title="Available" class="label label-success">{{formatTotalHours profile.totalHoursAvailable}}</span>
@@ -16,7 +18,7 @@
 	<ul class="users inactive-users">
 		{{#each InactiveUserArr}}
 		<li class="user-item {{selected}}">
-			{{username}}
+			<span class="badge">{{profile.draftPosition}}</span> {{username}}
 			<div class="pull-right">
 				<span class="label label-info">{{formatTotalHours profile.hoursAssigned}}</span>
 			</div>

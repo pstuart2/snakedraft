@@ -49,15 +49,6 @@ Template.Config.events({
 	"click button.config": function() {
 		$("#configs").toggle();
 	},
-	"click button.add-config": function() {
-		var name = $("#name"),
-				value = $("#value");
-
-		Configs.insert({Name: name.val(), Value: value.val()});
-
-		name.val(null);
-		value.val(null);
-	},
 	"click .config-item": function (evt, tmpl) { // start editing
 		console.log("Editing Config: " + this.Name);
 		Session.set('editing_config', this._id);
@@ -70,7 +61,8 @@ Template.Config.events(okCancelEvents(
 		'#value-input',
 		{
 			ok: function (value) {
-				Configs.update(this._id, {$set: {Value: value}});
+				console.log("Saving Config: " + this._id);
+				Meteor.call("updateConfig", this._id, value);
 				Session.set('editing_config', null);
 			},
 			cancel: function () {

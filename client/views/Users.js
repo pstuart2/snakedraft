@@ -1,9 +1,10 @@
 Session.set('selectedUserId', null);
 
 Meteor.subscribe("users");
+Meteor.subscribe("Drafts");
 
 Template.Users.ActiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {username: 0}});
+	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 0}});
 };
 
 Template.Users.InactiveUserArr = function() {
@@ -12,6 +13,14 @@ Template.Users.InactiveUserArr = function() {
 
 Template.Users.formatTotalHours = function(totalHours) {
 	return formatTotalHours(totalHours);
+};
+
+Template.Users.isDraftRunning = function() {
+	return isDraftRunning();
+};
+
+Template.Users.DraftTimer = function() {
+	return Drafts.findOne({});
 };
 
 Template.Users.selected = function () {

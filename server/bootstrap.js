@@ -15,6 +15,24 @@ Meteor.startup(function () {
 			}
 		}
 	}
+
+	var draft = Drafts.findOne({}),
+			config = Configs.findOne({Name: "SecondsPerChoice"}),
+			defaults = {
+				turnTime: config.Value,
+				currentTime: config.Value,
+				isPaused: false,
+				isRunning: false
+			};
+	if(!draft) {
+		console.log("BOOTSTRAP: Creating default draft.");
+		Drafts.insert(defaults);
+	} else {
+		console.log("BOOTSTRAP: Updating default draft.");
+		Drafts.update({_id: draft._id},
+				{$set: defaults},
+				{multi: false});
+	}
 });
 
 // Only valid email domain users.

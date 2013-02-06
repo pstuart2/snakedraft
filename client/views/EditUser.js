@@ -38,6 +38,7 @@ Template.EditUser.events = {
 				availableHours = $("#editUser-available-hours"),
 				assignedDays = $("#editUser-assigned-days"),
 				assignedHours = $("#editUser-assigned-hours"),
+				draftPosition = $("#editUser-draft-position"),
 				isAdmin = ($("#editUser-is-admin").attr("checked") == "checked"),
 				totalAssignedHours,
 				totalAvailableHours;
@@ -50,7 +51,8 @@ Template.EditUser.events = {
 					'profile.isAdmin': isAdmin,
 					'profile.totalHoursAvailable': totalAvailableHours,
 					'profile.hoursAssigned': totalAssignedHours,
-					'profile.hoursLeft': totalAvailableHours - totalAssignedHours
+					'profile.hoursLeft': totalAvailableHours - totalAssignedHours,
+					'profile.draftPosition': parseInt(draftPosition.val())
 				}
 		);
 
