@@ -76,7 +76,7 @@ Meteor.methods({
 	editUser: function(userId, fields) {
 		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}}),
 				oldUserRec,
-				userCount;
+				newDraftPos;
 
 		// Ensure we are allowed to edit.
 		if (!currentUser.profile.isAdmin) {
@@ -85,13 +85,10 @@ Meteor.methods({
 
 		// Get our old user record.
 		oldUserRec = Meteor.users.findOne({_id: userId});
+		newDraftPos = fields['profile.draftPosition'];
 
-		// Get our user count so we do not exceed our draft position.
-		userCount = Meteor.users.find({}).count();
-		if (userCount < fields['profile.draftPosition']) {
-			// Draft position exceeded, change to last place.
-			fields['profile.draftPosition'] = userCount;
-		}
+		// We don't want to update our draft position now, do it later.
+		fields['profile.draftPosition'] = oldUserRec.profile.draftPosition;
 
 		// Update our user.
 		Meteor.users.update({_id: userId},
@@ -100,38 +97,12 @@ Meteor.methods({
 				},
 				{multi: false});
 
+
+
 		// Check to see if our draft position changed...
-		if (oldUserRec.profile.draftPosition != fields['profile.draftPosition']) {
-			var pos,
-					endPos,
-					increment;
-
-			// Determine if we are moving up or moving down.
-			if (oldUserRec.profile.draftPosition > fields['profile.draftPosition']) {
-				pos = fields['profile.draftPosition'];
-				endPos = oldUserRec.profile.draftPosition;
-				increment = 1;
-			} else {
-				pos = oldUserRec.profile.draftPosition;
-				endPos = fields['profile.draftPosition'];
-				increment = -1;
-			}
-
-			// Update the other users draft positions.
-			Meteor.users.update({
-						'profile.draftPosition': {
-							$gte: pos,
-							$lte: endPos
-						},
-						_id: {$ne: userId}
-					},
-					{$inc: {'profile.draftPosition': increment}},
-					{multi: true});
+		if (oldUserRec.profile.draftPosition != newDraftPos) {
+			movePeep(userId, newDraftPos);
 		}
-	},
-
-	movePeep: function(id, newPos) {
-
 	},
 
 	randomizeDraftees: function() {
@@ -142,9 +113,18 @@ Meteor.methods({
 		}
 
 		var peeps = Meteor.users.find({}, {fields: {username: 1, profile: 1}}),
-				peepCount = peeps.count();
+				peepCount = peeps.count(),
+				newPeepPos = new Array(),
+				arrPos = 0;
 
+		peeps.forEach(function(peep)
+		{
+			newPeepPos[arrPos++] = {id: peep._id, newPos: Math.floor((Math.random()*peepCount)+1)};
+		});
 
+		_.each(newPeepPos, function(newPos) {
+			movePeep(newPos.id, newPos.newPos);
+		});
 	},
 
 	startDraft: function() {
@@ -217,4 +197,50 @@ function resetDraft()
 			}
 			},
 			{multi: false});
+}
+
+function movePeep(userId, newDraftPos)
+{
+	var pos,
+			endPos,
+			increment,
+			userCount,
+			oldUserRec = Meteor.users.findOne({_id: userId},
+					{fields: {username: 1, profile: 1}});
+
+	// Get our user count so we do not exceed our draft position.
+	userCount = Meteor.users.find({}).count();
+	if (userCount < newDraftPos) {
+		// Draft position exceeded, change to last place.
+		newDraftPos = userCount;
+	}
+
+	// Update our user.
+	Meteor.users.update({_id: userId},
+			{
+				$set: {'profile.draftPosition': newDraftPos}
+			},
+			{multi: false});
+
+	// Determine if we are moving up or moving down.
+	if (oldUserRec.profile.draftPosition > newDraftPos) {
+		pos = newDraftPos;
+		endPos = oldUserRec.profile.draftPosition;
+		increment = 1;
+	} else {
+		pos = oldUserRec.profile.draftPosition;
+		endPos = newDraftPos;
+		increment = -1;
+	}
+
+	// Update the other users draft positions.
+	Meteor.users.update({
+				'profile.draftPosition': {
+					$gte: pos,
+					$lte: endPos
+				},
+				_id: {$ne: userId}
+			},
+			{$inc: {'profile.draftPosition': increment}},
+			{multi: true});
 }
