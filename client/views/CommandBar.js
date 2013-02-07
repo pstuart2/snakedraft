@@ -3,5 +3,8 @@ Template.CommandBar.ConfigsArr = function() {
 };
 
 Template.CommandBar.events({
-
+	"click a.randomize-draft": function(e) {
+		e.preventDefault();
+		Meteor.call("randomizeDraftees");
+	}
 });

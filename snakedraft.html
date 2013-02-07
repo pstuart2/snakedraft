@@ -8,11 +8,7 @@
 		<div class="row">
 			{{#if currentUser}}
 			<div class="group span4">
-				{{#if currentUser.profile.isAdmin}}
-				<div class="group draft-control well">
-					{{> DraftControl}}
-				</div>
-				{{/if}}
+				{{> DraftControl}}
 				<div class="group user-area well">
 					{{> Users}}
 				</div>

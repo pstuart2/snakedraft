@@ -1,7 +1,7 @@
 Session.set('selectedUserId', null);
 
 Meteor.subscribe("users");
-Meteor.subscribe("Drafts");
+//Meteor.subscribe("Drafts");
 
 Template.Users.ActiveUserArr = function() {
 	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 0}});
@@ -15,13 +15,13 @@ Template.Users.formatTotalHours = function(totalHours) {
 	return formatTotalHours(totalHours);
 };
 
-Template.Users.isDraftRunning = function() {
-	return isDraftRunning();
-};
-
-Template.Users.DraftTimer = function() {
-	return Drafts.findOne({});
-};
+//Template.Users.isDraftRunning = function() {
+//	return isDraftRunning();
+//};
+//
+//Template.Users.DraftTimer = function() {
+//	return Drafts.findOne({});
+//};
 
 Template.Users.selected = function () {
 	return Session.equals('selectedUserId', this._id) ? 'user-selected' : '';
@@ -38,6 +38,12 @@ Template.Users.events({
 	},
 
 	"dblclick li.user-item": function() {
+		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
+
+		if (!currentUser.profile.isAdmin) {
+			return;
+		}
+
 		Template.EditUser.Show(this._id);
 	}
 });

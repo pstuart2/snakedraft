@@ -19,8 +19,8 @@ Meteor.startup(function () {
 	var draft = Drafts.findOne({}),
 			config = Configs.findOne({Name: "SecondsPerChoice"}),
 			defaults = {
-				turnTime: config.Value,
-				currentTime: config.Value,
+				turnTime: parseInt(config.Value),
+				currentTime: parseInt(config.Value),
 				isPaused: false,
 				isRunning: false
 			};
@@ -28,10 +28,18 @@ Meteor.startup(function () {
 		console.log("BOOTSTRAP: Creating default draft.");
 		Drafts.insert(defaults);
 	} else {
-		console.log("BOOTSTRAP: Updating default draft.");
-		Drafts.update({_id: draft._id},
-				{$set: defaults},
-				{multi: false});
+		// If for some reason we reload make sure the interval is running again.
+		console.log("BOOTSTRAP: draft.isRunning: " + draft.isRunning);
+		if (draft.isRunning) {
+			if (!draft.isPaused) {
+				startDraftInterval();
+			}
+		} else {
+			console.log("BOOTSTRAP: Updating default draft.");
+			Drafts.update({_id: draft._id},
+					{$set: defaults},
+					{multi: false});
+		}
 	}
 });
 
@@ -58,6 +66,7 @@ Accounts.onCreateUser(function(options, user) {
 	user.profile.totalHoursAvailable = 0;
 	user.profile.hoursAssigned = 0;
 	user.profile.hoursLeft = 0;
+	user.profile.draftPosition = userCount + 1;
 
 	return user;
 });
