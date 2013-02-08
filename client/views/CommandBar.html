@@ -24,11 +24,13 @@
 								<b class="caret"></b>
 							</a>
 							<ul class="dropdown-menu">
-								<li><a href="#" data-toggle="modal" data-target="#configModal">Config</a></li>
 								<li><a href="#" data-toggle="modal" data-target="#customTicketModal">Manual Add Ticket</a></li>
+								{{#if notIsDraftRunning}}
 								<li class="divider"></li>
+								<li><a href="#" data-toggle="modal" data-target="#configModal">Config</a></li>
 								<li><a href="#" class="randomize-draft">Randomize Users</a></li>
 								<li><a href="#" data-toggle="modal" data-target="#resetDbModal">Reset DB</a></li>
+								{{/if}}
 							</ul>
 						</li>
 						{{/if}}

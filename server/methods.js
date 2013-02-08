@@ -108,7 +108,8 @@ Meteor.methods({
 	randomizeDraftees: function() {
 		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
 
-		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
+		var draft = Drafts.findOne({});
+		if (!(currentUser.profile.isAdmin || draft.isRunning)) {
 			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
@@ -146,8 +147,9 @@ Meteor.methods({
 		if(draftTimerInterval != null) {
 			Meteor.clearInterval(draftTimerInterval);
 			draftTimerInterval = null;
-			resetDraft();
 		}
+
+		resetDraft();
 	},
 
 	pauseDraft: function() {
