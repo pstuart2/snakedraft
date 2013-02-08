@@ -10,8 +10,8 @@ Meteor.methods({
 		}
 
 		hours = ticket.Hours;
-		assignee = Meteor.users.findOne({_id: userId}, {fields: {username: 1, profile: 1}});
-		currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+		assignee = getUser(userId);
+		currentUser = getUser(Meteor.userId());
 
 		if (!currentUser.profile.isAdmin && assignee.profile.totalHoursAvailable < ticket.Hours) {
 			throw new Meteor.Error(404, "User doesn't have enough hours.");
@@ -30,7 +30,7 @@ Meteor.methods({
 	},
 
 	resetDatabase: function(sprintHours) {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+		var currentUser = getUser(Meteor.userId());
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
@@ -54,7 +54,7 @@ Meteor.methods({
 	},
 
 	updateConfig: function(id, value) {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+		var currentUser = getUser(Meteor.userId());
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
@@ -74,7 +74,7 @@ Meteor.methods({
 	},
 
 	editUser: function(userId, fields) {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}}),
+		var currentUser = getUser(Meteor.userId()),
 				oldUserRec,
 				newDraftPos;
 
@@ -84,7 +84,7 @@ Meteor.methods({
 		}
 
 		// Get our old user record.
-		oldUserRec = Meteor.users.findOne({_id: userId});
+		oldUserRec = getUser(userId);
 		newDraftPos = fields['profile.draftPosition'];
 
 		// We don't want to update our draft position now, do it later.
@@ -106,14 +106,14 @@ Meteor.methods({
 	},
 
 	randomizeDraftees: function() {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+		var currentUser = getUser(Meteor.userId());
 
 		var draft = Drafts.findOne({});
 		if (!(currentUser.profile.isAdmin || draft.isRunning)) {
 			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
-		var peeps = Meteor.users.find({}, {fields: {username: 1, profile: 1}}),
+		var peeps = getUsers({}),
 				peepCount = peeps.count(),
 				newPeepPos = new Array(),
 				arrPos = 0;
@@ -129,7 +129,8 @@ Meteor.methods({
 	},
 
 	startDraft: function() {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()}, {fields: {username: 1, profile: 1}});
+		var currentUser = getUser(Meteor.userId()),
+				firstPlayer;
 
 		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
 			throw new Meteor.Error(404, "You cannot start the draft.");
@@ -141,6 +142,16 @@ Meteor.methods({
 		}
 
 		resetDraft();
+
+		// Get our first player.
+		firstPlayer = Meteor.users.findOne(
+				{"profile.hoursLeft": {$gt: 0}},
+				{sort: {'profile.draftTurn': 0}});
+
+		// Set our starting user in the draft.
+		Drafts.update({_id: draft._id}, {$set: {currentUser: firstPlayer._id, isRunning: true}},
+				{multi: false});
+
 		startDraftInterval();
 	},
 	stopDraft: function() {
@@ -170,6 +181,16 @@ Meteor.methods({
 	}
 });
 
+function getUser(userId)
+{
+	return Meteor.users.findOne({_id: userId}, {fields: {username: 1, profile: 1}});
+}
+
+function getUsers(filter)
+{
+	return Meteor.users.find(filter, {fields: {username: 1, profile: 1}})
+}
+
 function startDraftInterval()
 {
 	// Don't do multiple starts.
@@ -178,8 +199,7 @@ function startDraftInterval()
 	draftTimerInterval = Meteor.setInterval(function() {
 		var draft = Drafts.findOne({});
 		if(draft.currentTime <= 0) {
-			Drafts.update({_id: draft._id}, {$set: {currentTime: draft.turnTime, isRunning: true}},
-					{multi: false});
+			draftChangeTurn();
 		} else {
 			Drafts.update({_id: draft._id}, {$inc: {currentTime: -1}, $set: {isRunning: true}}, {multi: false});
 		}
@@ -188,7 +208,10 @@ function startDraftInterval()
 
 function resetDraft()
 {
-	var SecondsPerChoice = Configs.findOne({Name: 'SecondsPerChoice'});
+	var SecondsPerChoice = Configs.findOne({Name: 'SecondsPerChoice'}),
+			peeps = getUsers({}),
+			peepArray = new Array(),
+			arrPos = 0;
 
 	Drafts.update({},
 			{$set: {
@@ -199,6 +222,17 @@ function resetDraft()
 			}
 			},
 			{multi: false});
+
+	peeps.forEach(function(peep)
+	{
+		peepArray[arrPos++] = {id: peep._id, pos: peep.profile.draftPosition};
+	});
+
+	_.each(peepArray, function(newPos) {
+		Meteor.users.update({_id: newPos.id},
+				{$set: {'profile.draftTurn': newPos.pos}},
+				{multi: false});
+	});
 }
 
 function movePeep(userId, newDraftPos)
@@ -207,8 +241,7 @@ function movePeep(userId, newDraftPos)
 			endPos,
 			increment,
 			userCount,
-			oldUserRec = Meteor.users.findOne({_id: userId},
-					{fields: {username: 1, profile: 1}});
+			oldUserRec = getUser(userId);
 
 	// Get our user count so we do not exceed our draft position.
 	userCount = Meteor.users.find({}).count();
@@ -245,4 +278,45 @@ function movePeep(userId, newDraftPos)
 			},
 			{$inc: {'profile.draftPosition': increment}},
 			{multi: true});
+}
+
+function draftChangeTurn()
+{
+	// Stop our interval.
+	if(draftTimerInterval != null) {
+		Meteor.clearInterval(draftTimerInterval);
+		draftTimerInterval = null;
+	}
+
+	var draft = Drafts.findOne({}),
+			currentUser = getUser(draft.currentUser),
+			newCurrentUser,
+			activeUserCount;
+
+	console.log("changing turns: " + draft.currentUser);
+
+	// Get our active users count.
+	activeUserCount = Meteor.users.find({"profile.hoursLeft": {$gt: 0}}).count();
+
+	// Get our new current user.
+	newCurrentUser = Meteor.users.findOne(
+			{"profile.hoursLeft": {$gt: 0}, _id: {$ne: draft.currentUser}},
+			{sort: {'profile.draftTurn': 0}});
+
+	// Move our current user to the end.
+	Meteor.users.update({_id: currentUser._id},
+			{$set: {"profile.draftTurn": (activeUserCount + 1)}},
+			{multi: false});
+
+	// Decrement all our positions.
+	Meteor.users.update({"profile.hoursLeft": {$gt: 0}},
+			{$inc: {"profile.draftTurn": -1}},
+			{multi: true});
+
+	// Update our draft.
+	Drafts.update({_id: draft._id},
+			{$set: {currentTime: draft.turnTime, isRunning: true, currentUser: newCurrentUser._id}},
+			{multi: false});
+
+	startDraftInterval();
 }

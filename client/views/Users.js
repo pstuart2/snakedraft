@@ -1,10 +1,12 @@
 Session.set('selectedUserId', null);
 
 Meteor.subscribe("users");
-//Meteor.subscribe("Drafts");
 
 Template.Users.ActiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 0}});
+	if (isDraftRunning()) {
+		return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftTurn': "asc"}});
+	}
+	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': "asc"}});
 };
 
 Template.Users.InactiveUserArr = function() {
@@ -15,6 +17,13 @@ Template.Users.formatTotalHours = function(totalHours) {
 	return formatTotalHours(totalHours);
 };
 
+Template.Users.activeUserClass = function() {
+	if (isDraftRunning() && Session.equals('draftCurrentUser', this._id)) {
+		return "alert alert-success";
+	}
+
+	return "";
+};
 //Template.Users.isDraftRunning = function() {
 //	return isDraftRunning();
 //};
