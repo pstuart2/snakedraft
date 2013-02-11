@@ -3,7 +3,7 @@ Session.set('selectedUserId', null);
 Meteor.subscribe("users");
 
 Template.Users.ActiveUserArr = function() {
-	if (isDraftRunning()) {
+	if (isDraftRunning() && isSequential()) {
 		return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftTurn': "asc"}});
 	}
 	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': "asc"}});

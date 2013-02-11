@@ -12,3 +12,13 @@ function isUserTurn(userId)
 {
 	return Session.equals('draftCurrentUser', userId);
 }
+
+function isSnake()
+{
+	return Session.equals('cycleType', 1);
+}
+
+function isSequential()
+{
+	return Session.equals('cycleType', 2);
+}

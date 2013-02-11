@@ -8,6 +8,7 @@ Template.DraftControl.rendered = function() {
 		Session.set('isDraftRunning', draft.isRunning);
 		Session.set('isDraftPaused', draft.isPaused);
 		Session.set('draftCurrentUser', draft.currentUser);
+		Session.set('cycleType', draft.cycleType)
 	}
 };
 

@@ -2,7 +2,7 @@
 	<h4>Active Users</h4>
 	<ul class="users active-users">
 	{{#each ActiveUserArr}}
-		<li class="user-item {{selected}} {{activeUserClass}}">
+		<li class="{{selected}} {{activeUserClass}} user-item">
 			<span class="badge">{{profile.draftPosition}}</span> {{username}}
 			<div class="pull-right">
 				<span title="Assigned" class="label label-info">{{formatTotalHours profile.hoursAssigned}}</span>
