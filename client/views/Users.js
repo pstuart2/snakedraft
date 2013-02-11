@@ -18,19 +18,12 @@ Template.Users.formatTotalHours = function(totalHours) {
 };
 
 Template.Users.activeUserClass = function() {
-	if (isDraftRunning() && Session.equals('draftCurrentUser', this._id)) {
+	if (isDraftRunning() && isUserTurn(this._id)) {
 		return "alert alert-success";
 	}
 
 	return "";
 };
-//Template.Users.isDraftRunning = function() {
-//	return isDraftRunning();
-//};
-//
-//Template.Users.DraftTimer = function() {
-//	return Drafts.findOne({});
-//};
 
 Template.Users.selected = function () {
 	return Session.equals('selectedUserId', this._id) ? 'user-selected' : '';

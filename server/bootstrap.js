@@ -2,27 +2,33 @@
 Meteor.startup(function () {
 	var data = [
 		{Name: "JiraUrl", Value: "http://someurl.com"},
-		{Name: "EmailDomain", Value: ""},
-		{Name: "ScrumMaster", Value: ""},
-		{Name: "HoursPerDay", Value: "6"},
-		{Name: "SecondsPerChoice", Value: 60}
+		{Name: "EmailDomain", Value: "", Description: ""},
+		{Name: "ScrumMaster", Value: "", Description: ""},
+		{Name: "HoursPerDay", Value: "6", Description: ""},
+		{Name: "SecondsPerChoice", Value: 60, Description: ""},
+		{Name: "CycleType", Value: 1, Description: "1-Snake, 2-Sequential"} // 1 = snake, 2 = sequential
 	];
 
-	if (Configs.find().count() != data.length) {
-		for (var i = 0; i < data.length; i++) {
-			if (Configs.findOne({Name: data[i].Name}) == null) {
-				Configs.insert(data[i]);
-			}
+
+	for (var i = 0; i < data.length; i++) {
+		var setting = Configs.findOne({Name: data[i].Name});
+		if (!setting) {
+			Configs.insert(data[i]);
+		} else {
+			data[i]["Value"] = setting.Value;
+			Configs.update({_id: setting._id}, {$set: data[i]}, {multi: false});
 		}
 	}
 
 	var draft = Drafts.findOne({}),
 			config = Configs.findOne({Name: "SecondsPerChoice"}),
+			draftType = Configs.findOne({Name: "CycleType"}),
 			defaults = {
 				turnTime: parseInt(config.Value),
 				currentTime: parseInt(config.Value),
 				isPaused: false,
-				isRunning: false
+				isRunning: false,
+				cycleType: parseInt(draftType.Value)
 			};
 	if(!draft) {
 		console.log("BOOTSTRAP: Creating default draft.");

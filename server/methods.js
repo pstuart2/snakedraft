@@ -2,7 +2,7 @@ var draftTimerInterval = null;
 
 Meteor.methods({
 	takeTicket: function (userId, ticketId) {
-		var ticket, assignee, currentUser,  hours;
+		var ticket, assignee, currentUser, hours, draft;
 
 		ticket = Tickets.findOne({_id: ticketId});
 		if (ticket == null) {
@@ -12,9 +12,17 @@ Meteor.methods({
 		hours = ticket.Hours;
 		assignee = getUser(userId);
 		currentUser = getUser(Meteor.userId());
+		draft = Drafts.getOne({});
 
-		if (!currentUser.profile.isAdmin && assignee.profile.totalHoursAvailable < ticket.Hours) {
-			throw new Meteor.Error(404, "User doesn't have enough hours.");
+		if (!currentUser.profile.isAdmin) {
+
+			if (!draft.currentUser == userId) {
+				throw new Meteor.Error(302, "Not your turn.");
+			}
+
+			if (assignee.profile.totalHoursAvailable < ticket.Hours) {
+				throw new Meteor.Error(302, "User doesn't have enough hours.");
+			}
 		}
 
 		Tickets.update({_id: ticketId},
@@ -26,7 +34,19 @@ Meteor.methods({
 				{$inc: {'profile.hoursLeft': -hours, 'profile.hoursAssigned': hours}},
 				{multi: false});
 
+		draftChangeTurn();
+
 		return true;
+	},
+
+	skipTurn: function() {
+		var currentUser = getUser(Meteor.userId());
+
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "User isn't the scrum master.");
+		}
+
+		draftChangeTurn();
 	},
 
 	resetDatabase: function(sprintHours) {
@@ -70,6 +90,8 @@ Meteor.methods({
 					}
 					},
 					{multi: false});
+		} else if (config.Name) {
+
 		}
 	},
 
@@ -315,7 +337,7 @@ function draftChangeTurn()
 
 	// Update our draft.
 	Drafts.update({_id: draft._id},
-			{$set: {currentTime: draft.turnTime, isRunning: true, currentUser: newCurrentUser._id}},
+			{$set: {currentTime: draft.turnTime, isPaused: false, isRunning: true, currentUser: newCurrentUser._id}},
 			{multi: false});
 
 	startDraftInterval();

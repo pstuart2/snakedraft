@@ -65,5 +65,11 @@ Template.DraftControl.events({
 
 		Meteor.call("pauseDraft");
 		Session.set('isDraftPaused', !Session.get('isDraftPaused'));
+	},
+	"click button#draft-skip": function(e) {
+		e.preventDefault();
+		if (!isDraftRunning()) { return; }
+
+		Meteor.call("skipTurn");
 	}
 });

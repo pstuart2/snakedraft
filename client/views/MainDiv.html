@@ -1,0 +1,25 @@
+<template name="MainDiv">
+	<div id="main-div-wrapper" class="{{activeUserClass}}">
+		{{> CommandBar}}
+		<div class="container">
+			<div class="row">
+				{{#if currentUser}}
+				<div class="group span4">
+					{{> DraftControl}}
+					<div class="group user-area well">
+						{{> Users}}
+					</div>
+				</div>
+
+				<div class="group ticket-area span7 well">
+					{{> Tickets}}
+				</div>
+				{{/if}}
+			</div>
+		</div>
+		{{> Config}}
+		{{> CustomTicket}}
+		{{> ResetDb}}
+		{{> EditUser}}
+	</div>
+</template>

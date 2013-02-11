@@ -15,17 +15,14 @@
 		{{#each AvailableTicketArr}}
 		<div class="ticket">
 			<div class="pull-right">
-				{{#if canChoose Hours}}
-				<span class="label label-inverse">{{formatTotalHours Hours}}</span>
-				{{else}}
-				<span class="label label-important">{{formatTotalHours Hours}}</span>
-				{{/if}}
+				<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
 			</div>
 			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
 			<div>{{Description}}</div>
 			<div class="ticket-buttons">
 				{{#if canChoose Hours}}
 				<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+				{{else}}
 				<button type="button" class="btn btn-mini suggest-ticket">Suggest</button>
 				{{/if}}
 			</div>

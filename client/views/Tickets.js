@@ -18,9 +18,24 @@ Template.Tickets.formatTotalHours = function(totalHours) {
 	return formatTotalHours(totalHours);
 };
 
+Template.Tickets.canChooseHours = function (hours) {
+	var cssClass = "label-inverse",
+			user = Meteor.users.findOne({_id: Meteor.userId()});
+	if (parseInt(hours) > user.profile.totalHoursAvailable)
+	{
+		cssClass = "label-important";
+	}
+
+	return cssClass;
+};
+
 Template.Tickets.canChoose = function (hours) {
-	var user = Meteor.users.findOne({_id: Meteor.userId()});
-	return (parseInt(hours) <= user.profile.totalHoursAvailable)
+	if(isDraftRunning() && isUserTurn(Meteor.userId()))
+	{
+		var user = Meteor.users.findOne({_id: Meteor.userId()});
+		return (parseInt(hours) <= user.profile.totalHoursAvailable);
+	}
+	return false;
 };
 
 Template.Tickets.events = {

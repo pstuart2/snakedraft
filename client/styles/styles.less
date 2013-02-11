@@ -9,6 +9,19 @@
 @infoBackground: #d9edf7;
 @successBackground: #dff0d8;
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#main-div-wrapper {
+  min-height: 100%;
+}
+
+.main-div-active {
+  background-color: @successBackground;
+}
+
 // Functions
 .rounded-corners (@radius: 5px) {
   -webkit-border-radius: @radius;
