@@ -207,6 +207,39 @@ Meteor.methods({
 
 			startDraftInterval();
 		}
+	},
+
+	toggleRecTicket: function(userId, recUsername, ticketId, isRec) {
+		var ticket = Tickets.findOne({_id: ticketId}),
+				user = Meteor.users.findOne({_id: userId}),
+				foundRec = false;
+
+		console.log("toggleRecTicket...");
+		if (!ticket.recommends) {
+			ticket.recommends = [];
+		}
+
+		console.log("_.each...");
+		_.each(ticket.recommends, function(rec) {
+			if (rec.by == user.username) {
+				foundRec = true;
+				if (isRec && rec.users.indexOf(recUsername) < 0) {
+					rec.users += "," + recUsername;
+				} else if (!isRec && rec.users.indexOf(recUsername) >= 0) {
+					rec.users = rec.users.replace(recUsername, "").replace(",,", ",");
+				}
+			}
+		});
+
+		console.log("!found..." + isRec);
+		if (!foundRec && isRec) {
+			console.log("Adding Length: " + ticket.recommends.length);
+			ticket.recommends[ticket.recommends.length] = {by: user.username, users: recUsername};
+		}
+
+		Tickets.update({_id: ticket._id},
+				{$set: {recommends: ticket.recommends}},
+				{multi: false});
 	}
 });
 
@@ -304,8 +337,9 @@ function draftChangeTurn()
 		draftTimerInterval = null;
 	}
 
-	updateNewCurrentUser();
-	startDraftInterval();
+	if(updateNewCurrentUser()) {
+		startDraftInterval();
+	}
 }
 
 function updateNewCurrentUser()
@@ -314,10 +348,17 @@ function updateNewCurrentUser()
 			lastUser = Meteor.users.findOne(
 					{"profile.hoursLeft": {$gt: 0}},
 					{sort: {'profile.draftPosition': -draft.direction}}),
+			activeUserCount,
 			newCurrentUser = null;
 
 	// If we are the only user left, ....
-	if (Meteor.users.find({"profile.hoursLeft": {$gt: 0}}).count() == 1) { return lastUser; }
+	activeUserCount = Meteor.users.find({"profile.hoursLeft": {$gt: 0}}).count();
+	if (activeUserCount == 1) { return lastUser; }
+	if (activeUserCount == 0) {
+		// Draft is over!
+		resetDraft();
+		return false;
+	}
 
 	if (draft.cycleType == 2)
 	{

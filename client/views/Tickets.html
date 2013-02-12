@@ -23,7 +23,17 @@
 				{{#if canChoose Hours}}
 				<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
 				{{else}}
-				<button type="button" class="btn btn-mini suggest-ticket">Suggest</button>
+					{{#each recommends}}
+						<div><b>{{by}}:</b> {{users}}
+						</div>
+					{{/each}}
+					{{#each Users}}
+					<div style="float: left;">
+						<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" />
+						<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>
+					</div>
+					{{/each}}
+				<div style="clear: both;"></div>
 				{{/if}}
 			</div>
 		</div>

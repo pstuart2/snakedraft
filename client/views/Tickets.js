@@ -1,3 +1,4 @@
+Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
 
 Template.Tickets.AvailableTicketArr = function() {
@@ -8,6 +9,10 @@ Template.Tickets.MyTicketArr = function() {
 	var selectedUserId = Session.get('selectedUserId');
 	if(!selectedUserId) { selectedUserId = Meteor.userId(); }
 	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
+};
+
+Template.Tickets.Users = function() {
+	return Meteor.users.find({});
 };
 
 Template.Tickets.userSelected = function() {
@@ -43,5 +48,9 @@ Template.Tickets.events = {
 		e.preventDefault();
 
 		Meteor.call("takeTicket", Meteor.userId(), this._id);
+	},
+	"change input.sug-checkbox": function(e) {
+		var cb = $(e.currentTarget);
+		Meteor.call("toggleRecTicket", Meteor.userId(), cb.val(), cb.data("ticket-id"), cb.is(":checked"));
 	}
 };
