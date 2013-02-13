@@ -1,17 +1,19 @@
 <template name="MainDiv">
 	<div id="main-div-wrapper" class="{{activeUserClass}}">
 		{{> CommandBar}}
-		<div class="container">
+		<div class="container main-area">
 			<div class="row">
 				{{#if currentUser}}
-				<div class="group span4">
-					{{> DraftControl}}
-					<div class="group user-area well">
-						{{> Users}}
+				<div class="span4">
+					<div class="affix-top">
+						{{> DraftControl}}
+						<div class="group user-area">
+							{{> Users}}
+						</div>
 					</div>
 				</div>
 
-				<div class="group ticket-area span7 well">
+				<div class="span8 ticket-area">
 					{{> Tickets}}
 				</div>
 				{{/if}}

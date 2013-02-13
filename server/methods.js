@@ -211,22 +211,26 @@ Meteor.methods({
 
 	toggleRecTicket: function(userId, recUsername, ticketId, isRec) {
 		var ticket = Tickets.findOne({_id: ticketId}),
-				user = Meteor.users.findOne({_id: userId}),
+				byUser = Meteor.users.findOne({_id: userId}),
 				foundUser;
 
 		if (!ticket.recommends) {
 			ticket.recommends = [];
 		}
 
-		foundUser = _.find(ticket.recommends, function(rec) { return rec.by == user.username; });
+		foundUser = _.find(ticket.recommends, function(rec) { return rec.user == recUsername; });
 		if (foundUser) {
-			foundUser.users = _.reject(foundUser.users, function(user) { return user.username == recUsername; });
+			foundUser.by = _.reject(foundUser.by, function(user) { return user.username == byUser.username; });
 			if (isRec) {
-				foundUser.users[foundUser.users.length] = {username: recUsername};
+				foundUser.by[foundUser.by.length] = {username: byUser.username};
+			} else {
+				if (foundUser.by.length == 0) {
+					ticket.recommends = _.reject(ticket.recommends, function(rec) { return rec.user == recUsername; });
+				}
 			}
 		} else {
 			ticket.recommends[ticket.recommends.length] =
-				{by: user.username, users: [{username: recUsername}]};
+				{user: recUsername, by: [{username: byUser.username}]};
 		}
 
 		Tickets.update({_id: ticket._id},

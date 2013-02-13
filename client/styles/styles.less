@@ -1,13 +1,107 @@
 /////////////////////////////////////////////////////////
 // Common
 
-// Colors
+// Heights (Bootstrap)
+@baseFontSize: 13px;
+@baseLineHeight: 18px;
+
+// Tables (Bootstrap)
+@tableBackgroundAccent: #f9f9f9;
+@tableBackgroundHover: #f5f5f5;
+@tableBorder: #ddd;
+
+// Grayscale colors (Bootstrap)
+@black: #000;
+@grayDarker: #222;
+@grayDark: #333;
+@gray: #555;
+@grayLight: #999;
+@grayLighter: #eee;
 @white: #fff;
-@lightGray: #eee;
-@gray: #ddd;
-@darkGray: #999;
-@infoBackground: #d9edf7;
+
+// Accent Colors (Bootstrap)
+@blue: #049cdb;
+@green: #46a546;
+@red: #9d261d;
+@yellow: #ffc40d;
+@orange: #f89406;
+@pink: #c3325f;
+@purple: #7a43b6;
+
+// Scaffolding and links (Bootstrap)
+@bodyBackground: @white;			// Page background color
+@textColor: @grayDark;				// Default text color for entire body, headings, and more
+@linkColor: #08c;							// Default link text color
+@linkColorHover: darken(@linkColor, 15%);		//Default link text hover color
+
+// Components Buttons (Bootstrap)
+@btnBackground: @white;
+@btnBackgroundHighlight: darken(@white, 10%);
+@btnBorder: darken(@white, 20%);
+@btnPrimaryBackground: @linkColor;
+@btnPrimaryBackgroundHighlight: spin(@btnPrimaryBackground, 15%);
+@btnInfoBackground: #5bc0de;
+@btnInfoBackgroundHighlight: #2f96b4;
+@btnSuccessBackground: #62c462;
+@btnSuccessBackgroundHighlight: #51a351;
+@btnWarningBackground: lighten(@orange, 15%);
+@btnWarningBackgroundHighlight: @orange;
+@btnDangerBackground: #ee5f5b;
+@btnDangerBackgroundHighlight: #bd362f;
+@btnInverseBackground: @gray;
+@btnInverseBackgroundHighlight: @grayDarker;
+
+// Component colors (Bootstrap)
+@btnBackground: @white;
+@btnBackgroundHighlight: darken(@white, 10%);
+@btnBorder: darken(@white, 20%);
+@btnPrimaryBackground: @linkColor;
+@btnPrimaryBackgroundHighlight: spin(@btnPrimaryBackground, 15%);
+@btnInfoBackground: #5bc0de;
+@btnInfoBackgroundHighlight: #2f96b4;
+@btnSuccessBackground: #62c462;
+@btnSuccessBackgroundHighlight: #51a351;
+@btnWarningBackground: lighten(@orange, 15%);
+@btnWarningBackgroundHighlight: @orange;
+@btnDangerBackground: #ee5f5b;
+@btnDangerBackgroundHighlight: #bd362f;
+@btnInverseBackground: @gray;
+@btnInverseBackgroundHighlight: @grayDarker;
+
+// Forms (Bootstrap)
+@placeholderText: @grayLight;
+@inputBackground: @white;
+@inputBorder: #ccc;
+@inputDisabledBackground: @grayLighter;
+@formActionsBackground: #f5f5f5;
+
+// Form States and Alerts (Bootstrap)
+@warningText: #c09853;
+@warningBackground: #f3edd2;
+@errorText: #b94a48;
+@errorBackground: #f2dede;
+@successText: #468847;
 @successBackground: #dff0d8;
+@infoText: #3a87ad;
+@infoBackground: #d9edf7;
+
+// Navbar (Bootstrap)
+@navbarHeight: 40px;
+@navbarBackground: @grayDarker;
+@navbarBackgroundHighlight: @grayDark;
+@navbarText: @grayLight;
+@navbarLinkColor: @grayLight;
+@navbarLinkColorHover: @white;
+@navbarLinkColorActive: @navbarLinkColorHover;
+@navbarLinkBackgroundHover: transparent;
+@navbarLinkBackgroundActive: @navbarBackground;
+@navbarSearchBackground: lighten(@navbarBackground, 25%);
+@navbarSearchBackgroundFocus: @white;
+@navbarSearchBorder: darken(@navbarSearchBackground, 30%);
+@navbarSearchPlaceholderColor: #ccc;
+@navbarBrandColor: @navbarLinkColor;
+
+// END BOOTSTRAP
 
 html, body {
   height: 100%;
@@ -37,11 +131,20 @@ html, body {
 
 }
 
-span.is-me {
-  font-weight: bold;
+div.main-area {
+  margin-top: 50px;
+}
+
+div.recommends {
+  padding: 5px;
+  margin-top: 5px;
   .rounded-corners;
   background-color: @infoBackground;
-  padding: 3px;
+}
+
+span.is-me {
+  font-weight: bold;
+  color: #900;
 }
 
 li {
@@ -64,13 +167,16 @@ div.draft-control {
   }
 }
 div.ticket-area {
-  border-left: solid 1px @gray;
-  padding: 5px;
+  div.ticket-wrapper {
+	padding: 5px;
+  }
   margin-top: 0px;
+  .rounded-corners;
+  background-color: @grayLighter;
 
   div.ticket {
 	&:hover {
-	  background-color: @infoBackground;
+	  background-color: #eee;
 	}
 
 	div.ticket-buttons {
@@ -80,6 +186,8 @@ div.ticket-area {
 }
 
 div.user-area {
+  background-color: @grayLighter;
+  .rounded-corners;
   padding: 5px;
   	ul.users {
 	  margin: 3px;
@@ -92,7 +200,7 @@ div.user-area {
 		  padding: 5px;
 		  cursor: pointer;
 		  margin: 3px;
-		  border: 1px solid @lightGray;
+		  border: 1px solid @grayLighter;
 
 		  &:hover {
 			background-color: @infoBackground;

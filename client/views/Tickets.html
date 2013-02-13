@@ -1,4 +1,5 @@
 <template name="Tickets">
+	<div class="ticket-wrapper">
 	{{#if userSelected}}
 		<h4>User Tickets</h4>
 		{{#each MyTicketArr}}
@@ -7,7 +8,6 @@
 				<span class="label label-info">{{formatTotalHours Hours}}</span>
 			</div>
 			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
-			<div>{{Description}}</div>
 		</div>
 		{{/each}}
 	{{else}}
@@ -18,30 +18,25 @@
 				<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
 			</div>
 			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
-			<div>{{Description}}</div>
 			<div class="ticket-buttons">
-				{{#if canChoose Hours}}
-				<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
-				{{else}}
-				{{#each Recommends}}
-				<div>
-					<b>{{by}}:</b>
-					{{#each users}}
-					{{{CheckMe username}}}
-					{{/each}}
-				</div>
-				{{/each}}
 
+				{{#if IsMyTurn}}
+					{{#if canChoose Hours}}
+					<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+					{{/if}}
+				{{else}}
 					{{#each Users}}
 					<div style="float: left;">
 						<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
 						<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
 					</div>
 					{{/each}}
-				<div style="clear: both;"></div>
+					<div style="clear: both;"></div>
+					{{{Recommends recommends}}}
 				{{/if}}
 			</div>
 		</div>
 		{{/each}}
 	{{/if}}
+	</div>
 </template>

@@ -15,23 +15,42 @@ Template.Tickets.Users = function() {
 	return Meteor.users.find({});
 };
 
-Template.Tickets.Recommends = function() {
+/*Template.Tickets.Recommends = function() {
 	return _.reject(this.recommends, function(rec) { return rec.by == Meteor.user().username; });
-};
+};*/
 
-/**
- *
- * @param username
- * @return {*}
- * @constructor
- */
-Template.Tickets.CheckMe = function(username) {
-	if (username != Meteor.user().username) {
-		return username;
+Template.Tickets.helpers({
+	/**
+	 *
+	 * @param items
+	 * @return {String}
+	 * @constructor
+	 */
+	Recommends: function (items) {
+		if (!items) return '<div class="recommends"><span class="muted">Not recommended</span></div>';
+
+		var sortedList = _.sortBy(items, function(item) { return item.user; }),
+				output = "",
+				title;
+
+		_.each(sortedList, function(item) {
+			title = "";
+			output += "<span";
+			if (item.user == Meteor.user().username) {
+				output += ' class="is-me"';
+			}
+			_.each(item.by, function(byUser) {
+				if (title.length > 0) { title += ","; }
+				title += byUser.username;
+			});
+
+			output += ' title="By: ' + title + '">';
+			output += item.user + "(" + item.by.length + ")</span>&nbsp;";
+		});
+
+		return '<div class="recommends">' + output + "</div>";
 	}
-
-	return '<span class="is-me">' + username + '</span>';
-};
+});
 
 /**
  * @param ticketId
@@ -40,13 +59,13 @@ Template.Tickets.CheckMe = function(username) {
  */
 Template.Tickets.IsMyRecommendChecked = function(ticketId) {
 	var ticket = Tickets.findOne({_id: ticketId}),
-			myrec = _.find(ticket.recommends, function(rec) { return rec.by == Meteor.user().username; }),
-			curusername = this.username,
+			thisUser = this.username,
+			userRec = _.find(ticket.recommends, function(rec) { return rec.user == thisUser; }),
 			retstring = "",
 			myuser;
 
-	if (myrec) {
-		myuser = _.find(myrec.users, function(user) { return user.username == curusername; });
+	if (userRec) {
+		myuser = _.find(userRec.by, function(recBy) { return recBy.username == Meteor.user().username; });
 		if (myuser) {
 
 			retstring = 'checked="checked"';
@@ -55,6 +74,10 @@ Template.Tickets.IsMyRecommendChecked = function(ticketId) {
 
 	return retstring;
 };
+
+Template.Tickets.IsMyTurn = function() {
+	return isUserTurn(Meteor.userId());
+}
 
 Template.Tickets.userSelected = function() {
 	return !Session.equals('selectedUserId', null);
