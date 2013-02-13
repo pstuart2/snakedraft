@@ -212,29 +212,21 @@ Meteor.methods({
 	toggleRecTicket: function(userId, recUsername, ticketId, isRec) {
 		var ticket = Tickets.findOne({_id: ticketId}),
 				user = Meteor.users.findOne({_id: userId}),
-				foundRec = false;
+				foundUser;
 
-		console.log("toggleRecTicket...");
 		if (!ticket.recommends) {
 			ticket.recommends = [];
 		}
 
-		console.log("_.each...");
-		_.each(ticket.recommends, function(rec) {
-			if (rec.by == user.username) {
-				foundRec = true;
-				if (isRec && rec.users.indexOf(recUsername) < 0) {
-					rec.users += "," + recUsername;
-				} else if (!isRec && rec.users.indexOf(recUsername) >= 0) {
-					rec.users = rec.users.replace(recUsername, "").replace(",,", ",");
-				}
+		foundUser = _.find(ticket.recommends, function(rec) { return rec.by == user.username; });
+		if (foundUser) {
+			foundUser.users = _.reject(foundUser.users, function(user) { return user.username == recUsername; });
+			if (isRec) {
+				foundUser.users[foundUser.users.length] = {username: recUsername};
 			}
-		});
-
-		console.log("!found..." + isRec);
-		if (!foundRec && isRec) {
-			console.log("Adding Length: " + ticket.recommends.length);
-			ticket.recommends[ticket.recommends.length] = {by: user.username, users: recUsername};
+		} else {
+			ticket.recommends[ticket.recommends.length] =
+				{by: user.username, users: [{username: recUsername}]};
 		}
 
 		Tickets.update({_id: ticket._id},

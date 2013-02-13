@@ -15,6 +15,47 @@ Template.Tickets.Users = function() {
 	return Meteor.users.find({});
 };
 
+Template.Tickets.Recommends = function() {
+	return _.reject(this.recommends, function(rec) { return rec.by == Meteor.user().username; });
+};
+
+/**
+ *
+ * @param username
+ * @return {*}
+ * @constructor
+ */
+Template.Tickets.CheckMe = function(username) {
+	if (username != Meteor.user().username) {
+		return username;
+	}
+
+	return '<span class="is-me">' + username + '</span>';
+};
+
+/**
+ * @param ticketId
+ * @return {String}
+ * @constructor
+ */
+Template.Tickets.IsMyRecommendChecked = function(ticketId) {
+	var ticket = Tickets.findOne({_id: ticketId}),
+			myrec = _.find(ticket.recommends, function(rec) { return rec.by == Meteor.user().username; }),
+			curusername = this.username,
+			retstring = "",
+			myuser;
+
+	if (myrec) {
+		myuser = _.find(myrec.users, function(user) { return user.username == curusername; });
+		if (myuser) {
+
+			retstring = 'checked="checked"';
+		}
+	}
+
+	return retstring;
+};
+
 Template.Tickets.userSelected = function() {
 	return !Session.equals('selectedUserId', null);
 };
