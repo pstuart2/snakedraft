@@ -1,5 +1,5 @@
 <template name="DraftControl">
-	<div class="group draft-control alert {{WarningClass DraftTimer.currentTime}}">
+	<div class="group draft-control alert {{WarningClass}}">
 		{{#if currentUser.profile.isAdmin}}
 			<div class="draft-control-buttons">
 				{{#if isDraftRunning}}

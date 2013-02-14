@@ -78,6 +78,7 @@
 // Form States and Alerts (Bootstrap)
 @warningText: #c09853;
 @warningBackground: #f3edd2;
+@warningBackground2: #fcf8e3;
 @errorText: #b94a48;
 @errorBackground: #f2dede;
 @successText: #468847;
@@ -131,8 +132,24 @@ html, body {
 
 }
 
+.info-back {
+  background-color: @infoBackground;
+}
+
+.success-back {
+  background-color: @successBackground;
+}
+
+.warning-back {
+  background-color: @warningBackground2;
+}
+
+.danger-back {
+  background-color: @errorBackground;
+}
+
 div.main-area {
-  margin-top: 50px;
+  padding-top: 40px;
 }
 
 div.recommends {
@@ -144,7 +161,7 @@ div.recommends {
 
 span.is-me {
   font-weight: bold;
-  color: #900;
+  color: @red;
 }
 
 li {
@@ -169,14 +186,19 @@ div.draft-control {
 div.ticket-area {
   margin-top: 0px;
   .rounded-corners;
-  background-color: @grayLighter;
+
+
 
   div.ticket-wrapper {
-
+	background-color: @white;
+	border-left: solid 1px @grayLight;
 	padding: 5px;
   }
 
   div.ticket {
+	.rounded-corners;
+	border: solid 1px @grayLight;
+
 	&:hover {
 	  background-color: #eee;
 	}

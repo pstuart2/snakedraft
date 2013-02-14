@@ -9,6 +9,7 @@ Template.DraftControl.rendered = function() {
 		Session.set('isDraftPaused', draft.isPaused);
 		Session.set('draftCurrentUser', draft.currentUser);
 		Session.set('cycleType', draft.cycleType)
+		Session.set('draftTime', draft.currentTime);
 	}
 };
 
@@ -32,8 +33,9 @@ Template.DraftControl.RunningClass = function() {
  * @return {String}
  * @constructor
  */
-Template.DraftControl.WarningClass = function(time) {
-	var wclass = "";
+Template.DraftControl.WarningClass = function() {
+	var wclass = "",
+			time = getDraftTime();
 
 	if (isDraftRunning() && !isDraftPaused()) {
 		if (time > 20) { wclass = "alert-success"; }

@@ -22,3 +22,8 @@ function isSequential()
 {
 	return Session.equals('cycleType', 2);
 }
+
+function getDraftTime()
+{
+	return Session.get('draftTime');
+}

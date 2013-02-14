@@ -2,41 +2,67 @@ var draftTimerInterval = null;
 
 Meteor.methods({
 	takeTicket: function (userId, ticketId) {
-		var ticket, assignee, currentUser, hours, draft;
+		var ticket, assignee, draft;
 
 		ticket = Tickets.findOne({_id: ticketId});
 		if (ticket == null) {
 			throw new Meteor.Error(404, "Can't find ticket.");
 		}
 
-		hours = ticket.Hours;
 		assignee = getUser(userId);
-		currentUser = getUser(Meteor.userId());
 		draft = Drafts.findOne({});
 
-		if (!currentUser.profile.isAdmin) {
-
-			if (!draft.currentUser == userId) {
-				throw new Meteor.Error(302, "Not your turn.");
-			}
-
-			if (assignee.profile.totalHoursAvailable < ticket.Hours) {
-				throw new Meteor.Error(302, "User doesn't have enough hours.");
-			}
+		if (!draft.currentUser == userId) {
+			throw new Meteor.Error(302, "Not your turn.");
 		}
 
-		Tickets.update({_id: ticketId},
-				{$set: {AssignedUserId: userId}},
-				{multi: false});
+		if (assignee.profile.totalHoursAvailable < ticket.Hours) {
+			throw new Meteor.Error(302, "User doesn't have enough hours.");
+		}
 
-		console.log("Hours: " + hours);
-		Meteor.users.update({_id: userId},
-				{$inc: {'profile.hoursLeft': -hours, 'profile.hoursAssigned': hours}},
-				{multi: false});
 
+		assignTicketToUser(userId, ticketId, ticket.Hours);
 		draftChangeTurn();
 
 		return true;
+	},
+
+	assignTicket: function(userId, ticketId) {
+		var ticket, currentUser;
+
+		ticket = Tickets.findOne({_id: ticketId});
+		if (ticket == null) {
+			throw new Meteor.Error(404, "Can't find ticket.");
+		}
+
+		currentUser = getUser(Meteor.userId());
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot assign tickets.");
+		}
+
+		assignTicketToUser(userId, ticketId, ticket.Hours);
+	},
+
+	unassignTicket: function(ticketId) {
+		var ticket, currentUser;
+
+		ticket = Tickets.findOne({_id: ticketId});
+		if (ticket == null) {
+			throw new Meteor.Error(404, "Can't find ticket.");
+		}
+
+		currentUser = getUser(Meteor.userId());
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot assign tickets.");
+		}
+
+		Tickets.update({_id: ticketId},
+				{$unset: {AssignedUserId: 1}},
+				{multi: false});
+
+		Meteor.users.update({_id: ticket.AssignedUserId},
+				{$inc: {'profile.hoursLeft': ticket.Hours, 'profile.hoursAssigned': -ticket.Hours}},
+				{multi: false});
 	},
 
 	skipTurn: function() {
@@ -247,6 +273,16 @@ function getUser(userId)
 function getUsers(filter)
 {
 	return Meteor.users.find(filter, {fields: {username: 1, profile: 1}})
+}
+
+function assignTicketToUser(userId, ticketId, hours) {
+	Tickets.update({_id: ticketId},
+			{$set: {AssignedUserId: userId}},
+			{multi: false});
+
+	Meteor.users.update({_id: userId},
+			{$inc: {'profile.hoursLeft': -hours, 'profile.hoursAssigned': hours}},
+			{multi: false});
 }
 
 function startDraftInterval()

@@ -15,9 +15,17 @@ Template.Tickets.Users = function() {
 	return Meteor.users.find({});
 };
 
-/*Template.Tickets.Recommends = function() {
-	return _.reject(this.recommends, function(rec) { return rec.by == Meteor.user().username; });
-};*/
+Template.Tickets.isAdmin = function() {
+	return Meteor.user().profile.isAdmin;
+};
+
+Template.Tickets.selectedUsername = function() {
+	return Session.get("selectedUserName");
+}
+
+Template.Tickets.canAssign = function() {
+	return !Session.equals('selectedUserId', null) && Meteor.user().profile.isAdmin;
+};
 
 Template.Tickets.helpers({
 	/**
@@ -27,7 +35,9 @@ Template.Tickets.helpers({
 	 * @constructor
 	 */
 	Recommends: function (items) {
-		if (!items) return '<div class="recommends"><span class="muted">Not recommended</span></div>';
+		if (!items || items.length == 0) {
+			return '<div class="recommends"><span class="muted">Not recommended</span></div>';
+		}
 
 		var sortedList = _.sortBy(items, function(item) { return item.user; }),
 				output = "",
@@ -112,6 +122,12 @@ Template.Tickets.events = {
 		e.preventDefault();
 
 		Meteor.call("takeTicket", Meteor.userId(), this._id);
+	},
+	"click button.assign-ticket": function(e) {
+		Meteor.call("assignTicket", Session.get('selectedUserId'), this._id);
+	},
+	"click button.unassign-ticket": function(e) {
+		Meteor.call("unassignTicket", this._id);
 	},
 	"change input.sug-checkbox": function(e) {
 		var cb = $(e.currentTarget);

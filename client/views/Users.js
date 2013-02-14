@@ -32,7 +32,9 @@ Template.Users.events({
 		{
 			Session.set('selectedUserId', null);
 		} else {
+			var user = Meteor.users.findOne({_id: this._id});
 			Session.set('selectedUserId', this._id);
+			Session.set('selectedUserName', user.username);
 		}
 	},
 

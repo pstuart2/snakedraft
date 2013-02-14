@@ -1,42 +1,66 @@
 <template name="Tickets">
 	<div class="ticket-wrapper">
-	{{#if userSelected}}
-		<h4>User Tickets</h4>
-		{{#each MyTicketArr}}
-		<div class="ticket">
-			<div class="pull-right">
-				<span class="label label-info">{{formatTotalHours Hours}}</span>
-			</div>
-			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
-		</div>
-		{{/each}}
-	{{else}}
-		<h4>Available Tickets</h4>
-		{{#each AvailableTicketArr}}
-		<div class="ticket">
-			<div class="pull-right">
-				<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
-			</div>
-			<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
-			<div class="ticket-buttons">
+		<ul class="nav nav-tabs" id="myTab">
+			<li class="active"><a data-toggle="tab" href="#Tickets">Tickets</a></li>
+			{{#if userSelected}}
+			<li><a data-toggle="tab" href="#UserTickets">User Tickets</a></li>
+			{{/if}}
+		</ul>
 
-				{{#if IsMyTurn}}
-					{{#if canChoose Hours}}
-					<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
-					{{/if}}
-				{{else}}
-					{{#each Users}}
-					<div style="float: left;">
-						<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
-						<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
+		<div class="tab-content">
+			<div class="tab-pane active" id="Tickets">
+				{{#each AvailableTicketArr}}
+				<div class="ticket">
+					<div class="pull-right">
+						<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
 					</div>
-					{{/each}}
-					<div style="clear: both;"></div>
-					{{{Recommends recommends}}}
-				{{/if}}
+					<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+					{{#if isAdmin}}
+					<div class="admin-buttons">
+						<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>
+						{{#if canAssign}}
+						<button type="button" class="btn btn-mini assign-ticket">Assign to {{selectedUsername}}</button>
+						{{/if}}
+					</div>
+					{{/if}}
+					<div class="ticket-buttons">
+
+						{{#if IsMyTurn}}
+						{{#if canChoose Hours}}
+						<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+						{{/if}}
+
+						{{else}}
+						{{#each Users}}
+						<div style="float: left;">
+							<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
+							<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
+						</div>
+						{{/each}}
+						<div style="clear: both;"></div>
+						{{/if}}
+						{{{Recommends recommends}}}
+					</div>
+				</div>
+				{{/each}}
 			</div>
+			{{#if userSelected}}
+			<div class="tab-pane" id="UserTickets">
+				{{#each MyTicketArr}}
+				<div class="ticket">
+					<div class="pull-right">
+						<span class="label label-info">{{formatTotalHours Hours}}</span>
+					</div>
+					<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+					{{#if isAdmin}}
+					<div class="admin-buttons">
+						<button type="button" class="btn btn-mini btn-warning unassign-ticket">Un-assign</button>
+					</div>
+					{{/if}}
+				</div>
+				{{/each}}
+			</div>
+			{{/if}}
 		</div>
-		{{/each}}
-	{{/if}}
 	</div>
 </template>
