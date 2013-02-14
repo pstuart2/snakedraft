@@ -2,6 +2,7 @@
 var Configs = new Meteor.Collection("Configs");
 var Tickets = new Meteor.Collection("Tickets");
 var Drafts = new Meteor.Collection("Drafts");
+var Messages = new Meteor.Collection("Messages");
 
 function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -76,6 +77,21 @@ Drafts.allow({
 	insert: function (userId, doc) {
 		// No inserts.
 		return false;
+	},
+	update: function (userId, docs, fields, modifier) {
+		// Only allow admins to update configs.
+		return false;
+	},
+	remove: function (userId, docs) {
+		// No deletes.
+		return false;
+	}
+});
+
+Messages.allow({
+	insert: function (userId, doc) {
+		// No inserts.
+		return true;
 	},
 	update: function (userId, docs, fields, modifier) {
 		// Only allow admins to update configs.

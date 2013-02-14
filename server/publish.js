@@ -13,3 +13,7 @@ Meteor.publish("Configs", function() {
 Meteor.publish("Drafts", function() {
 	return Drafts.find({});
 });
+
+Meteor.publish("Messages", function() {
+	return Messages.find({});
+});

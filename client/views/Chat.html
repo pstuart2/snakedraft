@@ -1,0 +1,10 @@
+<template name="Chat">
+	<ul class="chat-list">
+		{{#each Messages}}
+		<li class="chat-item">
+			<b>{{user}}</b>: {{message}}
+		</li>
+		{{/each}}
+	</ul>
+	<input type="text" id="chatInput" style="width: 95%;" />
+</template>
