@@ -3,7 +3,7 @@ Session.set('selectedUserId', null);
 Meteor.subscribe("users");
 
 Template.Users.ActiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': "asc"}});
+	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.InactiveUserArr = function() {

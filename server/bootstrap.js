@@ -47,6 +47,32 @@ Meteor.startup(function () {
 					{multi: false});
 		}
 	}
+
+	var tickets = Tickets.find({}),
+			ticketData;
+	if (tickets.count() == 0) {
+		ticketData = [
+			{ Id: "ENC-0001", Title: "Small Title", Hours: 6, Description: "Small Description" },
+			{ Id: "ENC-0002", Title: "MongoDB said:Failed", Hours: 15, Description: "Small Description" },
+			{ Id: "ENC-0003", Title: "On the server", Hours: 12, Description: "Small Description" },
+			{ Id: "ENC-0004", Title: "exclude certain fields from the result objects", Hours: 24, Description: "Small Description" },
+			{ Id: "ENC-0005", Title: "It is not possible to mix inclusion and exclusion styles.", Hours: 12, Description: "Small Description" },
+			{ Id: "ENC-0006", Title: "modifier doesn't contain any $-operators", Hours: 16, Description: "Small Description" },
+			{ Id: "ENC-0007", Title: "completely replaces whatever was previously in the database.", Hours: 12, Description: "Small Description" },
+			{ Id: "ENC-0008", Title: "can also contain more complicated tests", Hours: 3, Description: "Small Description" },
+			{ Id: "ENC-0009", Title: "Currently Meteor uses this function to generate _id fields for new Mongo documents.", Hours: 12, Description: "Small Description" },
+			{ Id: "ENC-0010", Title: "In the future we will likely switch to native binary Mongo IDs", Hours: 12, Description: "Small Description" },
+			{ Id: "ENC-0011", Title: "current implementation", Hours: 18, Description: "Small Description" },
+			{ Id: "ENC-0012", Title: "seeded with the current time", Hours: 22, Description: "Small Description" },
+			{ Id: "ENC-0013", Title: "This returns a random text string", Hours: 32, Description: "Small Description" },
+			{ Id: "ENC-0014", Title: "The format of the string complies", Hours: 48, Description: "Small Description" },
+			{ Id: "ENC-0015", Title: "Returns a Universally Unique Identifier", Hours: 200, Description: "Small Description" }
+		];
+
+		for (i = 0; i < ticketData.length; i++) {
+			Tickets.insert(ticketData[i]);
+		}
+	}
 });
 
 // Only valid email domain users.
