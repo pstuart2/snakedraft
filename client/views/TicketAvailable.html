@@ -3,7 +3,7 @@
 		<div class="pull-right">
 			<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
 		</div>
-		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		<h4><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}}</h4>
 		{{#if isAdmin}}
 		<div class="admin-buttons">
 			<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>

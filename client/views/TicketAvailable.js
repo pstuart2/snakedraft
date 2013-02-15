@@ -1,5 +1,6 @@
 Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
+Meteor.subscribe("Configs");
 
 Template.TicketAvailable.Users = function() {
 	return Meteor.users.find({});
@@ -101,6 +102,10 @@ Template.TicketAvailable.canChooseHours = function (hours) {
 	}
 
 	return cssClass;
+};
+
+Template.TicketAvailable.JiraLinkUrl = function() {
+	return Configs.findOne({Name: "JiraLinkUrl"}).Value;
 };
 
 Template.TicketAvailable.canChoose = function (hours) {

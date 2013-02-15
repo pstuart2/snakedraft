@@ -1,5 +1,6 @@
 Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
+Meteor.subscribe("Configs");
 
 Template.TicketAssigned.isAdmin = function() {
 	return Meteor.user().profile.isAdmin;
@@ -11,6 +12,10 @@ Template.TicketAssigned.formatTotalHours = function(totalHours) {
 
 Template.TicketAssigned.assignedUsername = function() {
 	return Meteor.users.findOne({_id: this.AssignedUserId}).username;
+};
+
+Template.TicketAssigned.JiraLinkUrl = function() {
+	return Configs.findOne({Name: "JiraLinkUrl"}).Value;
 };
 
 Template.TicketAssigned.events = {

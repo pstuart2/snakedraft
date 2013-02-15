@@ -1,6 +1,133 @@
 var draftTimerInterval = null;
 
 Meteor.methods({
+	///////////////////////////////////////////////////////////////////////////////
+	// Draft Control
+	///////////////////////////////////////////////////////////////////////////////
+	/**
+	 * As an admin skip the current users turn.
+	 */
+	skipTurn: function() {
+		var currentUser = getUser(Meteor.userId());
+
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "User isn't the scrum master.");
+		}
+
+		draftChangeTurn();
+	},
+
+	/**
+	 * As an admin start the draft.
+	 */
+	startDraft: function() {
+		var currentUser = getUser(Meteor.userId()),
+				firstPlayer;
+
+		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
+			throw new Meteor.Error(404, "You cannot start the draft.");
+		}
+
+		var draft = Drafts.findOne({});
+		if (draft.isRunning) {
+			throw new Meteor.Error(404, "Draft is already running.");
+		}
+
+		resetDraft();
+
+		// Get our first player.
+		firstPlayer = Meteor.users.findOne(
+				{"profile.hoursLeft": {$gt: 0}},
+				{sort: {"profile.draftPosition": 1}});
+
+		console.log("firstPlayer: " + firstPlayer.profile.draftPosition);
+
+		// Set our starting user in the draft.
+		Drafts.update({_id: draft._id}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
+				{multi: false});
+
+		startDraftInterval();
+	},
+
+	/**
+	 * As an admin stop the draft.
+	 */
+	stopDraft: function() {
+		if(draftTimerInterval != null) {
+			Meteor.clearInterval(draftTimerInterval);
+			draftTimerInterval = null;
+		}
+
+		resetDraft();
+	},
+
+	/**
+	 * As an admin pause the draft.
+	 */
+	pauseDraft: function() {
+		if(draftTimerInterval != null) {
+			Drafts.update({},
+					{$set: {isPaused: true}},
+					{multi: false});
+
+			Meteor.clearInterval(draftTimerInterval);
+			draftTimerInterval = null;
+		} else {
+			Drafts.update({},
+					{$set: {isPaused: false}},
+					{multi: false});
+
+			startDraftInterval();
+		}
+	},
+
+	///////////////////////////////////////////////////////////////////////////////
+	// Ticket Functions
+	///////////////////////////////////////////////////////////////////////////////
+	/**
+	 * As a user toggle ticket recommendation.
+	 *
+	 * @param userId
+	 * @param recUsername
+	 * @param ticketId
+	 * @param isRec
+	 */
+	toggleRecTicket: function(userId, recUsername, ticketId, isRec) {
+		var ticket = Tickets.findOne({_id: ticketId}),
+				byUser = Meteor.users.findOne({_id: userId}),
+				foundUser;
+
+		if (!ticket.recommends) {
+			ticket.recommends = [];
+		}
+
+		foundUser = _.find(ticket.recommends, function(rec) { return rec.user == recUsername; });
+		if (foundUser) {
+			foundUser.by = _.reject(foundUser.by, function(user) { return user.username == byUser.username; });
+			if (isRec) {
+				foundUser.by[foundUser.by.length] = {username: byUser.username};
+			} else {
+				if (foundUser.by.length == 0) {
+					ticket.recommends = _.reject(ticket.recommends, function(rec) { return rec.user == recUsername; });
+				}
+			}
+		} else {
+			ticket.recommends[ticket.recommends.length] =
+			{user: recUsername, by: [{username: byUser.username}]};
+		}
+
+		Tickets.update({_id: ticket._id},
+				{$set: {recommends: ticket.recommends}},
+				{multi: false});
+	},
+
+	/**
+	 * Take a ticket when it is your turn.
+	 *
+	 * @param userId
+	 * @param ticketId
+	 * @return {Boolean}
+	 */
 	takeTicket: function (userId, ticketId) {
 		var ticket, assignee, draft;
 
@@ -27,6 +154,12 @@ Meteor.methods({
 		return true;
 	},
 
+	/**
+	 * As an admin assign a ticket to a user.
+	 *
+	 * @param userId
+	 * @param ticketId
+	 */
 	assignTicket: function(userId, ticketId) {
 		var ticket, currentUser;
 
@@ -43,6 +176,11 @@ Meteor.methods({
 		assignTicketToUser(userId, ticketId, ticket.Hours);
 	},
 
+	/**
+	 * As an admin un-assign tickets from a user.
+	 *
+	 * @param ticketId
+	 */
 	unassignTicket: function(ticketId) {
 		var ticket, currentUser;
 
@@ -65,16 +203,15 @@ Meteor.methods({
 				{multi: false});
 	},
 
-	skipTurn: function() {
-		var currentUser = getUser(Meteor.userId());
 
-		if (!currentUser.profile.isAdmin) {
-			throw new Meteor.Error(302, "User isn't the scrum master.");
-		}
-
-		draftChangeTurn();
-	},
-
+	///////////////////////////////////////////////////////////////////////////////
+	// Admin Menu Actions
+	///////////////////////////////////////////////////////////////////////////////
+	/**
+	 * As an admin reset the database for a new draft.
+	 *
+	 * @param sprintHours
+	 */
 	resetDatabase: function(sprintHours) {
 		var currentUser = getUser(Meteor.userId());
 
@@ -101,6 +238,12 @@ Meteor.methods({
 				}, {multi: true});
 	},
 
+	/**
+	 * As an admin update a config value.
+	 *
+	 * @param id
+	 * @param value
+	 */
 	updateConfig: function(id, value) {
 		var currentUser = getUser(Meteor.userId());
 
@@ -128,6 +271,12 @@ Meteor.methods({
 		}
 	},
 
+	/**
+	 * As an admin edit a user.
+	 *
+	 * @param userId
+	 * @param fields
+	 */
 	editUser: function(userId, fields) {
 		var currentUser = getUser(Meteor.userId()),
 				oldUserRec,
@@ -160,6 +309,9 @@ Meteor.methods({
 		}
 	},
 
+	/**
+	 * As an admin randomize the draft order.
+	 */
 	randomizeDraftees: function() {
 		var currentUser = getUser(Meteor.userId());
 
@@ -183,90 +335,27 @@ Meteor.methods({
 		});
 	},
 
-	startDraft: function() {
+	addJiraTickets: function(tickets) {
 		var currentUser = getUser(Meteor.userId()),
-				firstPlayer;
+				ticketArr, hours, result;
 
-		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
-			throw new Meteor.Error(404, "You cannot start the draft.");
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
-		var draft = Drafts.findOne({});
-		if (draft.isRunning) {
-			throw new Meteor.Error(404, "Draft is already running.");
-		}
-
-		resetDraft();
-
-		// Get our first player.
-		firstPlayer = Meteor.users.findOne(
-				{"profile.hoursLeft": {$gt: 0}},
-				{sort: {"profile.draftPosition": 1}});
-
-		console.log("firstPlayer: " + firstPlayer.profile.draftPosition);
-
-		// Set our starting user in the draft.
-		Drafts.update({_id: draft._id}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
-				{multi: false});
-
-		startDraftInterval();
-	},
-	stopDraft: function() {
-		if(draftTimerInterval != null) {
-			Meteor.clearInterval(draftTimerInterval);
-			draftTimerInterval = null;
-		}
-
-		resetDraft();
-	},
-
-	pauseDraft: function() {
-		if(draftTimerInterval != null) {
-			Drafts.update({},
-					{$set: {isPaused: true}},
-					{multi: false});
-
-			Meteor.clearInterval(draftTimerInterval);
-			draftTimerInterval = null;
-		} else {
-			Drafts.update({},
-					{$set: {isPaused: false}},
-					{multi: false});
-
-			startDraftInterval();
-		}
-	},
-
-	toggleRecTicket: function(userId, recUsername, ticketId, isRec) {
-		var ticket = Tickets.findOne({_id: ticketId}),
-				byUser = Meteor.users.findOne({_id: userId}),
-				foundUser;
-
-		if (!ticket.recommends) {
-			ticket.recommends = [];
-		}
-
-		foundUser = _.find(ticket.recommends, function(rec) { return rec.user == recUsername; });
-		if (foundUser) {
-			foundUser.by = _.reject(foundUser.by, function(user) { return user.username == byUser.username; });
-			if (isRec) {
-				foundUser.by[foundUser.by.length] = {username: byUser.username};
-			} else {
-				if (foundUser.by.length == 0) {
-					ticket.recommends = _.reject(ticket.recommends, function(rec) { return rec.user == recUsername; });
-				}
-			}
-		} else {
-			ticket.recommends[ticket.recommends.length] =
-				{user: recUsername, by: [{username: byUser.username}]};
-		}
-
-		Tickets.update({_id: ticket._id},
-				{$set: {recommends: ticket.recommends}},
-				{multi: false});
+		ticketArr = tickets.split(",");
+		_.each(ticketArr, function(ticket) {
+			result = getJiraObject('/issue/' + ticket);
+			hours = secondsToHours(result.fields.timetracking.originalEstimateSeconds);
+			addTicket(result.key, result.fields.summary, result.fields.description, hours);
+		});
 	}
 });
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Helper Methods
+///////////////////////////////////////////////////////////////////////////////
 function getUser(userId)
 {
 	return Meteor.users.findOne({_id: userId}, {fields: {username: 1, profile: 1}});
@@ -275,6 +364,35 @@ function getUser(userId)
 function getUsers(filter)
 {
 	return Meteor.users.find(filter, {fields: {username: 1, profile: 1}})
+}
+
+function getJiraObject(query)
+{
+	var jiraUser = Configs.findOne({Name: "JiraUser"}).Value,
+			jiraPass = Configs.findOne({Name: "JiraPass"}).Value,
+			JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
+
+	console.log("JIRA: " + JiraRestUrl + query);
+	var result = Meteor.http.call("GET", JiraRestUrl + query, {
+		timeout: 30000,
+		auth: jiraUser + ":" + jiraPass,
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+
+	return JSON.parse(result.content);
+}
+
+function secondsToHours(seconds) {
+	return (seconds / 60 / 60);
+}
+
+function addTicket(Id, Title, Description, Hours) {
+	var ticket = Tickets.findOne({Id: Id});
+	if (!ticket) {
+		Tickets.insert({Id: Id, Title: Title, Description: Description, Hours: parseInt(Hours)});
+	}
 }
 
 function assignTicketToUser(userId, ticketId, hours) {

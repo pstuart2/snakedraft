@@ -7,7 +7,8 @@
 		<div class="modal-body">
 			{{#each ConfigsArr}}
 			<div class="config-item control-group hover-visible">
-				<label class="control-label">{{Name}}: {{Description}}</label>
+				<div class="pull-right muted">{{Description}}</div>
+				<label class="control-label">{{Name}}</label>
 				<i style="float: left; margin-top: 7px; margin-left: 2px;" class="icon-edit"></i>
 				<div class="controls">
 					{{#if editing}}

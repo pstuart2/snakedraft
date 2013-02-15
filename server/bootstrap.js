@@ -1,7 +1,13 @@
 // if the database is empty on server start, create some sample data.
 Meteor.startup(function () {
+	// This solves the issue
+	require = __meteor_bootstrap__.require;
+
 	var data = [
-		{Name: "JiraUrl", Value: "http://someurl.com"},
+		{Name: "JiraLinkUrl", Value: "http://someurl.com", Description: "Base url for creating ticket links."},
+		{Name: "JiraRestUrl", Value: "", Description: "Path for jira rest calls. (ie. 'http://jirainst.mycomp.com/rest/api/2')."},
+		{Name: "JiraUser", Value: "", Description: "Username for pulling Jira tickets."},
+		{Name: "JiraPass", Value: "", Description: "Password for pulling Jira tickets."},
 		{Name: "EmailDomain", Value: "", Description: ""},
 		{Name: "ScrumMaster", Value: "", Description: ""},
 		{Name: "HoursPerDay", Value: "6", Description: ""},
@@ -48,7 +54,7 @@ Meteor.startup(function () {
 		}
 	}
 
-	var tickets = Tickets.find({}),
+	/*var tickets = Tickets.find({}),
 			ticketData;
 	if (tickets.count() == 0) {
 		ticketData = [
@@ -72,7 +78,8 @@ Meteor.startup(function () {
 		for (i = 0; i < ticketData.length; i++) {
 			Tickets.insert(ticketData[i]);
 		}
-	}
+		ENC-11546,ENC-11545,ENC-11544
+	}*/
 });
 
 // Only valid email domain users.

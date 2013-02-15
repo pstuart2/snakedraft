@@ -4,6 +4,9 @@ var Tickets = new Meteor.Collection("Tickets");
 var Drafts = new Meteor.Collection("Drafts");
 var Messages = new Meteor.Collection("Messages");
 
+// Used for NodeJs require.
+var require = null;
+
 function endsWith(str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }

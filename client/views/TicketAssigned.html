@@ -4,7 +4,7 @@
 			<div><span class="label label-inverse">{{formatTotalHours Hours}}</span></div>
 			<div><span class="label label-info">{{assignedUsername}}</span></div>
 		</div>
-		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		<h4><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}}</h4>
 		{{#if isAdmin}}
 		<div class="admin-buttons">
 			<button type="button" class="btn btn-mini btn-warning unassign-ticket">Un-assign</button>
