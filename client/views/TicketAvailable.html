@@ -1,0 +1,34 @@
+<template name="TicketAvailable">
+	<div class="ticket">
+		<div class="pull-right">
+			<span class="label {{canChooseHours Hours}}">{{formatTotalHours Hours}}</span>
+		</div>
+		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		{{#if isAdmin}}
+		<div class="admin-buttons">
+			<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>
+			{{#if canAssign}}
+			<button type="button" class="btn btn-mini assign-ticket">Assign to {{selectedUsername}}</button>
+			{{/if}}
+		</div>
+		{{/if}}
+		<div class="ticket-buttons">
+
+			{{#if IsMyTurn}}
+			{{#if canChoose Hours}}
+			<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+			{{/if}}
+
+			{{else}}
+			{{#each Users}}
+			<div style="float: left;">
+				<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
+				<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
+			</div>
+			{{/each}}
+			<div style="clear: both;"></div>
+			{{/if}}
+			{{{Recommends recommends}}}
+		</div>
+	</div>
+</template>

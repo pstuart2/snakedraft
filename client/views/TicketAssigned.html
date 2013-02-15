@@ -1,0 +1,14 @@
+<template name="TicketAssigned">
+	<div class="ticket">
+		<div class="pull-right right-label">
+			<div><span class="label label-inverse">{{formatTotalHours Hours}}</span></div>
+			<div><span class="label label-info">{{assignedUsername}}</span></div>
+		</div>
+		<h4><a target="blank" href="http://jirainsta/browse/{{Id}}">{{Id}}</a> : {{Title}}</h4>
+		{{#if isAdmin}}
+		<div class="admin-buttons">
+			<button type="button" class="btn btn-mini btn-warning unassign-ticket">Un-assign</button>
+		</div>
+		{{/if}}
+	</div>
+</template>

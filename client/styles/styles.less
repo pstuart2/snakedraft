@@ -128,9 +128,7 @@ html, body {
 
 /* Large desktop */
 @media (min-width: 980px) {
-  body {
-	background-color: @white;
-  }
+  //body { background-color: @white; }
 
   div.main-area {
 	padding-top: 40px;
@@ -139,27 +137,21 @@ html, body {
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 768px) and (max-width: 979px) {
-  body {
-	background-color: @yellow;
-  }
+  //body { background-color: @yellow; }
 
   .affix { position: relative !important;}
 }
 
 /* Landscape phone to portrait tablet */
 @media (max-width: 767px) {
-  body {
-	background-color: @orange;
-  }
+  //body { background-color: @orange; }
 
   .affix { position: relative !important;}
 }
 
 /* Landscape phones and down */
 @media (max-width: 480px) {
-  body {
-	background-color: @red;
-  }
+  //body { background-color: @red; }
 
   .affix { position: relative !important;}
 }
@@ -167,6 +159,10 @@ html, body {
 .group
 {
 
+}
+
+div.right-label {
+  text-align: right;
 }
 
 .info-back {
