@@ -87,6 +87,8 @@ Meteor.methods({
 
 		// Remove all tickets.
 		Tickets.remove({});
+		// Remove all messages.
+		Messages.remove({});
 
 		Meteor.users.update({'profile.isScrumMaster': false},
 				{

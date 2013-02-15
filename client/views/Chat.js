@@ -28,9 +28,6 @@ var okCancelEvents = function (selector, callbacks) {
 };
 
 Template.Chat.rendered = function() {
-	console.log("------");
-	console.log($('ul.chat-list').height());
-	console.log($("ul.chat-list").prop("scrollHeight"));
 	$("ul.chat-list").animate({ scrollTop: $("ul.chat-list").prop("scrollHeight") }, 500);
 };
 

@@ -36,7 +36,7 @@ Template.Tickets.helpers({
 	 */
 	Recommends: function (items) {
 		if (!items || items.length == 0) {
-			return '<div class="recommends"><span class="muted">Not recommended</span></div>';
+			return '<div class="recommends"><span class="muted">No recommendations</span></div>';
 		}
 
 		var sortedList = _.sortBy(items, function(item) { return item.user; }),
