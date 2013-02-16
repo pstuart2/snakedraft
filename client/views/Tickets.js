@@ -1,6 +1,15 @@
 Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
 
+Template.Tickets.rendered = function() {
+	var selTab = Session.get('selectedTab');
+	if (selTab && $('#myTab a[href="' + selTab + '"]').length > 0) {
+		$('#myTab a[href="' + selTab + '"]').tab("show");
+	} else {
+		$('#myTab a[href="#All"]').tab("show");
+	}
+};
+
 Template.Tickets.AvailableTicketArr = function() {
 	return Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Id: 1}});
 };
@@ -38,3 +47,10 @@ Template.Tickets.canAssign = function() {
 Template.Tickets.userSelected = function() {
 	return !Session.equals('selectedUserId', null);
 };
+
+Template.Tickets.events({
+	"click ul#myTab > li": function(e) {
+		var alink = $(e.currentTarget).find("a");
+		Session.set('selectedTab', alink.attr("href"));
+	}
+});
