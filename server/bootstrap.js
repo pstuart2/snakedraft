@@ -4,15 +4,15 @@ Meteor.startup(function () {
 	require = __meteor_bootstrap__.require;
 
 	var data = [
-		{Name: "JiraLinkUrl", Value: "http://someurl.com", Description: "Base url for creating ticket links."},
-		{Name: "JiraRestUrl", Value: "", Description: "Path for jira rest calls. (ie. 'http://jirainst.mycomp.com/rest/api/2')."},
-		{Name: "JiraUser", Value: "", Description: "Username for pulling Jira tickets."},
-		{Name: "JiraPass", Value: "", Description: "Password for pulling Jira tickets."},
-		{Name: "EmailDomain", Value: "", Description: ""},
-		{Name: "ScrumMaster", Value: "", Description: ""},
-		{Name: "HoursPerDay", Value: "6", Description: ""},
-		{Name: "SecondsPerChoice", Value: 60, Description: ""},
-		{Name: "CycleType", Value: 1, Description: "1-Snake, 2-Sequential"} // 1 = snake, 2 = sequential
+		{IsVisible: false, Name: "JiraCredentials", Value: "", Description: ""},
+		{IsVisible: false, Name: "JiraLinkUrl", Value: "http://someurl.com", Description: "Base url for creating ticket links."},
+		{IsVisible: false, Name: "JiraRestUrl", Value: "", Description: "Path for jira rest calls."},
+
+		{IsVisible: true, Name: "EmailDomain", Value: "", Description: ""},
+		{IsVisible: true, Name: "ScrumMaster", Value: "", Description: ""},
+		{IsVisible: true, Name: "HoursPerDay", Value: "6", Description: ""},
+		{IsVisible: true, Name: "SecondsPerChoice", Value: 60, Description: ""},
+		{IsVisible: true, Name: "CycleType", Value: 1, Description: "1-Snake, 2-Sequential"} // 1 = snake, 2 = sequential
 	];
 
 

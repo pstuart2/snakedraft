@@ -1,4 +1,7 @@
-var draftTimerInterval = null;
+var draftTimerInterval = null,
+		cipherKey = 'n33ds0mehintbet1',
+		cipherIv = '5622587455896325',
+		cipherType = 'aes-128-cbc';
 
 Meteor.methods({
 	///////////////////////////////////////////////////////////////////////////////
@@ -292,6 +295,23 @@ Meteor.methods({
 	},
 
 	/**
+	 * Encryptes the jira credentials.
+	 *
+	 * @param username
+	 * @param password
+	 */
+	updateJiraCredentials: function(username, password) {
+		var currentUser = getUser(Meteor.userId()),
+				encryptedValue = encryptValue(username + ":" + password);
+
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(404, "User isn't the scrum master.");
+		}
+
+		Configs.update({Name: "JiraCredentials"}, {$set: {Value: encryptedValue}}, {multi: false});
+	},
+
+	/**
 	 * As an admin edit a user.
 	 *
 	 * @param userId
@@ -388,20 +408,36 @@ function getUsers(filter)
 
 function getJiraObject(query)
 {
-	var jiraUser = Configs.findOne({Name: "JiraUser"}).Value,
-			jiraPass = Configs.findOne({Name: "JiraPass"}).Value,
+	var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value),
 			JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
 
-	console.log("JIRA: " + JiraRestUrl + query);
 	var result = Meteor.http.call("GET", JiraRestUrl + query, {
 		timeout: 30000,
-		auth: jiraUser + ":" + jiraPass,
+		auth: jiraUser,
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	});
 
 	return JSON.parse(result.content);
+}
+
+function encryptValue(value)
+{
+	var crypto = require('crypto'),
+			cipher = crypto.createCipheriv(cipherType, cipherKey, cipherIv),
+			crypted = cipher.update(value, 'utf-8', 'hex');
+	crypted += cipher.final('hex');
+	return crypted;
+}
+
+function decryptValue(value)
+{
+	var crypto = require('crypto'),
+			decipher = crypto.createDecipheriv(cipherType, cipherKey, cipherIv),
+			decrypted = decipher.update(value, 'hex', 'utf-8');
+	decrypted += decipher.final('utf-8');
+	return decrypted;
 }
 
 function secondsToHours(seconds) {

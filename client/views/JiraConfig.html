@@ -1,0 +1,38 @@
+<template name="JiraConfig">
+	<div id="jiraConfigModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Jira Configuration</h3>
+		</div>
+		<div class="modal-body">
+			<div class="config-item control-group">
+				<div class="pull-right muted">{{config.JiraLinkUrl.Description}}</div>
+				<label class="control-label">{{config.JiraLinkUrl.Name}}</label>
+				<div class="controls">
+					<input type="text" id="JiraLinkUrlInp" class="value-input input-xlarge" placeholder="Value" value="{{config.JiraLinkUrl.Value}}"/>
+				</div>
+			</div>
+
+			<div class="config-item control-group">
+				<div class="pull-right muted">{{config.JiraRestUrl.Description}}</div>
+				<label class="control-label">{{config.JiraRestUrl.Name}}</label>
+				<div class="controls">
+					<input type="text" id="JiraRestUrlInp" class="value-input input-xlarge" placeholder="Value" value="{{config.JiraRestUrl.Value}}"/>
+				</div>
+			</div>
+
+			<div class="config-item control-group">
+				<div class="pull-right muted">Update your Jira login credentials for calls to Jira.</div>
+				<label class="control-label">Jira Login Credentials</label>
+				<div class="controls">
+					<input type="text" id="JiraUsername" class="value-input input-xlarge" placeholder="Enter new username" />
+					<input type="password" id="JiraPassword" class="value-input input-xlarge" placeholder="Enter new password" />
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary save-jira-config" data-dismiss="modal" aria-hidden="true">Save</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+</template>

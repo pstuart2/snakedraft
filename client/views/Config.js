@@ -42,7 +42,7 @@ Template.Config.editing = function () {
 };
 
 Template.Config.ConfigsArr = function() {
-	return Configs.find({}, {sort: {Name: 1}});
+	return Configs.find({IsVisible: true}, {sort: {Name: 1}});
 };
 
 Template.Config.events({
