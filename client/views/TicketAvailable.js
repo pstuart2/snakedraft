@@ -96,6 +96,7 @@ Template.TicketAvailable.formatTotalHours = function(totalHours) {
 Template.TicketAvailable.canChooseHours = function (hours) {
 	var cssClass = "label-inverse",
 			user = Meteor.users.findOne({_id: Meteor.userId()});
+
 	if (parseInt(hours) > user.profile.totalHoursAvailable)
 	{
 		cssClass = "label-important";

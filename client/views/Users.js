@@ -14,6 +14,10 @@ Template.Users.formatTotalHours = function(totalHours) {
 	return formatTotalHours(totalHours);
 };
 
+Template.Users.remainingHoursFormat = function() {
+	return formatTotalHours(this.profile.totalHoursAvailable - this.profile.hoursAssigned)
+};
+
 Template.Users.activeUserClass = function() {
 	if (isDraftRunning() && isUserTurn(this._id)) {
 		return "alert alert-success";

@@ -1,0 +1,23 @@
+<template name="Results">
+	<div id="resultsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">Results</h3>
+		</div>
+		<div class="modal-body">
+			{{#each Users}}
+				<div>
+					{{username}} ({{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}})
+				</div>
+				<ul>
+					{{#each UserTickets}}
+					<li><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}} ({{formatTotalHours Hours}})</li>
+					{{/each}}
+				</ul>
+			{{/each}}
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+</template>
