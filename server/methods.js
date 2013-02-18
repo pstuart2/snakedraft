@@ -375,19 +375,36 @@ Meteor.methods({
 		});
 	},
 
-	addJiraTickets: function(tickets) {
+	/**
+	 * Add tickets from Jira.
+	 *
+	 * @param tickets
+	 * @param filterIdInp
+	 */
+	addJiraTickets: function(tickets, filterIdInp) {
 		var currentUser = getUser(Meteor.userId()),
+				filterId = parseInt(filterIdInp),
 				ticketArr, hours, result;
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
+		console.log("FilterId: " + filterId);
+		if (filterId > 0) {
+			result = getJiraObject('/filter/' + filterId);
+			// Now get the search url.
+			result = callJira("GET", decodeURI(result.searchUrl));
+			// Loop over my issues and add them.
+			_.each(result.issues, function(issue) {
+				addJiraTicket(issue);
+			});
+		}
+
 		ticketArr = tickets.split(",");
 		_.each(ticketArr, function(ticket) {
 			result = getJiraObject('/issue/' + ticket);
-			hours = secondsToHours(result.fields.timetracking.originalEstimateSeconds);
-			addTicket(result.key, result.fields.summary, result.fields.description, hours);
+			addJiraTicket(result);
 		});
 	}
 });
@@ -408,10 +425,14 @@ function getUsers(filter)
 
 function getJiraObject(query)
 {
-	var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value),
-			JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
+	var JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
+	return callJira("GET", JiraRestUrl + query);
+}
 
-	var result = Meteor.http.call("GET", JiraRestUrl + query, {
+function callJira(type, url) {
+	var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
+
+	var result = Meteor.http.call(type, url, {
 		timeout: 30000,
 		auth: jiraUser,
 		headers: {
@@ -419,7 +440,27 @@ function getJiraObject(query)
 		}
 	});
 
+	if (result.content.substr(0, 1) == "<") {
+		console.log(result.content);
+		return false;
+	}
+
+
 	return JSON.parse(result.content);
+}
+
+function addJiraTicket(ticket)
+{
+	if (ticket) {
+		var hours = 0;
+		if (ticket.fields.timetracking != null) {
+			hours = secondsToHours(ticket.fields.timetracking.originalEstimateSeconds);
+		} else if (ticket.fields.progress != null) {
+			hours = secondsToHours(ticket.fields.progress.total);
+		}
+
+		addTicket(ticket.key, ticket.fields.summary, ticket.fields.description, hours);
+	}
 }
 
 function encryptValue(value)
