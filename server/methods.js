@@ -124,6 +124,10 @@ Meteor.methods({
 				{multi: false});
 	},
 
+	editTicket: function(ticketId, values) {
+
+	},
+
 	/**
 	 * Take a ticket when it is your turn.
 	 *

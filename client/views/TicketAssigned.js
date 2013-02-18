@@ -24,5 +24,14 @@ Template.TicketAssigned.events = {
 	},
 	"click button.delete-ticket": function() {
 		deleteTicket(this._id);
+	},
+	"dblclick div.ticket": function() {
+		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
+
+		if (!currentUser.profile.isAdmin) {
+			return;
+		}
+
+		Template.CustomTicket.Show(this._id);
 	}
 };

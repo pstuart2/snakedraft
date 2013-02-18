@@ -1,42 +1,42 @@
 <template name="CustomTicket">
-	<div id="customTicketModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div id="customTicketModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="myModalLabel">Add Custom Ticket</h3>
+			<button type="button" class="close close-custom-ticket" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">{{AddOrSave}} Ticket</h3>
 		</div>
 		<div class="modal-body">
 			<div class="control-group">
 				<label class="control-label" for="ticket">Ticket</label>
 				<div class="controls">
-					<input type="text" id="ticket" class="input-large" placeholder="Ticket"/>
+					<input type="text" id="ticket" class="input-large" placeholder="Ticket" value="{{Ticket.Id}}"/>
 				</div>
 			</div>
 
 			<div class="control-group">
 				<label class="control-label" for="custom-ticket-days">Time</label>
 				<div class="controls">
-					<input type="text" id="custom-ticket-days" class="input-small" placeholder="Days"/>
-					<input type="text" id="custom-ticket-hours" class="input-small" placeholder="Hours"/>
+					<input type="text" id="custom-ticket-days" class="input-small" placeholder="Days" value="{{Ticket.time.days}}"/>
+					<input type="text" id="custom-ticket-hours" class="input-small" placeholder="Hours" value="{{Ticket.time.hours}}"/>
 				</div>
 			</div>
 
 			<div class="control-group">
 				<label class="control-label" for="title">Title</label>
 				<div class="controls">
-					<input type="text" id="title" class="input-large" placeholder="Title"/>
+					<input type="text" id="title" class="input-large" placeholder="Title" value="{{Ticket.Title}}"/>
 				</div>
 			</div>
 
 			<div class="control-group">
 				<label class="control-label" for="description">Description</label>
 				<div class="controls">
-					<textarea id="description" style="width: 400px; height: 100px;"></textarea>
+					<textarea id="description" style="width: 400px; height: 100px;">{{Ticket.Description}}</textarea>
 				</div>
 			</div>
 		</div>
 		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-			<button class="btn btn-primary save-custom-ticket">Add</button>
+			<button class="btn close-custom-ticket" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button class="btn btn-primary save-custom-ticket" data-dismiss="modal" aria-hidden="true">{{AddOrSave}}</button>
 		</div>
 	</div>
 </template>
