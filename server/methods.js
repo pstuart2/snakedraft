@@ -124,10 +124,6 @@ Meteor.methods({
 				{multi: false});
 	},
 
-	editTicket: function(ticketId, values) {
-
-	},
-
 	/**
 	 * Take a ticket when it is your turn.
 	 *
@@ -582,6 +578,22 @@ function movePeep(userId, newDraftPos)
 			{multi: true});
 }
 
+function finishDraft(draft)
+{
+	Drafts.update({_id: draft._id},
+			{$set:
+			{
+				currentTime: draft.turnTime,
+				isPaused: false,
+				isRunning: false,
+				direction: draft.direction,
+				currentUser: 0,
+				currentPosition: 1
+			}
+			},
+			{multi: false});
+}
+
 function draftChangeTurn()
 {
 	// Stop our interval.
@@ -606,50 +618,55 @@ function updateNewCurrentUser()
 
 	// If we are the only user left, ....
 	activeUserCount = Meteor.users.find({"profile.hoursLeft": {$gt: 0}}).count();
-	if (activeUserCount == 1) { return lastUser; }
+	if (activeUserCount == 1) { newCurrentUser = lastUser; }
 	if (activeUserCount == 0) {
 		// Draft is over!
-		resetDraft();
+		finishDraft(draft);
 		return false;
 	}
 
-	if (draft.cycleType == 2)
-	{
-		// Sequential cycle
-		if (draft.currentPosition >= lastUser.profile.draftPosition) {
-			// Go back to the beginning.
-			newCurrentUser = Meteor.users.findOne(
-					{"profile.hoursLeft": {$gt: 0}},
-					{sort: {'profile.draftPosition': draft.direction}});
-		}
-	} else {
-		// Snake cycle...
-		console.log("===== Snake cycle....Dir: " + draft.direction);
-		console.log("LastUser: (" + lastUser.profile.draftPosition + ") " + lastUser.username);
-
-		if ((draft.direction > 0 && draft.currentPosition >= lastUser.profile.draftPosition) ||
-				(draft.direction < 0 && draft.currentPosition <= lastUser.profile.draftPosition)) {
-			console.log("Switching direction...");
-			newCurrentUser = lastUser;
-			draft.direction = -draft.direction;
-		}
-	}
-
-	// Get the next one in line.
 	if (newCurrentUser == null) {
-		console.log("newCurrentUser == null...");
-		if (draft.direction > 0) {
-			newCurrentUser = Meteor.users.findOne(
-					{"profile.hoursLeft": {$gt: 0}, 'profile.draftPosition': {$gt: draft.currentPosition}},
-					{sort: {'profile.draftPosition': draft.direction}});
+		if (draft.cycleType == 2)
+		{
+			// Sequential cycle
+			if (draft.currentPosition >= lastUser.profile.draftPosition) {
+				// Go back to the beginning.
+				newCurrentUser = Meteor.users.findOne(
+						{"profile.hoursLeft": {$gt: 0}},
+						{sort: {'profile.draftPosition': draft.direction}});
+			}
 		} else {
-			newCurrentUser = Meteor.users.findOne(
-					{"profile.hoursLeft": {$gt: 0}, 'profile.draftPosition': {$lt: draft.currentPosition}},
-					{sort: {'profile.draftPosition': draft.direction}});
+			// Snake cycle...
+			console.log("===== Snake cycle....Dir: " + draft.direction);
+			console.log("LastUser: (" + lastUser.profile.draftPosition + ") " + lastUser.username);
+
+			if ((draft.direction > 0 && draft.currentPosition >= lastUser.profile.draftPosition) ||
+					(draft.direction < 0 && draft.currentPosition <= lastUser.profile.draftPosition)) {
+				console.log("Switching direction...");
+				newCurrentUser = lastUser;
+				draft.direction = -draft.direction;
+			}
+		}
+
+		// Get the next one in line.
+		if (newCurrentUser == null) {
+			console.log("newCurrentUser == null...");
+			if (draft.direction > 0) {
+				newCurrentUser = Meteor.users.findOne(
+						{"profile.hoursLeft": {$gt: 0}, 'profile.draftPosition': {$gt: draft.currentPosition}},
+						{sort: {'profile.draftPosition': draft.direction}});
+			} else {
+				newCurrentUser = Meteor.users.findOne(
+						{"profile.hoursLeft": {$gt: 0}, 'profile.draftPosition': {$lt: draft.currentPosition}},
+						{sort: {'profile.draftPosition': draft.direction}});
+			}
+		}
+
+		if (!newCurrentUser || Tickets.find({AssignedUserId: {$exists: false}}).count() == 0) {
+			finishDraft(draft);
+			return false;
 		}
 	}
-
-	console.log("NEWUser: (" + newCurrentUser.profile.draftPosition + ") " + newCurrentUser.username);
 
 	Drafts.update({_id: draft._id},
 			{$set:
