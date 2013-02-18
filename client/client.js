@@ -27,3 +27,10 @@ function getDraftTime()
 {
 	return Session.get('draftTime');
 }
+
+function deleteTicket(ticketId)
+{
+	if (confirm("Are you sure you want to delete this ticket?")) {
+		Meteor.call("deleteTicket", ticketId);
+	}
+}

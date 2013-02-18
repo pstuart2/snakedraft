@@ -203,6 +203,26 @@ Meteor.methods({
 				{multi: false});
 	},
 
+	/**
+	 * Deletes a ticket from the system.
+	 *
+	 * @param ticketId
+	 */
+	deleteTicket: function(ticketId) {
+		var ticket, currentUser;
+
+		ticket = Tickets.findOne({_id: ticketId});
+		if (ticket == null) {
+			throw new Meteor.Error(404, "Can't find ticket.");
+		}
+
+		currentUser = getUser(Meteor.userId());
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot delete tickets.");
+		}
+
+		Tickets.remove({_id: ticketId});
+	},
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Admin Menu Actions

@@ -129,5 +129,8 @@ Template.TicketAvailable.events = {
 	"change input.sug-checkbox": function(e) {
 		var cb = $(e.currentTarget);
 		Meteor.call("toggleRecTicket", Meteor.userId(), cb.val(), cb.data("ticket-id"), cb.is(":checked"));
+	},
+	"click button.delete-ticket": function() {
+		deleteTicket(this._id);
 	}
 };

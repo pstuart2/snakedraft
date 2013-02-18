@@ -21,5 +21,8 @@ Template.TicketAssigned.JiraLinkUrl = function() {
 Template.TicketAssigned.events = {
 	"click button.unassign-ticket": function(e) {
 		Meteor.call("unassignTicket", this._id);
+	},
+	"click button.delete-ticket": function() {
+		deleteTicket(this._id);
 	}
 };
