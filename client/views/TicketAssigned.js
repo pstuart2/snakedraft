@@ -25,7 +25,7 @@ Template.TicketAssigned.events = {
 	"click button.delete-ticket": function() {
 		deleteTicket(this._id);
 	},
-	"dblclick div.ticket": function() {
+	"click button.edit-ticket": function() {
 		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
 
 		if (!currentUser.profile.isAdmin) {

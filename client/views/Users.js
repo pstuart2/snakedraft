@@ -18,12 +18,27 @@ Template.Users.remainingHoursFormat = function() {
 	return formatTotalHours(this.profile.totalHoursAvailable - this.profile.hoursAssigned)
 };
 
+Template.Users.imaAdmin = function() {
+	return Meteor.user().profile.isAdmin;
+};
+
 Template.Users.activeUserClass = function() {
 	if (isDraftRunning() && isUserTurn(this._id)) {
 		return "alert alert-success";
 	}
 
 	return "";
+};
+
+Template.Users.finishedHoursLabel = function () {
+	var cssClass = "label-inverse";
+
+	if (this.profile.totalHoursAvailable < this.profile.hoursAssigned)
+	{
+		cssClass = "label-important";
+	}
+
+	return cssClass;
 };
 
 Template.Users.selected = function () {
@@ -42,10 +57,11 @@ Template.Users.events({
 		}
 	},
 
-	"dblclick li.user-item": function() {
+	"click i.icon-edit": function() {
 		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
 
 		if (!currentUser.profile.isAdmin) {
+			alert("not an admin");
 			return;
 		}
 

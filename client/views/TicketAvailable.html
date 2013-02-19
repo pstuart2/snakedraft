@@ -6,6 +6,7 @@
 		<h4><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}}</h4>
 		{{#if isAdmin}}
 		<div class="admin-buttons">
+			<button type="button" class="btn btn-mini btn-primary edit-ticket">Edit</button>
 			<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>
 			{{#if canAssign}}
 			<button type="button" class="btn btn-mini assign-ticket">Assign to {{selectedUsername}}</button>
