@@ -16,18 +16,19 @@
 		<div class="ticket-buttons">
 
 			{{#if IsMyTurn}}
-			{{#if canChoose Hours}}
-			<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
-			{{/if}}
-
+				{{#if canChoose Hours}}
+				<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+				{{/if}}
 			{{else}}
-			{{#each Users}}
-			<div style="float: left;">
-				<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
-				<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
-			</div>
-			{{/each}}
-			<div style="clear: both;"></div>
+				{{#if currentUser}}
+				{{#each Users}}
+				<div style="float: left;">
+					<input type="checkbox" id="sug_{{../_id}}_{{username}}" class="sug-checkbox" value="{{username}}" data-ticket-id="{{../_id}}" {{IsMyRecommendChecked ../_id}} />
+					<label style="display: inline;" for="sug_{{../_id}}_{{username}}">{{username}}</label>&nbsp;
+				</div>
+				{{/each}}
+				<div style="clear: both;"></div>
+				{{/if}}
 			{{/if}}
 			{{{Recommends recommends}}}
 		</div>

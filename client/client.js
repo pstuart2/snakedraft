@@ -35,6 +35,11 @@ function deleteTicket(ticketId)
 	}
 }
 
+function imaAdmin()
+{
+	return Meteor.user() != null && Meteor.user().profile.isAdmin;
+}
+
 function getSelectedUserId()
 {
 	var userId = null;

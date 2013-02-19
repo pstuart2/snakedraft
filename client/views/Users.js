@@ -19,7 +19,7 @@ Template.Users.remainingHoursFormat = function() {
 };
 
 Template.Users.imaAdmin = function() {
-	return Meteor.user().profile.isAdmin;
+	return Meteor.user() != null && Meteor.user().profile.isAdmin;
 };
 
 Template.Users.activeUserClass = function() {

@@ -3,7 +3,7 @@ Meteor.subscribe("Tickets");
 Meteor.subscribe("Configs");
 
 Template.TicketAssigned.isAdmin = function() {
-	return Meteor.user().profile.isAdmin;
+	return imaAdmin();
 };
 
 Template.TicketAssigned.formatTotalHours = function(totalHours) {
@@ -26,9 +26,7 @@ Template.TicketAssigned.events = {
 		deleteTicket(this._id);
 	},
 	"click button.edit-ticket": function() {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
-
-		if (!currentUser.profile.isAdmin) {
+		if (!Meteor.user().profile.isAdmin) {
 			return;
 		}
 

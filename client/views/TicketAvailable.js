@@ -7,7 +7,7 @@ Template.TicketAvailable.Users = function() {
 };
 
 Template.TicketAvailable.isAdmin = function() {
-	return Meteor.user().profile.isAdmin;
+	return imaAdmin();
 };
 
 Template.TicketAvailable.selectedUsername = function() {
@@ -15,7 +15,7 @@ Template.TicketAvailable.selectedUsername = function() {
 };
 
 Template.TicketAvailable.canAssign = function() {
-	return getSelectedUserId() != null && Meteor.user().profile.isAdmin;
+	return getSelectedUserId() != null && imaAdmin();
 };
 
 Template.TicketAvailable.helpers({
@@ -37,7 +37,7 @@ Template.TicketAvailable.helpers({
 		_.each(sortedList, function(item) {
 			title = "";
 			output += "<span";
-			if (item.user == Meteor.user().username) {
+			if (Meteor.user() != null && item.user == Meteor.user().username) {
 				output += ' class="is-me"';
 			}
 			_.each(item.by, function(byUser) {
@@ -60,6 +60,8 @@ Template.TicketAvailable.helpers({
  * @constructor
  */
 Template.TicketAvailable.IsMyRecommendChecked = function(ticketId) {
+	if (Meteor.user() == null) { return false; }
+
 	var ticket = Tickets.findOne({_id: ticketId}),
 			thisUser = this.username,
 			userRec = _.find(ticket.recommends, function(rec) { return rec.user == thisUser; }),
@@ -78,6 +80,7 @@ Template.TicketAvailable.IsMyRecommendChecked = function(ticketId) {
 };
 
 Template.TicketAvailable.IsMyTurn = function() {
+	if (Meteor.user() == null) { return false; }
 	return isUserTurn(Meteor.userId());
 };
 
@@ -87,8 +90,11 @@ Template.TicketAvailable.formatTotalHours = function(totalHours) {
 
 Template.TicketAvailable.canChooseHours = function (hours) {
 	var cssClass = "label-inverse",
-			user = Meteor.users.findOne({_id: Meteor.userId()});
+			user;
 
+	if (Meteor.user() == null) { return cssClass; }
+
+	user = Meteor.users.findOne({_id: Meteor.userId()});
 	if (parseInt(hours) > user.profile.hoursLeft)
 	{
 		cssClass = "label-important";
@@ -102,6 +108,8 @@ Template.TicketAvailable.JiraLinkUrl = function() {
 };
 
 Template.TicketAvailable.canChoose = function (hours) {
+	if (Meteor.user() == null) { return false; }
+
 	if(isDraftRunning() && isUserTurn(Meteor.userId()))
 	{
 		var user = Meteor.users.findOne({_id: Meteor.userId()});

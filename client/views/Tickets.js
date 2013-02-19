@@ -24,7 +24,7 @@ Template.Tickets.AssignedTicketArr = function() {
 
 Template.Tickets.MyTicketArr = function() {
 	var selectedUserId = getSelectedUserId();
-	if(selectedUserId == null) { selectedUserId = Meteor.userId(); }
+	if(selectedUserId == null) { return []; }
 	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
 };
 
@@ -33,7 +33,7 @@ Template.Tickets.isAvailable = function() {
 };
 
 Template.Tickets.isAdmin = function() {
-	return Meteor.user().profile.isAdmin;
+	return imaAdmin();
 };
 
 Template.Tickets.selectedUsername = function() {
