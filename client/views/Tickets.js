@@ -23,8 +23,8 @@ Template.Tickets.AssignedTicketArr = function() {
 };
 
 Template.Tickets.MyTicketArr = function() {
-	var selectedUserId = Session.get('selectedUserId');
-	if(!selectedUserId) { selectedUserId = Meteor.userId(); }
+	var selectedUserId = getSelectedUserId();
+	if(selectedUserId == null) { selectedUserId = Meteor.userId(); }
 	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
 };
 
@@ -37,15 +37,11 @@ Template.Tickets.isAdmin = function() {
 };
 
 Template.Tickets.selectedUsername = function() {
-	return Session.get("selectedUserName");
-};
-
-Template.Tickets.canAssign = function() {
-	return !Session.equals('selectedUserId', null) && Meteor.user().profile.isAdmin;
+	return getSelectedUsername();
 };
 
 Template.Tickets.userSelected = function() {
-	return !Session.equals('selectedUserId', null);
+	return getSelectedUserId() != null;
 };
 
 Template.Tickets.events({

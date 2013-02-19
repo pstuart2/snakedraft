@@ -19,13 +19,13 @@
 		<ul class="users inactive-users">
 			{{#each InactiveUserArr}}
 			<li class="user-item {{selected}} hover-visible">
+				<div class="pull-right">
+					<span class="label {{finishedHoursLabel}}">{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}}</span>
+				</div>
 				<span class="badge">{{profile.draftPosition}}</span> {{username}}
 				{{#if imaAdmin}}
 				<i style="margin-left: 2px;" class="icon-edit"></i>
 				{{/if}}
-				<div class="pull-right">
-					<span class="label {{finishedHoursLabel}}">{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}}</span>
-				</div>
 			</li>
 			{{/each}}
 		</ul>

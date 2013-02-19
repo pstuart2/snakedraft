@@ -34,3 +34,22 @@ function deleteTicket(ticketId)
 		Meteor.call("deleteTicket", ticketId);
 	}
 }
+
+function getSelectedUserId()
+{
+	var userId = null;
+	if(!Session.equals('selectedUserId', null)) {
+		userId = Session.get('selectedUserId');
+	} else if(!Session.equals('draftCurrentUser', null)) {
+		userId = Session.get('draftCurrentUser');
+	}
+
+	return userId
+}
+
+function getSelectedUsername()
+{
+	var userId = getSelectedUserId();
+	if (userId == null) return "";
+	return Meteor.users.findOne({_id: userId}).username;
+}

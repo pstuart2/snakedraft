@@ -11,19 +11,11 @@ Template.TicketAvailable.isAdmin = function() {
 };
 
 Template.TicketAvailable.selectedUsername = function() {
-	return Session.get("selectedUserName");
+	return getSelectedUsername();
 };
 
 Template.TicketAvailable.canAssign = function() {
-	return !Session.equals('selectedUserId', null) && Meteor.user().profile.isAdmin;
-};
-
-Template.TicketAvailable.userSelected = function() {
-	return !Session.equals('selectedUserId', null);
-};
-
-Template.TicketAvailable.canAssign = function() {
-	return !Session.equals('selectedUserId', null) && Meteor.user().profile.isAdmin;
+	return getSelectedUserId() != null && Meteor.user().profile.isAdmin;
 };
 
 Template.TicketAvailable.helpers({
@@ -125,7 +117,7 @@ Template.TicketAvailable.events = {
 		Meteor.call("takeTicket", Meteor.userId(), this._id);
 	},
 	"click button.assign-ticket": function(e) {
-		Meteor.call("assignTicket", Session.get('selectedUserId'), this._id);
+		Meteor.call("assignTicket", getSelectedUserId(), this._id);
 	},
 	"change input.sug-checkbox": function(e) {
 		var cb = $(e.currentTarget);

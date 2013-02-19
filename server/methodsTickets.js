@@ -79,7 +79,7 @@ Meteor.methods({
 	 * @param ticketId
 	 */
 	assignTicket: function(userId, ticketId) {
-		var ticket, currentUser;
+		var ticket, currentUser, draft;
 
 		ticket = Tickets.findOne({_id: ticketId});
 		if (ticket == null) {
@@ -92,6 +92,13 @@ Meteor.methods({
 		}
 
 		assignTicketToUser(userId, ticketId, ticket.Hours);
+
+		// If the draft is running, it is this users turn and we assign it
+		// then switch turns.
+		draft = Drafts.findOne({});
+		if (draft.isRunning && draft.currentUser == userId) {
+			draftChangeTurn();
+		}
 	},
 
 	/**

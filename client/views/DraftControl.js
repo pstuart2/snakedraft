@@ -7,9 +7,14 @@ Template.DraftControl.rendered = function() {
 		//console.log("Found draft, setting sessions.");
 		Session.set('isDraftRunning', draft.isRunning);
 		Session.set('isDraftPaused', draft.isPaused);
-		Session.set('draftCurrentUser', draft.currentUser);
-		Session.set('cycleType', draft.cycleType)
+		Session.set('cycleType', draft.cycleType);
 		Session.set('draftTime', draft.currentTime);
+
+		if (draft.isRunning) {
+			Session.set('draftCurrentUser', draft.currentUser);
+		} else {
+			Session.set('draftCurrentUser', null);
+		}
 	}
 };
 

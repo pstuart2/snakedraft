@@ -51,17 +51,12 @@ Template.Users.events({
 		{
 			Session.set('selectedUserId', null);
 		} else {
-			var user = Meteor.users.findOne({_id: this._id});
 			Session.set('selectedUserId', this._id);
-			Session.set('selectedUserName', user.username);
 		}
 	},
 
 	"click i.icon-edit": function() {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
-
-		if (!currentUser.profile.isAdmin) {
-			alert("not an admin");
+		if (!Meteor.user().profile.isAdmin) {
 			return;
 		}
 
