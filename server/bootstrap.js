@@ -38,6 +38,7 @@ Meteor.startup(function () {
 			};
 	if(!draft) {
 		console.log("BOOTSTRAP: Creating default draft.");
+		defaults.sprintHours = 90;
 		Drafts.insert(defaults);
 	} else {
 		// If for some reason we reload make sure the interval is running again.
@@ -71,7 +72,8 @@ Accounts.validateNewUser(function(user) {
 
 Accounts.onCreateUser(function(options, user) {
 	var scrumMaster = Configs.findOne({Name: "ScrumMaster"}),
-			userCount = Meteor.users.find({}).count();
+			userCount = Meteor.users.find({}).count(),
+			draft = Drafts.findOne({});
 
 	user.username = user.emails[0].address.split("@")[0];
 	user.profile = {};
@@ -79,9 +81,16 @@ Accounts.onCreateUser(function(options, user) {
 	user.profile.isScrumMaster = (scrumMaster.Value == user.username);
 	// Admin is the first user created or the scrum master.
 	user.profile.isAdmin = (userCount == 0 || user.profile.isScrumMaster);
-	user.profile.totalHoursAvailable = 0;
+	if (user.profile.isScrumMaster) {
+		user.profile.totalHoursAvailable = 0;
+		user.profile.hoursLeft = 0;
+	} else {
+		user.profile.totalHoursAvailable = draft.sprintHours;
+		user.profile.hoursLeft = draft.sprintHours;
+	}
+
 	user.profile.hoursAssigned = 0;
-	user.profile.hoursLeft = 0;
+
 	user.profile.draftPosition = userCount + 1;
 
 	return user;

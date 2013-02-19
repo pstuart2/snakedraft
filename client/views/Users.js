@@ -7,7 +7,7 @@ Template.Users.ActiveUserArr = function() {
 };
 
 Template.Users.InactiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$lte: 0}}, {sort: {username: 0}});
+	return Meteor.users.find({"profile.hoursLeft": {$lte: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.formatTotalHours = function(totalHours) {

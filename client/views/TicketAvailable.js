@@ -97,7 +97,7 @@ Template.TicketAvailable.canChooseHours = function (hours) {
 	var cssClass = "label-inverse",
 			user = Meteor.users.findOne({_id: Meteor.userId()});
 
-	if (parseInt(hours) > user.profile.totalHoursAvailable)
+	if (parseInt(hours) > user.profile.hoursLeft)
 	{
 		cssClass = "label-important";
 	}
@@ -113,7 +113,7 @@ Template.TicketAvailable.canChoose = function (hours) {
 	if(isDraftRunning() && isUserTurn(Meteor.userId()))
 	{
 		var user = Meteor.users.findOne({_id: Meteor.userId()});
-		return (parseInt(hours) <= user.profile.totalHoursAvailable);
+		return (parseInt(hours) <= user.profile.hoursLeft);
 	}
 	return false;
 };
