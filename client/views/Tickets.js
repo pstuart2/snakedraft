@@ -6,26 +6,40 @@ Template.Tickets.rendered = function() {
 	if (selTab && $('#myTab a[href="' + selTab + '"]').length > 0) {
 		$('#myTab a[href="' + selTab + '"]').tab("show");
 	} else {
-		$('#myTab a[href="#All"]').tab("show");
+		Session.set('selectedTab', "#All");
 	}
 };
 
-Template.Tickets.AvailableTicketArr = function() {
-	return Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Id: 1}});
-};
+Template.Tickets.TicketArr = function() {
+	var selTab = Session.get('selectedTab'),
+			tickets;
 
-Template.Tickets.AllTicketsArr = function() {
-	return Tickets.find({}, {sort: {Id: 1}});
-};
+	switch(selTab)
+	{
+		case "#Assigned":
+		{
+			tickets = Tickets.find({AssignedUserId: {$exists: true}}, {sort: {Id: 1}});
+		} break;
 
-Template.Tickets.AssignedTicketArr = function() {
-	return Tickets.find({AssignedUserId: {$exists: true}}, {sort: {Id: 1}});
-};
+		case "#Available":
+		{
+			tickets = Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Id: 1}});
+		} break;
 
-Template.Tickets.MyTicketArr = function() {
-	var selectedUserId = getSelectedUserId();
-	if(selectedUserId == null) { return []; }
-	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
+		case "#UserTickets":
+		{
+			var selectedUserId = getSelectedUserId();
+			if(selectedUserId == null) { return []; }
+			tickets = Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
+		} break;
+
+		default:
+		{
+			tickets = Tickets.find({}, {sort: {Id: 1}});
+		} break;
+	}
+
+	return tickets;
 };
 
 Template.Tickets.isAvailable = function() {
@@ -45,8 +59,9 @@ Template.Tickets.userSelected = function() {
 };
 
 Template.Tickets.events({
-	"click ul#myTab > li": function(e) {
-		var alink = $(e.currentTarget).find("a");
+	"click ul#myTab > li > a": function(e) {
+		e.preventDefault();
+		var alink = $(e.currentTarget); //.find("a");
 		Session.set('selectedTab', alink.attr("href"));
 	}
 });

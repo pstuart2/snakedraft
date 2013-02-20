@@ -1,44 +1,22 @@
 <template name="Tickets">
 	<div class="ticket-wrapper">
 		<ul class="nav nav-tabs" id="myTab">
-			<li><a data-toggle="tab" href="#All">All</a></li>
-			<li><a data-toggle="tab" href="#Assigned">Assigned</a></li>
-			<li><a data-toggle="tab" href="#Available">Available</a></li>
+			<li><a href="#All">All</a></li>
+			<li><a href="#Assigned">Assigned</a></li>
+			<li><a href="#Available">Available</a></li>
 			{{#if userSelected}}
-			<li><a data-toggle="tab" href="#UserTickets">{{selectedUsername}}</a></li>
+			<li><a href="#UserTickets">{{selectedUsername}}</a></li>
 			{{/if}}
 		</ul>
 
 		<div class="tab-content">
-			<div class="tab-pane active" id="All">
-				{{#each AllTicketsArr}}
-				{{#if isAvailable}}
-				{{> TicketAvailable}}
-				{{else}}
-				{{> TicketAssigned}}
-				{{/if}}
-				{{/each}}
-			</div>
-
-			<div class="tab-pane" id="Available">
-				{{#each AvailableTicketArr}}
-					{{> TicketAvailable}}
-				{{/each}}
-			</div>
-
-			<div class="tab-pane" id="Assigned">
-				{{#each AssignedTicketArr}}
-				{{> TicketAssigned}}
-				{{/each}}
-			</div>
-
-			{{#if userSelected}}
-			<div class="tab-pane" id="UserTickets">
-				{{#each MyTicketArr}}
-					{{> TicketAssigned}}
-				{{/each}}
-			</div>
+			{{#each TicketArr}}
+			{{#if isAvailable}}
+			{{> TicketAvailable}}
+			{{else}}
+			{{> TicketAssigned}}
 			{{/if}}
+			{{/each}}
 		</div>
 	</div>
 </template>
