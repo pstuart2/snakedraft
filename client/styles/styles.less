@@ -127,7 +127,7 @@ html, body {
 }
 
 /* Large desktop */
-@media (min-width: 980px) {
+@media (min-width: 1024px) {
   //body { background-color: @white; }
 
   div.main-area {
@@ -135,9 +135,12 @@ html, body {
   }
 }
 
-/* Portrait tablet to landscape and desktop */
-@media (min-width: 768px) and (max-width: 979px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   //body { background-color: @yellow; }
+
+  div.main-area {
+	padding-top: 40px;
+  }
 
   .affix { position: relative !important;}
 }
@@ -149,12 +152,6 @@ html, body {
   .affix { position: relative !important;}
 }
 
-/* Landscape phones and down */
-@media (max-width: 480px) {
-  //body { background-color: @red; }
-
-  .affix { position: relative !important;}
-}
 /* CSS declarations go here */
 .group
 {
