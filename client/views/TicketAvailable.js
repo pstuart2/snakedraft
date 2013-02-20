@@ -15,7 +15,7 @@ Template.TicketAvailable.selectedUsername = function() {
 };
 
 Template.TicketAvailable.canAssign = function() {
-	return getSelectedUserId() != null && imaAdmin();
+	return getSelectedUserId() != null && (imaAdmin() ||  SessionAmplify.equals("allowViewerControl", true));
 };
 
 Template.TicketAvailable.helpers({

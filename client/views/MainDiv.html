@@ -19,12 +19,16 @@
 
 			</div>
 		</div>
-		{{> Config}}
-		{{> CustomTicket}}
-		{{> ResetDb}}
-		{{> EditUser}}
-		{{> AddJiraTicket}}
-		{{> JiraConfig}}
-		{{> Results}}
+		{{#if currentUser.profile.isAdmin}}
+			{{> Config}}
+			{{> CustomTicket}}
+			{{> ResetDb}}
+			{{> EditUser}}
+			{{> AddJiraTicket}}
+			{{> JiraConfig}}
+			{{> Results}}
+		{{else}}
+			{{> AllowViewerControl}}
+		{{/if}}
 	</div>
 </template>

@@ -86,11 +86,12 @@ Meteor.methods({
 			throw new Meteor.Error(404, "Can't find ticket.");
 		}
 
-		currentUser = getUser(Meteor.userId());
-		if (!currentUser.profile.isAdmin) {
-			throw new Meteor.Error(302, "You cannot assign tickets.");
+		if (Meteor.userId()) {
+			currentUser = getUser(Meteor.userId());
+			if (!currentUser.profile.isAdmin) {
+				throw new Meteor.Error(302, "You cannot assign tickets.");
+			}
 		}
-
 		assignTicketToUser(userId, ticketId, ticket.Hours);
 
 		// If the draft is running, it is this users turn and we assign it

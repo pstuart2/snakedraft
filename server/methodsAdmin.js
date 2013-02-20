@@ -44,13 +44,19 @@ Meteor.methods({
 	 * @param value
 	 */
 	updateConfig: function(id, value) {
-		var currentUser = getUser(Meteor.userId());
+		var currentUser = getUser(Meteor.userId()),
+				config = Configs.findOne({_id: id});
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
 		}
 
-		Configs.update(id, {$set: {Value: value}});
+		if (config.Encrypt) {
+			Configs.update(id, {$set: {Value: encryptValue(value)}});
+		} else {
+			Configs.update(id, {$set: {Value: value}});
+		}
+
 		var config = Configs.findOne({_id: id});
 		if (config.Name == "SecondsPerChoice") {
 			Drafts.update({},
@@ -160,7 +166,7 @@ Meteor.methods({
 	addJiraTickets: function(tickets, filterIdInp) {
 		var currentUser = getUser(Meteor.userId()),
 				filterId = parseInt(filterIdInp),
-				ticketArr, hours, result;
+				ticketArr, result;
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "You cannot do that!");
@@ -182,5 +188,16 @@ Meteor.methods({
 			result = getJiraObject('/issue/' + ticket);
 			addJiraTicket(result);
 		});
+	},
+
+	/**
+	 * Checks the password for enabling viewer control.
+	 *
+	 * @param password
+	 * @return {Boolean}
+	 */
+	checkViewerControlPassword: function(password) {
+		var configPass = decryptValue(Configs.findOne({Name: "ViewerControlPassword"}).Value);
+		return configPass == password;
 	}
 });
