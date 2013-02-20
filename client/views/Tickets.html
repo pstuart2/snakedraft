@@ -10,42 +10,33 @@
 		</ul>
 
 		<div class="tab-content">
-
 			<div class="tab-pane active" id="All">
-				{{#if ShowMe '#All'}}
-					{{#each AllTicketsArr}}
-					{{#if isAvailable}}
-					{{> TicketAvailable}}
-					{{else}}
-					{{> TicketAssigned}}
-					{{/if}}
-					{{/each}}
+				{{#each AllTicketsArr}}
+				{{#if isAvailable}}
+				{{> TicketAvailable}}
+				{{else}}
+				{{> TicketAssigned}}
 				{{/if}}
+				{{/each}}
 			</div>
 
 			<div class="tab-pane" id="Available">
-				{{#if ShowMe '#Available'}}
-					{{#each AvailableTicketArr}}
-						{{> TicketAvailable}}
-					{{/each}}
-				{{/if}}
+				{{#each AvailableTicketArr}}
+					{{> TicketAvailable}}
+				{{/each}}
 			</div>
 
 			<div class="tab-pane" id="Assigned">
-				{{#if ShowMe '#Assigned'}}
-					{{#each AssignedTicketArr}}
-					{{> TicketAssigned}}
-					{{/each}}
-				{{/if}}
+				{{#each AssignedTicketArr}}
+				{{> TicketAssigned}}
+				{{/each}}
 			</div>
 
 			{{#if userSelected}}
 			<div class="tab-pane" id="UserTickets">
-				{{#if ShowMe '#UserTickets'}}
-					{{#each MyTicketArr}}
-						{{> TicketAssigned}}
-					{{/each}}
-				{{/if}}
+				{{#each MyTicketArr}}
+					{{> TicketAssigned}}
+				{{/each}}
 			</div>
 			{{/if}}
 		</div>

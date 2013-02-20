@@ -28,15 +28,6 @@ Template.Tickets.MyTicketArr = function() {
 	return Tickets.find({AssignedUserId: selectedUserId}, {sort: {Id: 1}});
 };
 
-Template.Tickets.ShowMe = function(whome) {
-	return true;
-	if (Session.equals('selectedTab, null')) {
-		return whome == "#All";
-	}
-
-	return Session.equals('selectedTab', whome);
-};
-
 Template.Tickets.isAvailable = function() {
 	return this.AssignedUserId == null;
 };
@@ -57,6 +48,5 @@ Template.Tickets.events({
 	"click ul#myTab > li": function(e) {
 		var alink = $(e.currentTarget).find("a");
 		Session.set('selectedTab', alink.attr("href"));
-		Meteor.flush();
 	}
 });
