@@ -1,17 +1,20 @@
 Meteor.subscribe("Tickets");
 
-Session.set("editTicketId", null);
+
+Template.CustomTicket.rendered = function() {
+	SessionAmplify.setDefault("editTicketId", null);
+};
 
 Template.CustomTicket.Show = function(editId) {
 	if (editId) {
-		Session.set("editTicketId", editId);
+		SessionAmplify.set("editTicketId", editId);
 		Meteor.flush();
 		$("#customTicketModal").modal("show");
 	}
 };
 
 Template.CustomTicket.Ticket = function() {
-	var ticket = Tickets.findOne({_id: Session.get("editTicketId")});
+	var ticket = Tickets.findOne({_id: SessionAmplify.get("editTicketId")});
 	if (!ticket) { ticket = {}; }
 	else {
 		ticket.time = hoursToDaysHours(ticket.Hours);
@@ -25,7 +28,7 @@ Template.CustomTicket.Ticket = function() {
  * @constructor
  */
 Template.CustomTicket.AddOrSave = function() {
-	if (Session.get("editTicketId")) {
+	if (SessionAmplify.get("editTicketId")) {
 		return "Save";
 	}
 
@@ -34,7 +37,7 @@ Template.CustomTicket.AddOrSave = function() {
 
 Template.CustomTicket.events = {
 	"click button.close-custom-ticket": function() {
-		Session.set("editTicketId", null);
+		SessionAmplify.set("editTicketId", null);
 	},
 	"click button.save-custom-ticket": function() {
 		var ticket = $("#ticket"),
@@ -52,8 +55,8 @@ Template.CustomTicket.events = {
 
 		totalHours = hoursDaysToTotalHours(hoursVal, daysVal);
 
-		if (Session.get("editTicketId")) {
-			Tickets.update({_id: Session.get("editTicketId")}, {$set: {
+		if (SessionAmplify.get("editTicketId")) {
+			Tickets.update({_id: SessionAmplify.get("editTicketId")}, {$set: {
 				Id: ticket.val(),
 				Title: title.val(),
 				Hours: totalHours,
@@ -74,6 +77,6 @@ Template.CustomTicket.events = {
 		hours.val(null);
 		desc.val(null);
 
-		Session.set("editTicketId", null);
+		SessionAmplify.set("editTicketId", null);
 	}
 };

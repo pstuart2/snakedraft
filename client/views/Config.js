@@ -1,8 +1,5 @@
 Meteor.subscribe("Configs");
 
-// When editing a list name, ID of the list
-Session.set('editing_config', null);
-
 ////////// Helpers for in-place editing //////////
 
 // Returns an event map that handles the "escape" and "return" keys and
@@ -32,13 +29,18 @@ var okCancelEvents = function (selector, callbacks) {
 	return events;
 };
 
+Template.Config.rendered = function() {
+	// When editing a list name, ID of the list
+	SessionAmplify.setDefault('editing_config', null);
+};
+
 var activateInput = function (input) {
 	input.focus();
 	input.select();
 };
 
 Template.Config.editing = function () {
-	return Session.equals('editing_config', this._id);
+	return SessionAmplify.equals('editing_config', this._id);
 };
 
 Template.Config.ConfigsArr = function() {
@@ -51,7 +53,7 @@ Template.Config.events({
 	},
 	"click .config-item": function (evt, tmpl) { // start editing
 		console.log("Editing Config: " + this.Name);
-		Session.set('editing_config', this._id);
+		SessionAmplify.set('editing_config', this._id);
 		Meteor.flush(); // force DOM redraw, so we can focus the edit field
 		activateInput(tmpl.find("#value-input"));
 	}
@@ -63,9 +65,9 @@ Template.Config.events(okCancelEvents(
 			ok: function (value) {
 				console.log("Saving Config: " + this._id);
 				Meteor.call("updateConfig", this._id, value);
-				Session.set('editing_config', null);
+				SessionAmplify.set('editing_config', null);
 			},
 			cancel: function () {
-				Session.set('editing_config', null);
+				SessionAmplify.set('editing_config', null);
 			}
 		}));

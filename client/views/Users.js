@@ -1,6 +1,8 @@
-Session.set('selectedUserId', null);
-
 Meteor.subscribe("users");
+
+Template.Users.rendered = function() {
+	SessionAmplify.setDefault('selectedUserId', null);
+};
 
 Template.Users.ActiveUserArr = function() {
 	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
@@ -42,16 +44,16 @@ Template.Users.finishedHoursLabel = function () {
 };
 
 Template.Users.selected = function () {
-	return Session.equals('selectedUserId', this._id) ? 'user-selected' : '';
+	return SessionAmplify.equals('selectedUserId', this._id) ? 'user-selected' : '';
 };
 
 Template.Users.events({
 	"click li.user-item": function() {
-		if (Session.equals('selectedUserId', this._id))
+		if (SessionAmplify.equals('selectedUserId', this._id))
 		{
-			Session.set('selectedUserId', null);
+			SessionAmplify.set('selectedUserId', null);
 		} else {
-			Session.set('selectedUserId', this._id);
+			SessionAmplify.set('selectedUserId', this._id);
 		}
 	},
 

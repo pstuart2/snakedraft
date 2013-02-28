@@ -4,16 +4,15 @@ Template.DraftControl.rendered = function() {
 	// Make sure our stuff lines up.
 	var draft = Drafts.findOne({});
 	if (draft) {
-		//console.log("Found draft, setting sessions.");
-		Session.set('isDraftRunning', draft.isRunning);
-		Session.set('isDraftPaused', draft.isPaused);
-		Session.set('cycleType', draft.cycleType);
-		Session.set('draftTime', draft.currentTime);
+		SessionAmplify.set('isDraftRunning', draft.isRunning);
+		SessionAmplify.set('isDraftPaused', draft.isPaused);
+		SessionAmplify.set('cycleType', draft.cycleType);
+		SessionAmplify.set('draftTime', draft.currentTime);
 
 		if (draft.isRunning) {
-			Session.set('draftCurrentUser', draft.currentUser);
+			SessionAmplify.set('draftCurrentUser', draft.currentUser);
 		} else {
-			Session.set('draftCurrentUser', null);
+			SessionAmplify.set('draftCurrentUser', null);
 		}
 	}
 };
@@ -59,20 +58,29 @@ Template.DraftControl.DraftTimer = function() {
 Template.DraftControl.events({
 	"click button#draft-start": function(e) {
 		e.preventDefault();
-		Meteor.call("startDraft");
-		Session.set('isDraftRunning', true);
+		Meteor.call("startDraft", function(error, data) {
+			if (!error) {
+				var draft = Drafts.findOne({});
+				updateDraftSettings(draft);
+			}
+		});
 	},
 	"click button#draft-stop": function(e) {
 		e.preventDefault();
-		Meteor.call("stopDraft");
-		Session.set('isDraftRunning', false);
+		Meteor.call("stopDraft", function(error, data) {
+			if (!error) {
+				var draft = Drafts.findOne({});
+				updateDraftSettings(draft);
+			}
+		});
+
 	},
 	"click button#draft-pause": function(e) {
 		e.preventDefault();
 		if (!isDraftRunning()) { return; }
 
 		Meteor.call("pauseDraft");
-		Session.set('isDraftPaused', !Session.get('isDraftPaused'));
+		SessionAmplify.set('isDraftPaused', !SessionAmplify.get('isDraftPaused'));
 	},
 	"click button#draft-skip": function(e) {
 		e.preventDefault();
@@ -81,3 +89,12 @@ Template.DraftControl.events({
 		Meteor.call("skipTurn");
 	}
 });
+
+function updateDraftSettings(draft)
+{
+	SessionAmplify.set('isDraftRunning', draft.isRunning);
+	SessionAmplify.set('isDraftPaused', draft.isPaused);
+	SessionAmplify.set('cycleType', draft.cycleType);
+	SessionAmplify.set('draftTime', draft.currentTime);
+	SessionAmplify.set('draftCurrentUser', draft.currentUser);
+}

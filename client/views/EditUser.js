@@ -1,15 +1,18 @@
-Session.set("editUserId", null);
+
+Template.EditUser.rendered = function() {
+	SessionAmplify.setDefault("editUserId", null);
+};
 
 Template.EditUser.Show = function(editId) {
 	if (editId) {
-		Session.set("editUserId", editId);
+		SessionAmplify.set("editUserId", editId);
 		Meteor.flush();
 		$("#editUserModal").modal("show");
 	}
 };
 
 Template.EditUser.User = function() {
-	var user = Meteor.users.findOne({_id: Session.get("editUserId")}),
+	var user = Meteor.users.findOne({_id: SessionAmplify.get("editUserId")}),
 			tmp;
 	if (user) {
 		tmp = hoursToDaysHours(user.profile.hoursAssigned);
@@ -29,7 +32,7 @@ Template.EditUser.checkChecked = function(isTrue) {
 
 // We need the toggle so that it will re-render.
 Template.EditUser.EditingUser = function() {
-	return !Session.equals("editUserId", null);
+	return !SessionAmplify.equals("editUserId", null);
 };
 
 Template.EditUser.events = {
@@ -46,7 +49,7 @@ Template.EditUser.events = {
 		totalAssignedHours = hoursDaysToTotalHours(assignedHours.val(), assignedDays.val());
 		totalAvailableHours = hoursDaysToTotalHours(availableHours.val(), availableDays.val());
 
-		Meteor.call("editUser", Session.get("editUserId"),
+		Meteor.call("editUser", SessionAmplify.get("editUserId"),
 				{
 					'profile.isAdmin': isAdmin,
 					'profile.totalHoursAvailable': totalAvailableHours,
@@ -56,6 +59,6 @@ Template.EditUser.events = {
 				}
 		);
 
-		Session.set("editUserId", null);
+		SessionAmplify.set("editUserId", null);
 	}
 };

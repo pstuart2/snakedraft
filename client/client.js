@@ -11,32 +11,32 @@ SessionAmplify = _.extend({}, Session, {
 
 function isDraftRunning()
 {
-	return Session.equals('isDraftRunning', true);
+	return SessionAmplify.equals('isDraftRunning', true);
 }
 
 function isDraftPaused()
 {
-	return Session.equals('isDraftPaused', true);
+	return SessionAmplify.equals('isDraftPaused', true);
 }
 
 function isUserTurn(userId)
 {
-	return Session.equals('draftCurrentUser', userId);
+	return SessionAmplify.equals('draftCurrentUser', userId);
 }
 
 function isSnake()
 {
-	return Session.equals('cycleType', 1);
+	return SessionAmplify.equals('cycleType', 1);
 }
 
 function isSequential()
 {
-	return Session.equals('cycleType', 2);
+	return SessionAmplify.equals('cycleType', 2);
 }
 
 function getDraftTime()
 {
-	return Session.get('draftTime');
+	return SessionAmplify.get('draftTime');
 }
 
 function deleteTicket(ticketId)
@@ -54,10 +54,10 @@ function imaAdmin()
 function getSelectedUserId()
 {
 	var userId = null;
-	if(!Session.equals('selectedUserId', null)) {
-		userId = Session.get('selectedUserId');
-	} else if(!Session.equals('draftCurrentUser', null)) {
-		userId = Session.get('draftCurrentUser');
+	if(!SessionAmplify.equals('selectedUserId', null)) {
+		userId = SessionAmplify.get('selectedUserId');
+	} else if(!SessionAmplify.equals('draftCurrentUser', null)) {
+		userId = SessionAmplify.get('draftCurrentUser');
 	}
 
 	return userId
@@ -65,7 +65,10 @@ function getSelectedUserId()
 
 function getSelectedUsername()
 {
-	var userId = getSelectedUserId();
+	var userId = getSelectedUserId(),
+			user;
 	if (userId == null) return "";
-	return Meteor.users.findOne({_id: userId}).username;
+	user = Meteor.users.findOne({_id: userId});
+	if (user == null) { return ""; }
+	return user.username;
 }
