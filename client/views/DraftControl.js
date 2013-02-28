@@ -4,6 +4,8 @@ Template.DraftControl.rendered = function() {
 	// Make sure our stuff lines up.
 	var draft = Drafts.findOne({});
 	if (draft) {
+		// Using sessions here so that templates will update when the session variable
+		// actually changes, not any item on the draft.
 		SessionAmplify.set('isDraftRunning', draft.isRunning);
 		SessionAmplify.set('isDraftPaused', draft.isPaused);
 		SessionAmplify.set('cycleType', draft.cycleType);
@@ -15,10 +17,6 @@ Template.DraftControl.rendered = function() {
 			SessionAmplify.set('draftCurrentUser', null);
 		}
 	}
-};
-
-Template.DraftControl.isDraftRunning = function() {
-	return isDraftRunning();
 };
 
 /**
@@ -51,7 +49,7 @@ Template.DraftControl.WarningClass = function() {
 	return wclass;
 };
 
-Template.DraftControl.DraftTimer = function() {
+Template.DraftControl.Draft = function() {
 	return Drafts.findOne({});
 };
 
@@ -77,14 +75,14 @@ Template.DraftControl.events({
 	},
 	"click button#draft-pause": function(e) {
 		e.preventDefault();
-		if (!isDraftRunning()) { return; }
+		if (!Drafts.findOne({}).isRunning) { return; }
 
 		Meteor.call("pauseDraft");
 		SessionAmplify.set('isDraftPaused', !SessionAmplify.get('isDraftPaused'));
 	},
 	"click button#draft-skip": function(e) {
 		e.preventDefault();
-		if (!isDraftRunning()) { return; }
+		if (!Drafts.findOne({}).isRunning) { return; }
 
 		Meteor.call("skipTurn");
 	}

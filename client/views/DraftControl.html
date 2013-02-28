@@ -2,7 +2,7 @@
 	<div class="group draft-control alert {{WarningClass}}">
 		{{#if currentUser.profile.isAdmin}}
 			<div class="draft-control-buttons">
-				{{#if isDraftRunning}}
+				{{#if Draft.isRunning}}
 				<button type="button" class="btn btn-mini" id="draft-stop"><i class="icon-stop"></i> Stop</button>
 				{{else}}
 				<button type="button" class="btn btn-mini" id="draft-start"><i class="icon-play"></i> Start</button>
@@ -11,6 +11,6 @@
 				<button type="button" class="btn btn-mini {{RunningClass}}" id="draft-skip"><i class="icon-fast-forward"></i> Skip</button>
 			</div>
 		{{/if}}
-		<h4>Time: {{DraftTimer.currentTime}}</h4>
+		<h4>Time: {{Draft.currentTime}}</h4>
 	</div>
 </template>
