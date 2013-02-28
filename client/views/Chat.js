@@ -35,10 +35,6 @@ Template.Chat.Messages = function() {
 	return Messages.find({});
 };
 
-Template.Chat.events({
-
-});
-
 Template.Chat.events(okCancelEvents(
 		'#chatInput',
 		{

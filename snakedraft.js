@@ -44,6 +44,10 @@ function formatTotalHours(totalHours) {
 	return result.days + "d " + result.hours + "h";
 }
 
+/**
+ * These Allow / Deny rules control who can update the different collections (tables) from
+ * the client.
+ */
 Configs.allow({
 	insert: function (userId, doc) {
 		// No inserts.
@@ -93,11 +97,11 @@ Drafts.allow({
 
 Messages.allow({
 	insert: function (userId, doc) {
-		// No inserts.
+		// Any one can insert.
 		return true;
 	},
 	update: function (userId, docs, fields, modifier) {
-		// Only allow admins to update configs.
+		// No Updates
 		return false;
 	},
 	remove: function (userId, docs) {
