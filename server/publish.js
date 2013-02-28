@@ -4,6 +4,7 @@ Meteor.publish("users", function() {
 
 Meteor.publish("Tickets", function() {
 	return Tickets.find({});
+	// return Tickets.find({owner: Meteor.userId()});
 });
 
 Meteor.publish("Configs", function() {

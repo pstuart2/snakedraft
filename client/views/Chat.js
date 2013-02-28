@@ -43,7 +43,12 @@ Template.Chat.events(okCancelEvents(
 		'#chatInput',
 		{
 			ok: function (value) {
+				// Every one can see all messages. Easily insert form the client side.
+				// Record is inserted client side mini-mongo so it looks immediate, then synced with the server
+				// and pushed to all other clients.
 				Messages.insert({user: Meteor.user().username, created: new Date(), message: value});
+
+				// Clear input box.
 				$("#chatInput").val(null);
 			},
 			cancel: function () {
