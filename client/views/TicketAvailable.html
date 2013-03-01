@@ -6,18 +6,18 @@
 		<h4><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}}</h4>
 		<div class="admin-buttons">
 			{{#if isAdmin}}
-			<button type="button" class="btn btn-mini btn-primary edit-ticket">Edit</button>
-			<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>
+			<button type="button" class="btn btn-mini btn-primary edit-ticket"><i class="icon-edit"></i> Edit</button>
+			<button type="button" class="btn btn-mini btn-danger delete-ticket"><i class="icon-remove"></i> Delete</button>
 			{{/if}}
 			{{#if canAssign}}
-			<button type="button" class="btn btn-mini assign-ticket">Assign to {{selectedUsername}}</button>
+			<button type="button" class="btn btn-mini assign-ticket"><i class="icon-ok"></i> Assign to {{selectedUsername}}</button>
 			{{/if}}
 		</div>
 		<div class="ticket-buttons">
 
 			{{#if IsMyTurn}}
 				{{#if canChoose Hours}}
-				<button type="button" class="btn btn-mini btn-primary take-ticket">Take</button>
+				<button type="button" class="btn btn-mini btn-primary take-ticket"><i class="icon-ok"></i> Take</button>
 				{{/if}}
 			{{else}}
 				{{#if currentUser}}

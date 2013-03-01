@@ -9,6 +9,12 @@
 			{{/if}}
 		</ul>
 
+		{{#if ForceTicketMode}}
+		<div class="alert alert-warning">
+			You must choose one of these tickets.
+		</div>
+		{{/if}}
+
 		<div class="tab-content">
 			{{#each TicketArr}}
 			{{#if isAvailable}}

@@ -5,12 +5,14 @@
 			<div><span class="label label-info">{{assignedUsername}}</span></div>
 		</div>
 		<h4><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}}</h4>
-		{{#if isAdmin}}
 		<div class="admin-buttons">
-			<button type="button" class="btn btn-mini btn-primary edit-ticket">Edit</button>
-			<button type="button" class="btn btn-mini btn-danger delete-ticket">Delete</button>
-			<button type="button" class="btn btn-mini btn-warning unassign-ticket">Un-assign</button>
+			{{#if isAdmin}}
+			<button type="button" class="btn btn-mini btn-primary edit-ticket"><i class="icon-edit"></i> Edit</button>
+			<button type="button" class="btn btn-mini btn-danger delete-ticket"><i class="icon-remove"></i> Delete</button>
+			{{/if}}
+			{{#if canUnassign}}
+			<button type="button" class="btn btn-mini btn-warning unassign-ticket"><i class="icon-reply"></i> Un-assign</button>
+			{{/if}}
 		</div>
-		{{/if}}
 	</div>
 </template>

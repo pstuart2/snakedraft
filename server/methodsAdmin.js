@@ -23,18 +23,20 @@ Meteor.methods({
 		Tickets.remove({});
 		// Remove all messages.
 		Messages.remove({});
+		UserMessages.remove({});
 
 		Drafts.update({_id: draft._id}, {$set: {sprintHours: intHours}}, {multi: false});
 
-		Meteor.users.update({'profile.isScrumMaster': false},
+		Meteor.users.update({'profile.isScrumMaster': {$exists: false}},
 				{
 					$set: {
-						//'profile.isAdmin': false,
 						'profile.totalHoursAvailable': intHours,
 						'profile.hoursLeft': intHours,
 						'profile.hoursAssigned': 0
 					}
 				}, {multi: true});
+
+		checkHoursVsTicketHours(Meteor.userId());
 	},
 
 	/**
@@ -73,6 +75,17 @@ Meteor.methods({
 					}
 					},
 					{multi: false});
+		} else if (config.Name == "ScrumMaster") {
+			Meteor.users.update({}, {$unset: {'profile.isScrumMaster': 1}}, {multi: true});
+			var newScrumMaster = Meteor.users.findOne({username: value});
+			if (newScrumMaster) {
+				Meteor.users.update({_id: newScrumMaster._id}, {$set: {'profile.isScrumMaster': true, 'profile.hoursLeft': 0}}, {multi: false});
+				Drafts.update({}, {$set: {scrumMasterId: newScrumMaster._id}}, {multi: false});
+			} else {
+				Drafts.update({}, {$set: {scrumMasterId: 0}}, {multi: false});
+			}
+
+			checkHoursVsTicketHours(Meteor.userId());
 		}
 	},
 
@@ -129,6 +142,8 @@ Meteor.methods({
 		if (oldUserRec.profile.draftPosition != newDraftPos) {
 			movePeep(userId, newDraftPos);
 		}
+
+		checkHoursVsTicketHours(Meteor.userId());
 	},
 
 	/**
@@ -142,7 +157,7 @@ Meteor.methods({
 			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
-		var peeps = getUsers({}),
+		var peeps = getUsers({'profile.isScrumMaster': {$exists: false}}),
 				peepCount = peeps.count(),
 				newPeepPos = new Array(),
 				arrPos = 0;
@@ -188,6 +203,8 @@ Meteor.methods({
 			result = getJiraObject('/issue/' + ticket);
 			addJiraTicket(result);
 		});
+
+		checkHoursVsTicketHours(Meteor.userId());
 	},
 
 	/**
@@ -201,3 +218,35 @@ Meteor.methods({
 		return configPass == password;
 	}
 });
+
+function checkHoursVsTicketHours(currentUserId)
+{
+	var unassignedTickets = Tickets.find({}),
+			users = Meteor.users.find({'profile.isScrumMaster': {$exists: false}}),
+			totalTicketHours = 0, totalUserHours = 0,
+			totalRemainingTicketHours = 0, totalUserHoursLeft = 0;
+
+	users.forEach(function(user) {
+		totalUserHoursLeft += user.profile.hoursLeft;
+		totalUserHours += user.profile.totalHoursAvailable;
+	});
+
+	unassignedTickets.forEach(function(ticket) {
+		totalTicketHours += ticket.Hours;
+		if (!ticket.hasOwnProperty('AssignedUserId')) {
+			totalRemainingTicketHours += ticket.Hours;
+		}
+	});
+
+	Drafts.update({}, {$set: {
+		totalUserHours: totalUserHours,
+		totalTicketHours: totalTicketHours,
+		remainingUserHours: totalUserHoursLeft,
+		remainingTicketHours: totalRemainingTicketHours
+	}}, {multi: false});
+
+	if (totalRemainingTicketHours > totalUserHoursLeft) {
+		// We have a problem.
+		createUserMessage(currentUserId, "Total unassigned ticket hours (<b>" + totalRemainingTicketHours + "</b>) exceeds user remaining hours (<b>" + totalUserHoursLeft + "</b>)", "alert");
+	}
+}

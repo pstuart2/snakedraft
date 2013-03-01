@@ -65,8 +65,8 @@ Meteor.methods({
 			throw new Meteor.Error(302, "User doesn't have enough hours.");
 		}
 
-
 		assignTicketToUser(userId, ticketId, ticket.Hours);
+
 		draftChangeTurn();
 
 		return true;
@@ -91,7 +91,10 @@ Meteor.methods({
 			if (!currentUser.profile.isAdmin) {
 				throw new Meteor.Error(302, "You cannot assign tickets.");
 			}
+
+			//createUserMessage(userId, currentUser.username + " assigned ticket " + ticket.Id + " to you.", "alert");
 		}
+
 		assignTicketToUser(userId, ticketId, ticket.Hours);
 
 		// If the draft is running, it is this users turn and we assign it
@@ -116,8 +119,8 @@ Meteor.methods({
 		}
 
 		currentUser = getUser(Meteor.userId());
-		if (!currentUser.profile.isAdmin) {
-			throw new Meteor.Error(302, "You cannot assign tickets.");
+		if (!currentUser || !currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot unassign tickets.");
 		}
 
 		Tickets.update({_id: ticketId},
@@ -127,6 +130,10 @@ Meteor.methods({
 		Meteor.users.update({_id: ticket.AssignedUserId},
 				{$inc: {'profile.hoursLeft': ticket.Hours, 'profile.hoursAssigned': -ticket.Hours}},
 				{multi: false});
+
+		updateGlobalTicketHours(-ticket.Hours);
+
+		//createUserMessage(ticket.AssignedUserId, currentUser.username + " unassigned ticket " + ticket.Id + " from you.", "alert");
 	},
 
 	/**
@@ -148,5 +155,46 @@ Meteor.methods({
 		}
 
 		Tickets.remove({_id: ticketId});
+
+		checkHoursVsTicketHours(Meteor.userId());
+	},
+
+	addTicket: function(ticketId, title, totalHours, desc) {
+		var currentUser = getUser(Meteor.userId());
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot add tickets.");
+		}
+
+		Tickets.insert({
+			Id: ticketId,
+			Title: title,
+			Hours: totalHours,
+			Description: desc
+		});
+
+		checkHoursVsTicketHours(Meteor.userId());
+	},
+
+	updateTicket: function(id, ticketId, title, totalHours, desc) {
+		var ticket, currentUser;
+
+		ticket = Tickets.findOne({_id: ticketId});
+		if (ticket == null) {
+			throw new Meteor.Error(404, "Can't find ticket.");
+		}
+
+		currentUser = getUser(Meteor.userId());
+		if (!currentUser.profile.isAdmin) {
+			throw new Meteor.Error(302, "You cannot delete tickets.");
+		}
+
+		Tickets.update({_id: id}, {$set: {
+			Id: ticketId,
+			Title: title,
+			Hours: totalHours,
+			Description: desc
+		}}, {multi: false});
+
+		checkHoursVsTicketHours(Meteor.userId());
 	}
 });

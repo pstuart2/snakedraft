@@ -154,6 +154,8 @@ function assignTicketToUser(userId, ticketId, hours) {
 	Meteor.users.update({_id: userId},
 			{$inc: {'profile.hoursLeft': -hours, 'profile.hoursAssigned': hours}},
 			{multi: false});
+
+	updateGlobalTicketHours(hours);
 }
 
 /**
@@ -207,3 +209,20 @@ function movePeep(userId, newDraftPos)
 			{multi: true});
 }
 
+function createUserMessage(owner, message, type)
+{
+	UserMessages.insert({
+		owner: owner,
+		createdAt: (new Date()).getTime(),
+		message: message,
+		type: type
+	})
+}
+
+function updateGlobalTicketHours(hours)
+{
+	Drafts.update({}, {$inc: {
+		remainingUserHours: -hours,
+		remainingTicketHours: -hours
+	}}, {multi: false});
+}

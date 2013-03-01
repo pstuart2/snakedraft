@@ -15,7 +15,7 @@ Template.TicketAvailable.selectedUsername = function() {
 };
 
 Template.TicketAvailable.canAssign = function() {
-	return getSelectedUserId() != null && (imaAdmin() ||  SessionAmplify.equals("allowViewerControl", true));
+	return getSelectedUserId() != null && (imaAdmin() ||  (!Meteor.userId() && SessionAmplify.equals("allowViewerControl", true)));
 };
 
 Template.TicketAvailable.helpers({
@@ -30,7 +30,7 @@ Template.TicketAvailable.helpers({
 			return '<div class="recommends"><span class="muted">No recommendations</span></div>';
 		}
 
-		var sortedList = _.sortBy(items, function(item) { return item.user; }),
+		var sortedList = _.sortBy(items, function(item) { return -item.by.length; }),
 				output = "",
 				title;
 
@@ -122,10 +122,24 @@ Template.TicketAvailable.events = {
 	"click button.take-ticket": function(e) {
 		e.preventDefault();
 
-		Meteor.call("takeTicket", Meteor.userId(), this._id);
+		var ticketId = this.Id;
+		Meteor.call("takeTicket", Meteor.userId(), this._id, function(e, d){
+			if (e) {
+				alertify.error(e.reason);
+			} else {
+				alertify.success("You were assigned ticket " + ticketId);
+			}
+		});
 	},
 	"click button.assign-ticket": function(e) {
-		Meteor.call("assignTicket", getSelectedUserId(), this._id);
+		var ticketId = this.Id;
+		Meteor.call("assignTicket", getSelectedUserId(), this._id, function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			} else {
+				alertify.success("Ticket " + ticketId + " was assigned.");
+			}
+		});
 	},
 	"change input.sug-checkbox": function(e) {
 		var cb = $(e.currentTarget);

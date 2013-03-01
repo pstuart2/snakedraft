@@ -14,13 +14,24 @@ Template.TicketAssigned.assignedUsername = function() {
 	return Meteor.users.findOne({_id: this.AssignedUserId}).username;
 };
 
+Template.TicketAssigned.canUnassign = function() {
+	return imaAdmin();
+};
+
 Template.TicketAssigned.JiraLinkUrl = function() {
 	return Configs.findOne({Name: "JiraLinkUrl"}).Value;
 };
 
 Template.TicketAssigned.events = {
 	"click button.unassign-ticket": function(e) {
-		Meteor.call("unassignTicket", this._id);
+		var ticketId = this.Id;
+		Meteor.call("unassignTicket", this._id, function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			} else {
+				alertify.success("Ticket " + ticketId + " was unassigned.");
+			}
+		});
 	},
 	"click button.delete-ticket": function() {
 		deleteTicket(this._id);

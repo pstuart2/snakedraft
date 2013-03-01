@@ -38,11 +38,11 @@ Meteor.methods({
 				{"profile.hoursLeft": {$gt: 0}},
 				{sort: {"profile.draftPosition": 1}});
 
-		console.log("firstPlayer: " + firstPlayer.profile.draftPosition);
-
 		// Set our starting user in the draft.
 		Drafts.update({_id: draft._id}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
 				{multi: false});
+
+		checkRemainingTicketsForCurrentUser(firstPlayer, draft);
 
 		startDraftInterval();
 	},
@@ -111,6 +111,7 @@ function resetDraft()
 				currentTime: parseInt(SecondsPerChoice.Value),
 				isRunning: false,
 				isPaused: false,
+				forcedTicketSize: 0,
 				currentPosition: 1
 			}
 			},
@@ -132,6 +133,7 @@ function finishDraft(draft)
 				isRunning: false,
 				direction: draft.direction,
 				currentUser: 0,
+				forcedTicketSize: 0,
 				currentPosition: 1
 			}
 			},
@@ -163,13 +165,13 @@ function updateNewCurrentUser()
 {
 	var draft = Drafts.findOne({}),
 			lastUser = Meteor.users.findOne(
-					{"profile.hoursLeft": {$gt: 0}},
+					{'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}},
 					{sort: {'profile.draftPosition': -draft.direction}}),
 			activeUserCount,
 			newCurrentUser = null;
 
 	// If we are the only user left, ....
-	activeUserCount = Meteor.users.find({"profile.hoursLeft": {$gt: 0}}).count();
+	activeUserCount = Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}}).count();
 	if (activeUserCount == 1) { newCurrentUser = lastUser; }
 	if (activeUserCount == 0 || Tickets.find({AssignedUserId: {$exists: false}}).count() == 0) {
 		// Draft is over!
@@ -226,6 +228,7 @@ function updateNewCurrentUser()
 				currentTime: draft.turnTime,
 				isPaused: false,
 				isRunning: true,
+				forcedTicketSize: 0,
 				direction: draft.direction,
 				currentUser: newCurrentUser._id,
 				currentPosition: newCurrentUser.profile.draftPosition
@@ -233,5 +236,63 @@ function updateNewCurrentUser()
 			},
 			{multi: false});
 
-	return newCurrentUser;
+	return checkRemainingTicketsForCurrentUser(newCurrentUser, draft);
+}
+
+function checkRemainingTicketsForCurrentUser(user, draft)
+{
+	var tickets = Tickets.find({Hours: {$lte: user.profile.hoursLeft}}, {sort: {Hours: -1}}),
+			AllowAutoAssign = Configs.findOne({Name: "AllowAutoAssign"}),
+			AutoAssignChangesTurn = Configs.findOne({Name: "AutoAssignChangesTurn"}),
+			maxHours = 0, maxHourCount = 0, usersWhoCan, firstTicket;
+
+	// We do not allow auto-assing.
+	if (AllowAutoAssign.Value == 0) { return user; }
+
+	// Get the biggest ticket I can handle and how many of them there are.
+	tickets.forEach(function(ticket) {
+		if (maxHours == 0) {
+			firstTicket = ticket;
+			maxHours = ticket.Hours;
+		}
+		if (maxHours == ticket.Hours) {
+			maxHourCount++;
+		}
+	});
+
+	// Now get the list of users who can take a ticket this size.
+	usersWhoCan = Meteor.users.find({'profile.hoursLeft': {$gte: maxHours}}).count();
+
+	console.log("---------------------------------");
+	console.log("MaxHours: " + maxHours + " Number Users: " + usersWhoCan);
+
+	if (usersWhoCan > maxHourCount) {
+		// There are plenty of users left to take a ticket of this size.
+		console.log("Plenty of users.");
+		return user;
+	}
+
+	if (AllowAutoAssign.Value == 2 && usersWhoCan == 1) {
+		// I'm the only one who can take it.
+		assignTicketToUser(user._id, firstTicket._id, firstTicket.Hours);
+
+		var msg = '<b>' + user.username + '</b> was forced to take ticket <b>' + firstTicket.Id + '</b>.';
+		createUserMessage(user._id, msg, "alert alert-info");
+		createUserMessage(draft.scrumMasterId, msg, "alert alert-info");
+
+		if (AutoAssignChangesTurn.Value > 0 || user.profile.hoursLeft <= firstTicket.Hours) {
+			return updateNewCurrentUser();
+		}
+	}
+
+	// I have to take one of the tickets of this size.
+	Drafts.update({},
+			{$set:
+			{
+				forcedTicketSize: maxHours
+			}
+			},
+			{multi: false});
+
+	return user;
 }

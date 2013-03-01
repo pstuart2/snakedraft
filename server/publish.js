@@ -18,3 +18,8 @@ Meteor.publish("Drafts", function() {
 Meteor.publish("Messages", function() {
 	return Messages.find({});
 });
+
+Meteor.publish("UserMessages", function() {
+	// Publish messages just for me!
+	return UserMessages.find({owner: this.userId}, {sort: {createdAt: 1}});
+});

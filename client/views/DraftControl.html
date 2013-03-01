@@ -7,10 +7,20 @@
 				{{else}}
 				<button type="button" class="btn btn-mini" id="draft-start"><i class="icon-play"></i> Start</button>
 				{{/if}}
+				{{#if Draft.isPaused}}
+				<button type="button" class="btn btn-mini {{RunningClass}}" id="draft-pause"><i class="icon-play-circle"></i> Resume</button>
+				{{else}}
 				<button type="button" class="btn btn-mini {{RunningClass}}" id="draft-pause"><i class="icon-pause"></i> Pause</button>
+				{{/if}}
 				<button type="button" class="btn btn-mini {{RunningClass}}" id="draft-skip"><i class="icon-fast-forward"></i> Skip</button>
 			</div>
 		{{/if}}
 		<h4>Time: {{Draft.currentTime}}</h4>
+		<div class="ticket-hours">
+			<b>Total:</b> Tickets: {{formatTotalHours Draft.totalTicketHours}} Users: {{formatTotalHours Draft.totalUserHours}}
+		</div>
+		<div class="ticket-hours">
+			<b>Current:</b> Tickets: {{formatTotalHours Draft.remainingTicketHours}} Users: {{formatTotalHours Draft.remainingUserHours}}
+		</div>
 	</div>
 </template>

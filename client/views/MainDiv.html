@@ -3,7 +3,6 @@
 		{{> CommandBar}}
 		<div class="container main-area">
 			<div class="row">
-
 				<div class="span4">
 					<div class="affix span4" style="margin-left:0;margin-right:30px;">
 						{{> DraftControl}}
@@ -14,9 +13,9 @@
 				</div>
 
 				<div class="span8 ticket-area">
+					{{> UserMessages}}
 					{{> Tickets}}
 				</div>
-
 			</div>
 		</div>
 		{{#if currentUser.profile.isAdmin}}

@@ -56,19 +56,23 @@ Template.CustomTicket.events = {
 		totalHours = hoursDaysToTotalHours(hoursVal, daysVal);
 
 		if (SessionAmplify.get("editTicketId")) {
-			Tickets.update({_id: SessionAmplify.get("editTicketId")}, {$set: {
-				Id: ticket.val(),
-				Title: title.val(),
-				Hours: totalHours,
-				Description: desc.val()
-			}}, {multi: false});
-		} else {
-			Tickets.insert({
-				Id: ticket.val(),
-				Title: title.val(),
-				Hours: totalHours,
-				Description: desc.val()
+			Meteor.call("updateTicket", SessionAmplify.get("editTicketId"), ticket.val(), title.val(), totalHours, desc.val(),
+			function(error, data) {
+				if (error) {
+					alertify.error(error.reason);
+				} else {
+					alertify.success("Ticket was updated.");
+				}
 			});
+		} else {
+			Meteor.call("addTicket", ticket.val(), title.val(), totalHours, desc.val(),
+					function(error, data) {
+						if (error) {
+							alertify.error(error.reason);
+						} else {
+							alertify.success("Ticket was added.");
+						}
+					});
 		}
 
 		ticket.val(null);

@@ -3,6 +3,7 @@ var Configs = new Meteor.Collection("Configs");
 var Tickets = new Meteor.Collection("Tickets");
 var Drafts = new Meteor.Collection("Drafts");
 var Messages = new Meteor.Collection("Messages");
+var UserMessages = new Meteor.Collection("UserMessage");
 
 // Used for NodeJs require.
 var require = null;
@@ -67,16 +68,13 @@ Configs.allow({
 // Only admins can modify the tickets.
 Tickets.allow({
 	insert: function (userId, doc) {
-		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
-		return user.profile.isAdmin;
+		return false;
 	},
 	update: function (userId, docs, fields, modifier) {
-		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
-		return user.profile.isAdmin;
+		return false;
 	},
 	remove: function (userId, docs) {
-		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
-		return user.profile.isAdmin;
+		return false;
 	}
 });
 
@@ -107,5 +105,21 @@ Messages.allow({
 	remove: function (userId, docs) {
 		// No deletes.
 		return false;
+	}
+});
+
+UserMessages.allow({
+	insert: function (userId, doc) {
+		return false;
+	},
+	update: function (userId, docs, fields, modifier) {
+		// No Updates
+		return false;
+	},
+	remove: function (userId, docs) {
+		return ! _.any(docs, function (message) {
+			// Deny if it is not my message.
+			return message.owner !== userId;
+		});
 	}
 });

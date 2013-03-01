@@ -1,17 +1,19 @@
 Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
+Meteor.subscribe("Drafts");
 
 Template.Tickets.rendered = function() {
-	var selTab = Session.get('selectedTab');
+	var selTab = SessionAmplify.get('selectedTab');
 	if (selTab && $('#myTab a[href="' + selTab + '"]').length > 0) {
 		$('#myTab a[href="' + selTab + '"]').tab("show");
 	} else {
-		Session.set('selectedTab', "#All");
+		SessionAmplify.set('selectedTab', "#All");
 	}
 };
 
 Template.Tickets.TicketArr = function() {
-	var selTab = Session.get('selectedTab'),
+	var selTab = SessionAmplify.get('selectedTab'),
+			draft,
 			tickets;
 
 	switch(selTab)
@@ -23,7 +25,12 @@ Template.Tickets.TicketArr = function() {
 
 		case "#Available":
 		{
-			tickets = Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Id: 1}});
+			draft = Drafts.findOne({});
+			if (draft && draft.isRunning && draft.forcedTicketSize > 0) {
+				tickets = Tickets.find({AssignedUserId: {$exists: false}, Hours: draft.forcedTicketSize}, {sort: {Hours: -1, Id: 1}});
+			} else {
+				tickets = Tickets.find({AssignedUserId: {$exists: false}}, {sort: {Hours: -1, Id: 1}});
+			}
 		} break;
 
 		case "#UserTickets":
@@ -35,11 +42,22 @@ Template.Tickets.TicketArr = function() {
 
 		default:
 		{
-			tickets = Tickets.find({}, {sort: {Id: 1}});
+			draft = Drafts.findOne({});
+			if (draft && draft.isRunning && draft.forcedTicketSize > 0) {
+				tickets = Tickets.find({AssignedUserId: {$exists: false}, Hours: draft.forcedTicketSize}, {sort: {Hours: -1, Id: 1}});
+			} else {
+				tickets = Tickets.find({}, {sort: {Hours: -1, Id: 1}});
+			}
 		} break;
 	}
 
 	return tickets;
+};
+
+Template.Tickets.ForceTicketMode = function() {
+	var draft = Drafts.findOne({});
+	if (!draft) { return false; }
+	return draft.isRunning &&  draft.forcedTicketSize > 0;
 };
 
 Template.Tickets.isAvailable = function() {
@@ -62,6 +80,6 @@ Template.Tickets.events({
 	"click ul#myTab > li > a": function(e) {
 		e.preventDefault();
 		var alink = $(e.currentTarget); //.find("a");
-		Session.set('selectedTab', alink.attr("href"));
+		SessionAmplify.set('selectedTab', alink.attr("href"));
 	}
 });

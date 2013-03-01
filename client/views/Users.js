@@ -5,11 +5,11 @@ Template.Users.rendered = function() {
 };
 
 Template.Users.ActiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
+	return Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.InactiveUserArr = function() {
-	return Meteor.users.find({"profile.hoursLeft": {$lte: 0}}, {sort: {'profile.draftPosition': 1}});
+	return Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$lte: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.formatTotalHours = function(totalHours) {
