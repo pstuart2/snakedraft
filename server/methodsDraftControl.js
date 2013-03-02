@@ -241,7 +241,7 @@ function updateNewCurrentUser()
 
 function checkRemainingTicketsForCurrentUser(user, draft)
 {
-	var tickets = Tickets.find({Hours: {$lte: user.profile.hoursLeft}}, {sort: {Hours: -1}}),
+	var tickets = Tickets.find({AssignedUserId: {$exists: false}, Hours: {$lte: user.profile.hoursLeft}}, {sort: {Hours: -1}}),
 			AllowAutoAssign = Configs.findOne({Name: "AllowAutoAssign"}),
 			AutoAssignChangesTurn = Configs.findOne({Name: "AutoAssignChangesTurn"}),
 			maxHours = 0, maxHourCount = 0, usersWhoCan, firstTicket;
