@@ -5,11 +5,11 @@ Template.Users.rendered = function() {
 };
 
 Template.Users.ActiveUserArr = function() {
-	return Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
+	return Meteor.users.find({'profile.isScrumMaster': false, "profile.hoursLeft": {$gt: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.InactiveUserArr = function() {
-	return Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$lte: 0}}, {sort: {'profile.draftPosition': 1}});
+	return Meteor.users.find({'profile.isScrumMaster': false, "profile.hoursLeft": {$lte: 0}}, {sort: {'profile.draftPosition': 1}});
 };
 
 Template.Users.formatTotalHours = function(totalHours) {
@@ -17,7 +17,7 @@ Template.Users.formatTotalHours = function(totalHours) {
 };
 
 Template.Users.remainingHoursFormat = function() {
-	return formatTotalHours(this.profile.totalHoursAvailable - this.profile.hoursAssigned)
+	return formatTotalHours(this.profile.hoursAvailable - this.profile.hoursAssigned)
 };
 
 Template.Users.imaAdmin = function() {
@@ -35,7 +35,7 @@ Template.Users.activeUserClass = function() {
 Template.Users.finishedHoursLabel = function () {
 	var cssClass = "label-inverse";
 
-	if (this.profile.totalHoursAvailable < this.profile.hoursAssigned)
+	if (this.profile.hoursAvailable < this.profile.hoursAssigned)
 	{
 		cssClass = "label-important";
 	}

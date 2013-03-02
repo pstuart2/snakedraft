@@ -27,10 +27,10 @@ Meteor.methods({
 
 		Drafts.update({_id: draft._id}, {$set: {sprintHours: intHours}}, {multi: false});
 
-		Meteor.users.update({'profile.isScrumMaster': {$exists: false}},
+		Meteor.users.update({'profile.isScrumMaster': false},
 				{
 					$set: {
-						'profile.totalHoursAvailable': intHours,
+						'profile.hoursAvailable': intHours,
 						'profile.hoursLeft': intHours,
 						'profile.hoursAssigned': 0
 					}
@@ -157,7 +157,7 @@ Meteor.methods({
 			throw new Meteor.Error(404, "You cannot do that!");
 		}
 
-		var peeps = getUsers({'profile.isScrumMaster': {$exists: false}}),
+		var peeps = getUsers({'profile.isScrumMaster': false}),
 				peepCount = peeps.count(),
 				newPeepPos = new Array(),
 				arrPos = 0;
@@ -219,16 +219,16 @@ Meteor.methods({
 	}
 });
 
-function checkHoursVsTicketHours(currentUserId)
+function calculateUserHoursTicketHours()
 {
 	var unassignedTickets = Tickets.find({}),
-			users = Meteor.users.find({'profile.isScrumMaster': {$exists: false}}),
+			users = Meteor.users.find({'profile.isScrumMaster': false}),
 			totalTicketHours = 0, totalUserHours = 0,
 			totalRemainingTicketHours = 0, totalUserHoursLeft = 0;
 
 	users.forEach(function(user) {
 		totalUserHoursLeft += user.profile.hoursLeft;
-		totalUserHours += user.profile.totalHoursAvailable;
+		totalUserHours += user.profile.hoursAvailable;
 	});
 
 	unassignedTickets.forEach(function(ticket) {
@@ -246,7 +246,17 @@ function checkHoursVsTicketHours(currentUserId)
 	}}, {multi: false});
 
 	if (totalRemainingTicketHours > totalUserHoursLeft) {
+		return "Total unassigned ticket hours (<b>" + totalRemainingTicketHours + "</b>) exceeds user remaining hours (<b>" + totalUserHoursLeft + "</b>)"
+	}
+
+	return false;
+}
+
+function checkHoursVsTicketHours(currentUserId)
+{
+	var msg = calculateUserHoursTicketHours();
+	if (msg) {
 		// We have a problem.
-		createUserMessage(currentUserId, "Total unassigned ticket hours (<b>" + totalRemainingTicketHours + "</b>) exceeds user remaining hours (<b>" + totalUserHoursLeft + "</b>)", "alert");
+		createUserMessage(currentUserId, msg, "alert");
 	}
 }

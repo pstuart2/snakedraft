@@ -151,11 +151,56 @@ function assignTicketToUser(userId, ticketId, hours) {
 			{$set: {AssignedUserId: userId}},
 			{multi: false});
 
-	Meteor.users.update({_id: userId},
-			{$inc: {'profile.hoursLeft': -hours, 'profile.hoursAssigned': hours}},
+	assignHoursToUser(userId, hours);
+}
+
+function assignHoursToUser(userId, hours)
+{
+	var user = Meteor.users.findOne({_id: userId}),
+			newHoursLeft = user.profile.hoursLeft - hours,
+			newHoursAssigned = user.profile.hoursAssigned + hours,
+			userAdjusted;
+
+	console.log("--- assign ---");
+
+	if (newHoursLeft < 0) {
+		userAdjusted = hours + newHoursLeft;
+		newHoursLeft = 0;
+	} else {
+		userAdjusted = hours;
+	}
+
+	Meteor.users.update({_id: user._id},
+			{$set: {'profile.hoursLeft': newHoursLeft, 'profile.hoursAssigned': newHoursAssigned}},
 			{multi: false});
 
-	updateGlobalTicketHours(hours);
+	updateGlobalTicketHours(userAdjusted, hours);
+}
+
+function unassignHoursFromUser(userId, hours)
+{
+	var user = Meteor.users.findOne({_id: userId}),
+			newHoursLeft = user.profile.hoursLeft + hours,
+			newHoursAssigned = user.profile.hoursAssigned - hours,
+			userAdjusted;
+
+	if (newHoursAssigned < 0) { newHoursAssigned = 0; }
+	newHoursLeft = user.profile.hoursAvailable - newHoursAssigned;
+	userAdjusted = user.profile.hoursLeft - newHoursLeft;
+
+	Meteor.users.update({_id: user._id},
+			{$set: {'profile.hoursLeft': newHoursLeft, 'profile.hoursAssigned': newHoursAssigned}},
+			{multi: false});
+
+	updateGlobalTicketHours(userAdjusted, -hours);
+}
+
+function updateGlobalTicketHours(userHours, ticketHours)
+{
+	Drafts.update({}, {$inc: {
+		remainingUserHours: -userHours,
+		remainingTicketHours: -ticketHours
+	}}, {multi: false});
 }
 
 /**
@@ -217,12 +262,4 @@ function createUserMessage(owner, message, type)
 		message: message,
 		type: type
 	})
-}
-
-function updateGlobalTicketHours(hours)
-{
-	Drafts.update({}, {$inc: {
-		remainingUserHours: -hours,
-		remainingTicketHours: -hours
-	}}, {multi: false});
 }

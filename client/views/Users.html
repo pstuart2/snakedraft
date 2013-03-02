@@ -2,7 +2,7 @@
 	<h4>Active Users</h4>
 	<ul class="users active-users">
 	{{#each ActiveUserArr}}
-		<li class="{{selected}} {{activeUserClass}} user-item hover-visible" title="{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}}">
+		<li class="{{selected}} {{activeUserClass}} user-item hover-visible" title="{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.hoursAvailable}}">
 			<span class="badge">{{profile.draftPosition}}</span> {{username}}
 			{{#if imaAdmin}}
 			<i style="margin-left: 2px;" class="icon-edit"></i>
@@ -20,7 +20,7 @@
 			{{#each InactiveUserArr}}
 			<li class="user-item {{selected}} hover-visible">
 				<div class="pull-right">
-					<span class="label {{finishedHoursLabel}}">{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.totalHoursAvailable}}</span>
+					<span class="label {{finishedHoursLabel}}">{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.hoursAvailable}}</span>
 				</div>
 				<span class="badge">{{profile.draftPosition}}</span> {{username}}
 				{{#if imaAdmin}}

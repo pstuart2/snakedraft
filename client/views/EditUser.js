@@ -19,7 +19,7 @@ Template.EditUser.User = function() {
 		user.assignedHours = tmp.hours;
 		user.assignedDays = tmp.days;
 
-		tmp = hoursToDaysHours(user.profile.totalHoursAvailable);
+		tmp = hoursToDaysHours(user.profile.hoursAvailable);
 		user.availableHours = tmp.hours;
 		user.availableDays = tmp.days;
 	}
@@ -52,7 +52,7 @@ Template.EditUser.events = {
 		Meteor.call("editUser", SessionAmplify.get("editUserId"),
 				{
 					'profile.isAdmin': isAdmin,
-					'profile.totalHoursAvailable': totalAvailableHours,
+					'profile.hoursAvailable': totalAvailableHours,
 					'profile.hoursAssigned': totalAssignedHours,
 					'profile.hoursLeft': totalAvailableHours - totalAssignedHours,
 					'profile.draftPosition': parseInt(draftPosition.val())

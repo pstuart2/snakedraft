@@ -16,7 +16,7 @@ Meteor.startup(function () {
 		{IsVisible: true, Encrypt: false, Name: "AllowAutoAssign", Value: 1, Description: "0-Let it play out. 1-Will filter the tickets on screen but will not be automatic. 2-Will force a user to take a ticket if there are no other users with enough time."},
 		{IsVisible: true, Encrypt: false, Name: "AutoAssignChangesTurn", Value: 1, Description: "1-When a ticket is auto-assigned that counts as a turn. 0-Will allow them to make a choice if they have available time."},
 
-		{IsVisible: true, Encrypt: true, Name: "ViewerControlPassword", Value: "pass123", Description: "Password for enabling the viewer to assign tickets."}
+		{IsVisible: true, Encrypt: true, Name: "ViewerControlPassword", Value: encryptValue("password"), Description: "Password for enabling the viewer to assign tickets."}
 	];
 
 
@@ -39,10 +39,6 @@ Meteor.startup(function () {
 				isPaused: false,
 				isRunning: false,
 				forcedTicketSize: 0,
-				totalUserHours: 0,
-				totalTicketHours: 0,
-				remainingUserHours: 0,
-				remainingTicketHours: 0,
 				cycleType: parseInt(draftType.Value)
 			};
 	if(!draft) {
@@ -64,6 +60,8 @@ Meteor.startup(function () {
 		}
 	}
 
+	calculateUserHoursTicketHours();
+
 	/*
 	ENC-11546,ENC-11545,ENC-11544
 	*/
@@ -81,20 +79,23 @@ Accounts.validateNewUser(function(user) {
 
 Accounts.onCreateUser(function(options, user) {
 	var scrumMaster = Configs.findOne({Name: "ScrumMaster"}),
-			userCount = Meteor.users.find({}).count(),
+			userCount = Meteor.users.find({'profile.isScrumMaster': false}).count(),
 			draft = Drafts.findOne({});
 
 	user.username = user.emails[0].address.split("@")[0];
 	user.profile = {};
 	user.profile.isSelected = false;
-	if (scrumMaster.Value == user.username) {
-		user.profile.isScrumMaster = true;
+
+	user.profile.isScrumMaster = (scrumMaster.Value == user.username);
+
+	if (user.profile.isScrumMaster) {
 		user.profile.isAdmin = true;
-		user.profile.totalHoursAvailable = 0;
+		user.profile.hoursAvailable = 0;
 		user.profile.hoursLeft = 0;
+		user.profile.draftPosition = 0;
 	} else {
 		user.profile.isAdmin = (userCount == 0);
-		user.profile.totalHoursAvailable = draft.sprintHours;
+		user.profile.hoursAvailable = draft.sprintHours;
 		user.profile.hoursLeft = draft.sprintHours;
 		user.profile.draftPosition = userCount + 1;
 	}

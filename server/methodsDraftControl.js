@@ -165,13 +165,13 @@ function updateNewCurrentUser()
 {
 	var draft = Drafts.findOne({}),
 			lastUser = Meteor.users.findOne(
-					{'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}},
+					{'profile.isScrumMaster': false, "profile.hoursLeft": {$gt: 0}},
 					{sort: {'profile.draftPosition': -draft.direction}}),
 			activeUserCount,
 			newCurrentUser = null;
 
 	// If we are the only user left, ....
-	activeUserCount = Meteor.users.find({'profile.isScrumMaster': {$exists: false}, "profile.hoursLeft": {$gt: 0}}).count();
+	activeUserCount = Meteor.users.find({'profile.isScrumMaster': false, "profile.hoursLeft": {$gt: 0}}).count();
 	if (activeUserCount == 1) { newCurrentUser = lastUser; }
 	if (activeUserCount == 0 || Tickets.find({AssignedUserId: {$exists: false}}).count() == 0) {
 		// Draft is over!

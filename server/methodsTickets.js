@@ -61,7 +61,7 @@ Meteor.methods({
 			throw new Meteor.Error(302, "Not your turn.");
 		}
 
-		if (assignee.profile.totalHoursAvailable < ticket.Hours) {
+		if (assignee.profile.hoursAvailable < ticket.Hours) {
 			throw new Meteor.Error(302, "User doesn't have enough hours.");
 		}
 
@@ -111,7 +111,7 @@ Meteor.methods({
 	 * @param ticketId
 	 */
 	unassignTicket: function(ticketId) {
-		var ticket, currentUser;
+		var ticket, currentUser, userHours, ticketUser;
 
 		ticket = Tickets.findOne({_id: ticketId});
 		if (ticket == null) {
@@ -127,11 +127,7 @@ Meteor.methods({
 				{$unset: {AssignedUserId: 1}},
 				{multi: false});
 
-		Meteor.users.update({_id: ticket.AssignedUserId},
-				{$inc: {'profile.hoursLeft': ticket.Hours, 'profile.hoursAssigned': -ticket.Hours}},
-				{multi: false});
-
-		updateGlobalTicketHours(-ticket.Hours);
+		unassignHoursFromUser(ticket.AssignedUserId, ticket.Hours);
 
 		//createUserMessage(ticket.AssignedUserId, currentUser.username + " unassigned ticket " + ticket.Id + " from you.", "alert");
 	},
