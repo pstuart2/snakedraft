@@ -1,0 +1,19 @@
+<template name="Stats">
+	<div class="stats-area">
+		<table class="table">
+			<tr>
+				<th>&nbsp;</th><th>Total</th><th>Remaining</th>
+			</tr>
+			<tr>
+				<th>Tickets</th>
+				<td>{{formatTotalHours Draft.totalTicketHours}}</td>
+				<td>{{formatTotalHours Draft.remainingTicketHours}}</td>
+			</tr>
+			<tr>
+				<th>Users</th>
+				<td>{{formatTotalHours Draft.totalUserHours}}</td>
+				<td>{{formatTotalHours Draft.remainingUserHours}}</td>
+			</tr>
+		</table>
+	</div>
+</template>

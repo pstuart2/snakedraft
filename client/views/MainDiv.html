@@ -4,11 +4,55 @@
 		<div class="container main-area">
 			<div class="row">
 				<div class="span4">
-					<div class="affix span4" style="margin-left:0;margin-right:30px;">
+					<div class="affix span4 group" style="margin-left:0;margin-right:30px;">
 						{{> DraftControl}}
-						<div class="group user-area">
-							{{> Users}}
+
+
+						<div class="accordian" id="#leftNavArea">
+
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									<a class="accordion-toggle" data-toggle="collapse" data-parent="#leftNavArea" href="#collapseStats">
+										Stats
+									</a>
+								</div>
+								<div id="collapseStats" class="accordion-body collapse in">
+									<div class="accordion-inner user-area">
+										{{> Stats}}
+									</div>
+								</div>
+							</div>
+
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									<a class="accordion-toggle" data-toggle="collapse" data-parent="#leftNavArea" href="#collapseUsers">
+										Users
+									</a>
+								</div>
+								<div id="collapseUsers" class="accordion-body collapse in">
+									<div class="accordion-inner user-area">
+										{{> Users}}
+									</div>
+								</div>
+							</div>
+
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									<a class="accordion-toggle" data-toggle="collapse" data-parent="#leftNavArea" href="#collapseChat">
+										Chat
+									</a>
+								</div>
+								<div id="collapseChat" class="accordion-body collapse in">
+									<div class="accordion-inner user-area">
+										{{> Chat}}
+									</div>
+								</div>
+							</div>
+
 						</div>
+
+
+
 					</div>
 				</div>
 

@@ -155,11 +155,6 @@ html, body {
 
   .affix { position: relative !important;}
 }
-/* CSS declarations go here */
-.group
-{
-
-}
 
 div.right-label {
   text-align: right;
@@ -222,8 +217,6 @@ div.ticket-area {
   margin-top: 0px;
   .rounded-corners;
 
-
-
   div.ticket-wrapper {
 	background-color: @white;
 	border-left: solid 1px @grayLight;
@@ -242,36 +235,57 @@ div.ticket-area {
   }
 }
 
-div.user-area {
+.accordion-heading {
+  font-weight: bold;
   background-color: @grayLighter;
+}
+
+div.user-area {
+  /*background-color: @grayLighter;
+  .rounded-corners;
+  padding: 5px;*/
+  padding: 0px;
+
+  .user-title {
+	margin: 0;
+	padding: 2px;
+	font-weight: bold;
+	background-color: @infoBackground;
+  }
+
+  ul.users {
+	margin: 3px;
+	padding: 5px;
+	background-color: @white;
+	.rounded-corners;
+
+	  li.user-item {
+		.rounded-corners;
+		padding: 5px;
+		cursor: pointer;
+		margin: 3px;
+		border: 1px solid @grayLighter;
+
+		&:hover {
+		  background-color: @infoBackground;
+		}
+	  }
+
+	  li.user-turn {
+		background-color: @successBackground;
+	  }
+
+	  li.user-selected {
+		background-color: darken(@infoBackground, 20%);
+	  }
+  }
+}
+
+div.stats-area {
+  /*background-color: @grayLighter;
   .rounded-corners;
   padding: 5px;
-  	ul.users {
-	  margin: 3px;
-	  padding: 5px;
-	  background-color: @white;
-	  .rounded-corners;
-
-		li.user-item {
-		  .rounded-corners;
-		  padding: 5px;
-		  cursor: pointer;
-		  margin: 3px;
-		  border: 1px solid @grayLighter;
-
-		  &:hover {
-			background-color: @infoBackground;
-		  }
-		}
-
-		li.user-turn {
-		  background-color: @successBackground;
-		}
-
-		li.user-selected {
-		  background-color: darken(@infoBackground, 20%);
-		}
-	}
+  margin: 5px 0px;*/
 }
 
 .inline-edit {

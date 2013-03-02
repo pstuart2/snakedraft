@@ -23,10 +23,6 @@ Template.DraftControl.Draft = function() {
 	return Drafts.findOne({});
 };
 
-Template.DraftControl.formatTotalHours = function(totalHours) {
-	return formatTotalHours(totalHours);
-};
-
 /**
  * @return {String}
  * @constructor

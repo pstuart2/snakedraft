@@ -1,5 +1,5 @@
 <template name="Users">
-	<h4>Active Users</h4>
+	<div class="user-title">Active</div>
 	<ul class="users active-users">
 	{{#each ActiveUserArr}}
 		<li class="{{selected}} {{activeUserClass}} user-item hover-visible" title="{{formatTotalHours profile.hoursAssigned}} / {{formatTotalHours profile.hoursAvailable}}">
@@ -14,8 +14,7 @@
 	{{/each}}
 	</ul>
 	<div class="hidden-phone">
-		<hr />
-		<h4>Inactive Users</h4>
+		<div class="user-title">Complete</div>
 		<ul class="users inactive-users">
 			{{#each InactiveUserArr}}
 			<li class="user-item {{selected}} hover-visible">
@@ -29,7 +28,5 @@
 			</li>
 			{{/each}}
 		</ul>
-		<hr />
-		{{> Chat}}
 	</div>
 </template>
