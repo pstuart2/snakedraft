@@ -39,6 +39,10 @@ Meteor.startup(function () {
 				isPaused: false,
 				isRunning: false,
 				forcedTicketSize: 0,
+				totalUserHours: 0,
+				totalTicketHours: 0,
+				remainingUserHours: 0,
+				remainingTicketHours: 0,
 				cycleType: parseInt(draftType.Value)
 			};
 	if(!draft) {
@@ -83,20 +87,19 @@ Accounts.onCreateUser(function(options, user) {
 	user.username = user.emails[0].address.split("@")[0];
 	user.profile = {};
 	user.profile.isSelected = false;
-	user.profile.isScrumMaster = (scrumMaster.Value == user.username);
-	// Admin is the first user created or the scrum master.
-	user.profile.isAdmin = (userCount == 0 || user.profile.isScrumMaster);
-	if (user.profile.isScrumMaster) {
+	if (scrumMaster.Value == user.username) {
+		user.profile.isScrumMaster = true;
+		user.profile.isAdmin = true;
 		user.profile.totalHoursAvailable = 0;
 		user.profile.hoursLeft = 0;
 	} else {
+		user.profile.isAdmin = (userCount == 0);
 		user.profile.totalHoursAvailable = draft.sprintHours;
 		user.profile.hoursLeft = draft.sprintHours;
+		user.profile.draftPosition = userCount + 1;
 	}
 
 	user.profile.hoursAssigned = 0;
-
-	user.profile.draftPosition = userCount + 1;
 
 	return user;
 });
