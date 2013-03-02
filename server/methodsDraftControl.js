@@ -264,9 +264,9 @@ function checkRemainingTicketsForCurrentUser(user, draft)
 	usersWhoCan = Meteor.users.find({'profile.hoursLeft': {$gte: maxHours}}).count();
 
 	console.log("---------------------------------");
-	console.log("MaxHours: " + maxHours + " Number Users: " + usersWhoCan);
+	console.log("MaxHours: " + maxHours + " Number Users: " + usersWhoCan + " MaxHourCount: " + maxHourCount);
 
-	if (usersWhoCan > maxHourCount) {
+	if (usersWhoCan > 1 /*&& usersWhoCan >= maxHourCount*/) {
 		// There are plenty of users left to take a ticket of this size.
 		console.log("Plenty of users.");
 		return user;
@@ -274,6 +274,7 @@ function checkRemainingTicketsForCurrentUser(user, draft)
 
 	if (AllowAutoAssign.Value == 2 && usersWhoCan == 1) {
 		// I'm the only one who can take it.
+		console.log("I'm the only one who can take it.");
 		assignTicketToUser(user._id, firstTicket._id, firstTicket.Hours);
 
 		var msg = '<b>' + user.username + '</b> was forced to take ticket <b>' + firstTicket.Id + '</b>.';
@@ -281,18 +282,20 @@ function checkRemainingTicketsForCurrentUser(user, draft)
 		createUserMessage(draft.scrumMasterId, msg, "alert alert-info");
 
 		if (AutoAssignChangesTurn.Value > 0 || user.profile.hoursLeft <= firstTicket.Hours) {
+			console.log("Must change turn.");
 			return updateNewCurrentUser();
 		}
+	} else {
+		// I have to take one of the tickets of this size.
+		console.log("I have to take a ticket of this size.")
+		Drafts.update({},
+				{$set:
+				{
+					forcedTicketSize: maxHours
+				}
+				},
+				{multi: false});
 	}
-
-	// I have to take one of the tickets of this size.
-	Drafts.update({},
-			{$set:
-			{
-				forcedTicketSize: maxHours
-			}
-			},
-			{multi: false});
 
 	return user;
 }

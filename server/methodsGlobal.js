@@ -161,8 +161,6 @@ function assignHoursToUser(userId, hours)
 			newHoursAssigned = user.profile.hoursAssigned + hours,
 			userAdjusted;
 
-	console.log("--- assign ---");
-
 	if (newHoursLeft < 0) {
 		userAdjusted = hours + newHoursLeft;
 		newHoursLeft = 0;
@@ -180,9 +178,8 @@ function assignHoursToUser(userId, hours)
 function unassignHoursFromUser(userId, hours)
 {
 	var user = Meteor.users.findOne({_id: userId}),
-			newHoursLeft = user.profile.hoursLeft + hours,
 			newHoursAssigned = user.profile.hoursAssigned - hours,
-			userAdjusted;
+			newHoursLeft, userAdjusted;
 
 	if (newHoursAssigned < 0) { newHoursAssigned = 0; }
 	newHoursLeft = user.profile.hoursAvailable - newHoursAssigned;

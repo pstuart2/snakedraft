@@ -42,18 +42,15 @@ Meteor.startup(function () {
 				cycleType: parseInt(draftType.Value)
 			};
 	if(!draft) {
-		console.log("BOOTSTRAP: Creating default draft.");
 		defaults.sprintHours = 90;
 		Drafts.insert(defaults);
 	} else {
 		// If for some reason we reload make sure the interval is running again.
-		console.log("BOOTSTRAP: draft.isRunning: " + draft.isRunning);
 		if (draft.isRunning) {
 			if (!draft.isPaused) {
 				startDraftInterval();
 			}
 		} else {
-			console.log("BOOTSTRAP: Updating default draft.");
 			Drafts.update({_id: draft._id},
 					{$set: defaults},
 					{multi: false});
