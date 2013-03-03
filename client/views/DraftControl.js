@@ -2,14 +2,26 @@ Meteor.subscribe("Drafts");
 
 Template.DraftControl.rendered = function() {
 	// Make sure our stuff lines up.
-	var draft = Drafts.findOne({});
+	var draft = Drafts.findOne({}),
+			wclass;
 	if (draft) {
+
 		// Using sessions here so that templates will update when the session variable
 		// actually changes, not any item on the draft.
 		SessionAmplify.set('isDraftRunning', draft.isRunning);
 		SessionAmplify.set('isDraftPaused', draft.isPaused);
 		SessionAmplify.set('cycleType', draft.cycleType);
 		SessionAmplify.set('draftTime', draft.currentTime);
+
+		if (draft.isRunning && !draft.isPaused) {
+			if (draft.currentTime > 20) { wclass = "success-back"; }
+			else if (draft.currentTime <= 10) { wclass = "danger-back"; }
+			else {
+				wclass = "warning-back";
+			}
+		}
+
+		SessionAmplify.set("draftTimeBack", wclass);
 
 		if (draft.isRunning) {
 			SessionAmplify.set('draftCurrentUser', draft.currentUser);
