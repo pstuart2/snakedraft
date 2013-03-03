@@ -167,8 +167,18 @@ Meteor.methods({
 			newPeepPos[arrPos++] = {id: peep._id, newPos: Math.floor((Math.random()*peepCount)+1)};
 		});
 
+
+		newPeepPos = fisherYates(newPeepPos);
+
+		arrPos = 1;
 		_.each(newPeepPos, function(newPos) {
-			movePeep(newPos.id, newPos.newPos);
+
+			Meteor.users.update({_id: newPos.id},
+					{
+						$set: {'profile.draftPosition': arrPos++}
+					},
+					{multi: false});
+
 		});
 	},
 
@@ -259,4 +269,24 @@ function checkHoursVsTicketHours(currentUserId)
 		// We have a problem.
 		createUserMessage(currentUserId, msg, "alert");
 	}
+}
+
+/**
+ * http://en.wikipedia.org/wiki/Fisher-Yates_shuffle
+ *
+ * @param myArray
+ * @return {*}
+ */
+function fisherYates ( myArray ) {
+	var i = myArray.length, j, tempi, tempj;
+	if ( i == 0 ) return false;
+	while ( --i ) {
+		j = Math.floor( Math.random() * ( i + 1 ) );
+		tempi = myArray[i];
+		tempj = myArray[j];
+		myArray[i] = tempj;
+		myArray[j] = tempi;
+	}
+
+	return myArray;
 }

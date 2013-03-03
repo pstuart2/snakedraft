@@ -99,5 +99,10 @@ Accounts.onCreateUser(function(options, user) {
 
 	user.profile.hoursAssigned = 0;
 
+	Meteor.setTimeout(function() {
+		calculateUserHoursTicketHours();
+	}, 1000);
+
+
 	return user;
 });
