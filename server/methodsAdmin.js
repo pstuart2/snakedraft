@@ -158,13 +158,12 @@ Meteor.methods({
 		}
 
 		var peeps = getUsers({'profile.isScrumMaster': false}),
-				peepCount = peeps.count(),
-				newPeepPos = new Array(),
+				newPeepPos = [],
 				arrPos = 0;
 
 		peeps.forEach(function(peep)
 		{
-			newPeepPos[arrPos++] = {id: peep._id, newPos: Math.floor((Math.random()*peepCount)+1)};
+			newPeepPos[arrPos++] = {id: peep._id};
 		});
 
 
