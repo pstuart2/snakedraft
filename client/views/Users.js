@@ -32,6 +32,10 @@ Template.Users.activeUserClass = function() {
 	return "";
 };
 
+Template.Users.showDraftPosition = function() {
+	return false;
+};
+
 Template.Users.finishedHoursLabel = function () {
 	var cssClass = "label-inverse";
 

@@ -90,11 +90,16 @@ Template.TicketAvailable.formatTotalHours = function(totalHours) {
 
 Template.TicketAvailable.canChooseHours = function (hours) {
 	var cssClass = "label-inverse",
-			user;
+			userId, user;
 
-	if (Meteor.user() == null) { return cssClass; }
+	userId = getSelectedUserId();
+	if (!userId) {
+		userId = Meteor.userId();
+	}
 
-	user = Meteor.users.findOne({_id: Meteor.userId()});
+	if (!userId) { return cssClass; }
+
+	user = Meteor.users.findOne({_id: userId});
 	if (parseInt(hours) > user.profile.hoursLeft)
 	{
 		cssClass = "label-important";
