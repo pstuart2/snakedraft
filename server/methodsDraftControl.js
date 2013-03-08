@@ -19,6 +19,15 @@ Meteor.methods({
 	 * As an admin start the draft.
 	 */
 	startDraft: function() {
+		// Get our first player.
+		var firstPlayer = Meteor.users.findOne(
+				{"profile.hoursLeft": {$gt: 0}},
+				{sort: {"profile.draftPosition": 1}});
+
+		// Set our starting user in the draft.
+		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
+				{multi: false});
+
 		checkRemainingTicketsForCurrentUser();
 		startDraftInterval();
 	},
@@ -26,7 +35,7 @@ Meteor.methods({
 	/**
 	 * As an admin stop the draft.
 	 */
-	stopDraft: function() {
+	stopInterval: function() {
 		if(draftTimerInterval != null) {
 			Meteor.clearInterval(draftTimerInterval);
 			draftTimerInterval = null;
@@ -36,19 +45,8 @@ Meteor.methods({
 	/**
 	 * As an admin pause the draft.
 	 */
-	pauseDraft: function() {
-		if(draftTimerInterval != null) {
-			Drafts.update({},
-					{$set: {isPaused: true}},
-					{multi: false});
-
-			Meteor.clearInterval(draftTimerInterval);
-			draftTimerInterval = null;
-		} else {
-			Drafts.update({},
-					{$set: {isPaused: false}},
-					{multi: false});
-
+	startInterval: function() {
+		if(draftTimerInterval == null) {
 			startDraftInterval();
 		}
 	},

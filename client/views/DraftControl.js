@@ -71,43 +71,44 @@ Template.DraftControl.Draft = function() {
 
 Template.DraftControl.events({
 	"click button#draft-start": function(e) {
-		e.preventDefault();
-
-		resetDraft();
-
-		// Get our first player.
-		var firstPlayer = Meteor.users.findOne(
-				{"profile.hoursLeft": {$gt: 0}},
-				{sort: {"profile.draftPosition": 1}});
-
 		// Set our starting user in the draft.
-		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
+		Drafts.update({}, {$set: {isRunning: true}},
 				{multi: false});
 
 		Meteor.call("startDraft", function(error, data) {
-			if (!error) {
-				var draft = Drafts.findOne({});
-				updateDraftSettings(draft);
+			if (error) {
+				alertify.error(error.reason);
 			}
 		});
 	},
 	"click button#draft-stop": function(e) {
 		e.preventDefault();
 		resetDraft();
-		Meteor.call("stopDraft", function(error, data) {
-			if (!error) {
-				var draft = Drafts.findOne({});
-				updateDraftSettings(draft);
+		Meteor.call("stopInterval", function(error, data) {
+			if (error) {
+				alertify.error(error.reason);
 			}
 		});
 
 	},
 	"click button#draft-pause": function(e) {
 		e.preventDefault();
-		if (!Drafts.findOne({}).isRunning) { return; }
+		if (!isDraftRunning()) { return; }
 
-		SessionAmplify.set('isDraftPaused', !SessionAmplify.get('isDraftPaused'));
-		Meteor.call("pauseDraft");
+		//SessionAmplify.set('isDraftPaused', !SessionAmplify.get('isDraftPaused'));
+		if (!SessionAmplify.get('isDraftPaused')) {
+			Meteor.call("stopInterval", function(e, d) {
+				if (e) { alertify.error(e.reason); }
+			});
+		} else {
+			Meteor.call("startInterval", function(e, d) {
+				if (e) { alertify.error(e.reason); }
+			});
+		}
+
+		Drafts.update({},
+				{$set: {isPaused: !SessionAmplify.get('isDraftPaused')}},
+				{multi: false});
 	},
 	"click button#draft-skip": function(e) {
 		e.preventDefault();
