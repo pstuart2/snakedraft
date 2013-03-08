@@ -14,9 +14,7 @@ Meteor.startup(function () {
 		{IsVisible: true, Encrypt: false, Name: "SecondsPerChoice", Value: 60, Description: "How many seconds a user gets to choose a ticket."},
 		{IsVisible: true, Encrypt: false, Name: "CycleType", Value: 1, Description: "1-Snake, 2-Sequential"},
 		{IsVisible: true, Encrypt: false, Name: "AllowAutoAssign", Value: 1, Description: "0-Let it play out. 1-Will filter the tickets on screen but will not be automatic. 2-Will force a user to take a ticket if there are no other users with enough time."},
-		{IsVisible: true, Encrypt: false, Name: "AutoAssignChangesTurn", Value: 1, Description: "1-When a ticket is auto-assigned that counts as a turn. 0-Will allow them to make a choice if they have available time."},
-
-		{IsVisible: true, Encrypt: true, Name: "ViewerControlPassword", Value: encryptValue("password"), Description: "Password for enabling the viewer to assign tickets."}
+		{IsVisible: true, Encrypt: false, Name: "AutoAssignChangesTurn", Value: 1, Description: "1-When a ticket is auto-assigned that counts as a turn. 0-Will allow them to make a choice if they have available time."}
 	];
 
 

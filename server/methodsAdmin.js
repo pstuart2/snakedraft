@@ -102,17 +102,6 @@ Meteor.methods({
 		});
 
 		checkHoursVsTicketHours(Meteor.userId());
-	},
-
-	/**
-	 * Checks the password for enabling viewer control.
-	 *
-	 * @param password
-	 * @return {Boolean}
-	 */
-	checkViewerControlPassword: function(password) {
-		var configPass = decryptValue(Configs.findOne({Name: "ViewerControlPassword"}).Value);
-		return configPass == password;
 	}
 });
 
