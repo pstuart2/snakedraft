@@ -9,6 +9,12 @@ SessionAmplify = _.extend({}, Session, {
 	}
 });
 
+var Configs = new Meteor.Collection("Configs");
+var Tickets = new Meteor.Collection("Tickets");
+var Drafts = new Meteor.Collection("Drafts");
+var Messages = new Meteor.Collection("Messages");
+var UserMessages = new Meteor.Collection("UserMessage");
+
 function isDraftRunning()
 {
 	return SessionAmplify.equals('isDraftRunning', true);
