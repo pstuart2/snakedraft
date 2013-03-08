@@ -76,7 +76,7 @@ Meteor.methods({
 					},
 					{multi: false});
 		} else if (config.Name == "ScrumMaster") {
-			Meteor.users.update({}, {$unset: {'profile.isScrumMaster': 1}}, {multi: true});
+			Meteor.users.update({}, {$set: {'profile.isScrumMaster': false}}, {multi: true});
 			var newScrumMaster = Meteor.users.findOne({username: value});
 			if (newScrumMaster) {
 				Meteor.users.update({_id: newScrumMaster._id}, {$set: {'profile.isScrumMaster': true, 'profile.hoursLeft': 0}}, {multi: false});
