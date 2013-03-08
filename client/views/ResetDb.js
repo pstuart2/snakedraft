@@ -9,6 +9,29 @@ Template.ResetDb.events = {
 		if (!sprintHours) { sprintHours = 0; }
 		if (!dayEstimate) { dayEstimate = 0; }
 		sprintHours += dayEstimate * hoursInDay;
-		Meteor.call("resetDatabase", sprintHours);
+
+
+		// Remove all tickets.
+		Tickets.remove({});
+		// Remove all messages.
+		Messages.remove({});
+		UserMessages.remove({});
+
+		Drafts.update({}, {$set: {sprintHours: sprintHours}}, {multi: false});
+
+		Meteor.users.update({'profile.isScrumMaster': false},
+				{
+					$set: {
+						'profile.hoursAvailable': sprintHours,
+						'profile.hoursLeft': sprintHours,
+						'profile.hoursAssigned': 0
+					}
+				}, {multi: true});
+
+		Meteor.call("checkHoursVsTicketHours", function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			}
+		});
 	}
 };

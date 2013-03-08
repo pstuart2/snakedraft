@@ -3,43 +3,6 @@ Meteor.methods({
 	// Admin Menu Actions
 	///////////////////////////////////////////////////////////////////////////////
 	/**
-	 * As an admin reset the database for a new draft.
-	 *
-	 * @param sprintHours
-	 */
-	resetDatabase: function(sprintHours) {
-		var currentUser = getUser(Meteor.userId()),
-				draft = Drafts.findOne({})
-				intHours = parseInt(sprintHours);
-
-		if (!currentUser.profile.isAdmin) {
-			throw new Meteor.Error(404, "User isn't the scrum master.");
-		}
-
-		console.log("Resetting db");
-		console.log("SprintHours: " + sprintHours);
-
-		// Remove all tickets.
-		Tickets.remove({});
-		// Remove all messages.
-		Messages.remove({});
-		UserMessages.remove({});
-
-		Drafts.update({_id: draft._id}, {$set: {sprintHours: intHours}}, {multi: false});
-
-		Meteor.users.update({'profile.isScrumMaster': false},
-				{
-					$set: {
-						'profile.hoursAvailable': intHours,
-						'profile.hoursLeft': intHours,
-						'profile.hoursAssigned': 0
-					}
-				}, {multi: true});
-
-		checkHoursVsTicketHours(Meteor.userId());
-	},
-
-	/**
 	 * As an admin update a config value.
 	 *
 	 * @param id
@@ -104,81 +67,6 @@ Meteor.methods({
 		}
 
 		Configs.update({Name: "JiraCredentials"}, {$set: {Value: encryptedValue}}, {multi: false});
-	},
-
-	/**
-	 * As an admin edit a user.
-	 *
-	 * @param userId
-	 * @param fields
-	 */
-	editUser: function(userId, fields) {
-		var currentUser = getUser(Meteor.userId()),
-				oldUserRec,
-				newDraftPos;
-
-		// Ensure we are allowed to edit.
-		if (!currentUser.profile.isAdmin) {
-			throw new Meteor.Error(404, "You cannot edit this user.");
-		}
-
-		// Get our old user record.
-		oldUserRec = getUser(userId);
-		newDraftPos = fields['profile.draftPosition'];
-
-		// We don't want to update our draft position now, do it later.
-		fields['profile.draftPosition'] = oldUserRec.profile.draftPosition;
-
-		// Update our user.
-		Meteor.users.update({_id: userId},
-				{
-					$set: fields
-				},
-				{multi: false});
-
-
-
-		// Check to see if our draft position changed...
-		if (oldUserRec.profile.draftPosition != newDraftPos) {
-			movePeep(userId, newDraftPos);
-		}
-
-		checkHoursVsTicketHours(Meteor.userId());
-	},
-
-	/**
-	 * As an admin randomize the draft order.
-	 */
-	randomizeDraftees: function() {
-		var currentUser = getUser(Meteor.userId());
-
-		var draft = Drafts.findOne({});
-		if (!(currentUser.profile.isAdmin || draft.isRunning)) {
-			throw new Meteor.Error(404, "You cannot do that!");
-		}
-
-		var peeps = getUsers({'profile.isScrumMaster': false}),
-				newPeepPos = [],
-				arrPos = 0;
-
-		peeps.forEach(function(peep)
-		{
-			newPeepPos[arrPos++] = {id: peep._id};
-		});
-
-
-		newPeepPos = fisherYates(newPeepPos);
-
-		arrPos = 1;
-		_.each(newPeepPos, function(newPos) {
-
-			Meteor.users.update({_id: newPos.id},
-					{
-						$set: {'profile.draftPosition': arrPos++}
-					},
-					{multi: false});
-
-		});
 	},
 
 	/**
@@ -268,24 +156,4 @@ function checkHoursVsTicketHours(currentUserId)
 		// We have a problem.
 		createUserMessage(currentUserId, msg, "alert");
 	}
-}
-
-/**
- * http://en.wikipedia.org/wiki/Fisher-Yates_shuffle
- *
- * @param myArray
- * @return {*}
- */
-function fisherYates ( myArray ) {
-	var i = myArray.length, j, tempi, tempj;
-	if ( i == 0 ) return false;
-	while ( --i ) {
-		j = Math.floor( Math.random() * ( i + 1 ) );
-		tempi = myArray[i];
-		tempj = myArray[j];
-		myArray[i] = tempj;
-		myArray[j] = tempi;
-	}
-
-	return myArray;
 }

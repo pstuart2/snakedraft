@@ -19,31 +19,7 @@ Meteor.methods({
 	 * As an admin start the draft.
 	 */
 	startDraft: function() {
-		var currentUser = getUser(Meteor.userId()),
-				firstPlayer;
-
-		if (!(currentUser.profile.isAdmin || draftTimerInterval != null)) {
-			throw new Meteor.Error(404, "You cannot start the draft.");
-		}
-
-		var draft = Drafts.findOne({});
-		if (draft.isRunning) {
-			throw new Meteor.Error(404, "Draft is already running.");
-		}
-
-		resetDraft();
-
-		// Get our first player.
-		firstPlayer = Meteor.users.findOne(
-				{"profile.hoursLeft": {$gt: 0}},
-				{sort: {"profile.draftPosition": 1}});
-
-		// Set our starting user in the draft.
-		Drafts.update({_id: draft._id}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
-				{multi: false});
-
-		checkRemainingTicketsForCurrentUser(firstPlayer, draft);
-
+		checkRemainingTicketsForCurrentUser();
 		startDraftInterval();
 	},
 
@@ -55,8 +31,6 @@ Meteor.methods({
 			Meteor.clearInterval(draftTimerInterval);
 			draftTimerInterval = null;
 		}
-
-		resetDraft();
 	},
 
 	/**
@@ -100,26 +74,6 @@ function startDraftInterval()
 			Drafts.update({_id: draft._id}, {$inc: {currentTime: -1}, $set: {isRunning: true}}, {multi: false});
 		}
 	}, 1000);
-}
-
-/**
- * Resets the draft to the starting point.
- */
-function resetDraft()
-{
-	var SecondsPerChoice = Configs.findOne({Name: 'SecondsPerChoice'});
-
-	Drafts.update({},
-			{$set: {
-				turnTime: parseInt(SecondsPerChoice.Value),
-				currentTime: parseInt(SecondsPerChoice.Value),
-				isRunning: false,
-				isPaused: false,
-				forcedTicketSize: 0,
-				currentPosition: 1
-			}
-			},
-			{multi: false});
 }
 
 /**
@@ -240,14 +194,16 @@ function updateNewCurrentUser()
 			},
 			{multi: false});
 
-	return checkRemainingTicketsForCurrentUser(newCurrentUser, draft);
+	return checkRemainingTicketsForCurrentUser();
 }
 
-function checkRemainingTicketsForCurrentUser(user, draft)
+function checkRemainingTicketsForCurrentUser()
 {
-	var tickets = Tickets.find({AssignedUserId: {$exists: false}, Hours: {$lte: user.profile.hoursLeft}}, {sort: {Hours: -1}}),
-			AllowAutoAssign = Configs.findOne({Name: "AllowAutoAssign"}),
+	var AllowAutoAssign = Configs.findOne({Name: "AllowAutoAssign"}),
 			AutoAssignChangesTurn = Configs.findOne({Name: "AutoAssignChangesTurn"}),
+			draft = Drafts.findOne({}),
+			user = Meteor.users.findOne({_id: draft.currentUser}),
+			tickets = Tickets.find({AssignedUserId: {$exists: false}, Hours: {$lte: user.profile.hoursLeft}}, {sort: {Hours: -1}}),
 			maxHours = 0, maxHourCount = 0, usersWhoCan, firstTicket;
 
 	// We do not allow auto-assing.

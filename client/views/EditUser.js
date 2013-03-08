@@ -49,15 +49,32 @@ Template.EditUser.events = {
 		totalAssignedHours = hoursDaysToTotalHours(assignedHours.val(), assignedDays.val());
 		totalAvailableHours = hoursDaysToTotalHours(availableHours.val(), availableDays.val());
 
-		Meteor.call("editUser", SessionAmplify.get("editUserId"),
+		var currentUser = getUser(SessionAmplify.get("editUserId")),
+				intDraftPos = parseInt(draftPosition.val());
+
+		// Update our user.
+		Meteor.users.update({_id: SessionAmplify.get("editUserId")},
 				{
-					'profile.isAdmin': isAdmin,
-					'profile.hoursAvailable': totalAvailableHours,
-					'profile.hoursAssigned': totalAssignedHours,
-					'profile.hoursLeft': totalAvailableHours - totalAssignedHours,
-					'profile.draftPosition': parseInt(draftPosition.val())
-				}
-		);
+					$set: {
+						'profile.isAdmin': isAdmin,
+						'profile.hoursAvailable': totalAvailableHours,
+						'profile.hoursAssigned': totalAssignedHours,
+						'profile.hoursLeft': totalAvailableHours - totalAssignedHours
+					}
+				},
+				{multi: false});
+
+		// Check to see if our draft position changed...
+		if (currentUser.profile.draftPosition != intDraftPos) {
+			movePeep(SessionAmplify.get("editUserId"), intDraftPos);
+		}
+
+		Meteor.call("checkHoursVsTicketHours", function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			}
+		});
+
 
 		SessionAmplify.set("editUserId", null);
 	}

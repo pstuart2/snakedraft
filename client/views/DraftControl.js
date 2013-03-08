@@ -72,6 +72,18 @@ Template.DraftControl.Draft = function() {
 Template.DraftControl.events({
 	"click button#draft-start": function(e) {
 		e.preventDefault();
+
+		resetDraft();
+
+		// Get our first player.
+		var firstPlayer = Meteor.users.findOne(
+				{"profile.hoursLeft": {$gt: 0}},
+				{sort: {"profile.draftPosition": 1}});
+
+		// Set our starting user in the draft.
+		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
+				{multi: false});
+
 		Meteor.call("startDraft", function(error, data) {
 			if (!error) {
 				var draft = Drafts.findOne({});
@@ -81,6 +93,7 @@ Template.DraftControl.events({
 	},
 	"click button#draft-stop": function(e) {
 		e.preventDefault();
+		resetDraft();
 		Meteor.call("stopDraft", function(error, data) {
 			if (!error) {
 				var draft = Drafts.findOne({});
@@ -93,8 +106,8 @@ Template.DraftControl.events({
 		e.preventDefault();
 		if (!Drafts.findOne({}).isRunning) { return; }
 
-		Meteor.call("pauseDraft");
 		SessionAmplify.set('isDraftPaused', !SessionAmplify.get('isDraftPaused'));
+		Meteor.call("pauseDraft");
 	},
 	"click button#draft-skip": function(e) {
 		e.preventDefault();

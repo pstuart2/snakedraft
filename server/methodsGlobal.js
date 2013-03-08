@@ -117,57 +117,6 @@ function addTicket(Id, Title, Description, Hours) {
 	}
 }
 
-/**
- * Moves a user to a new position in the draft order.
- *
- * @param userId
- * @param newDraftPos
- */
-function movePeep(userId, newDraftPos)
-{
-	var pos,
-			endPos,
-			increment,
-			userCount,
-			oldUserRec = getUser(userId);
-
-	// Get our user count so we do not exceed our draft position.
-	userCount = Meteor.users.find({}).count();
-	if (userCount < newDraftPos) {
-		// Draft position exceeded, change to last place.
-		newDraftPos = userCount;
-	}
-
-	// Update our user.
-	Meteor.users.update({_id: userId},
-			{
-				$set: {'profile.draftPosition': newDraftPos}
-			},
-			{multi: false});
-
-	// Determine if we are moving up or moving down.
-	if (oldUserRec.profile.draftPosition > newDraftPos) {
-		pos = newDraftPos;
-		endPos = oldUserRec.profile.draftPosition;
-		increment = 1;
-	} else {
-		pos = oldUserRec.profile.draftPosition;
-		endPos = newDraftPos;
-		increment = -1;
-	}
-
-	// Update the other users draft positions.
-	Meteor.users.update({
-				'profile.draftPosition': {
-					$gte: pos,
-					$lte: endPos
-				},
-				_id: {$ne: userId}
-			},
-			{$inc: {'profile.draftPosition': increment}},
-			{multi: true});
-}
-
 function createUserMessage(owner, message, type)
 {
 	UserMessages.insert({
