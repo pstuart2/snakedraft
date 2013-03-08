@@ -19,15 +19,6 @@ Meteor.methods({
 	 * As an admin start the draft.
 	 */
 	startDraft: function() {
-		// Get our first player.
-		var firstPlayer = Meteor.users.findOne(
-				{"profile.hoursLeft": {$gt: 0}},
-				{sort: {"profile.draftPosition": 1}});
-
-		// Set our starting user in the draft.
-		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
-				{multi: false});
-
 		checkRemainingTicketsForCurrentUser();
 		startDraftInterval();
 	},

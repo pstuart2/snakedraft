@@ -62,7 +62,7 @@ Template.CustomTicket.events = {
 				if (error) {
 					alertify.error(error.reason);
 				} else {
-					alertify.success("Ticket was added.");
+					alertify.success("Ticket was updated.");
 				}
 			});
 		} else {

@@ -71,8 +71,14 @@ Template.DraftControl.Draft = function() {
 
 Template.DraftControl.events({
 	"click button#draft-start": function(e) {
+
+		// Get our first player.
+		var firstPlayer = Meteor.users.findOne(
+				{"profile.hoursLeft": {$gt: 0}},
+				{sort: {"profile.draftPosition": 1}});
+
 		// Set our starting user in the draft.
-		Drafts.update({}, {$set: {isRunning: true}},
+		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
 				{multi: false});
 
 		Meteor.call("startDraft", function(error, data) {
@@ -83,10 +89,11 @@ Template.DraftControl.events({
 	},
 	"click button#draft-stop": function(e) {
 		e.preventDefault();
-		resetDraft();
 		Meteor.call("stopInterval", function(error, data) {
 			if (error) {
 				alertify.error(error.reason);
+			} else {
+				resetDraft();
 			}
 		});
 
