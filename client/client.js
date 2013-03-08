@@ -15,6 +15,14 @@ var Drafts = new Meteor.Collection("Drafts");
 var Messages = new Meteor.Collection("Messages");
 var UserMessages = new Meteor.Collection("UserMessage");
 
+Meteor.subscribe("users");
+Meteor.subscribe("Tickets");
+Meteor.subscribe("Configs");
+Meteor.subscribe("Drafts");
+Meteor.subscribe("Messages");
+Meteor.subscribe("UserMessages");
+
+
 function isDraftRunning()
 {
 	return SessionAmplify.equals('isDraftRunning', true);
@@ -48,7 +56,13 @@ function getDraftTime()
 function deleteTicket(ticketId)
 {
 	if (confirm("Are you sure you want to delete this ticket?")) {
-		Meteor.call("deleteTicket", ticketId);
+		Tickets.remove({_id: ticketId});
+
+		Meteor.call("calculateUserHoursTicketHours", function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			}
+		});
 	}
 }
 

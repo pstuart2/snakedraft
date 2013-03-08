@@ -4,28 +4,6 @@ var draftTimerInterval = null,
 		cipherType = 'aes-128-cbc';
 
 /**
- * Gets a user and its profile.
- *
- * @param userId
- * @return {*|Cursor}
- */
-function getUser(userId)
-{
-	return Meteor.users.findOne({_id: userId}, {fields: {username: 1, profile: 1}});
-}
-
-/**
- * Gets a set of users based on a filter.
- *
- * @param filter
- * @return {*}
- */
-function getUsers(filter)
-{
-	return Meteor.users.find(filter, {fields: {username: 1, profile: 1}})
-}
-
-/**
  * Gets a json object from Jira.
  *
  * @param query
@@ -137,67 +115,6 @@ function addTicket(Id, Title, Description, Hours) {
 	if (!ticket) {
 		Tickets.insert({Id: Id, Title: Title, Description: Description, Hours: parseInt(Hours)});
 	}
-}
-
-/**
- * Assigns a ticket to a user.
- *
- * @param userId
- * @param ticketId
- * @param hours
- */
-function assignTicketToUser(userId, ticketId, hours) {
-	Tickets.update({_id: ticketId},
-			{$set: {AssignedUserId: userId}},
-			{multi: false});
-
-	assignHoursToUser(userId, hours);
-}
-
-function assignHoursToUser(userId, hours)
-{
-	var user = Meteor.users.findOne({_id: userId}),
-			newHoursLeft = user.profile.hoursLeft - hours,
-			newHoursAssigned = user.profile.hoursAssigned + hours,
-			userAdjusted;
-
-	if (newHoursLeft < 0) {
-		userAdjusted = hours + newHoursLeft;
-		newHoursLeft = 0;
-	} else {
-		userAdjusted = hours;
-	}
-
-	Meteor.users.update({_id: user._id},
-			{$set: {'profile.hoursLeft': newHoursLeft, 'profile.hoursAssigned': newHoursAssigned}},
-			{multi: false});
-
-	updateGlobalTicketHours(userAdjusted, hours);
-}
-
-function unassignHoursFromUser(userId, hours)
-{
-	var user = Meteor.users.findOne({_id: userId}),
-			newHoursAssigned = user.profile.hoursAssigned - hours,
-			newHoursLeft, userAdjusted;
-
-	if (newHoursAssigned < 0) { newHoursAssigned = 0; }
-	newHoursLeft = user.profile.hoursAvailable - newHoursAssigned;
-	userAdjusted = user.profile.hoursLeft - newHoursLeft;
-
-	Meteor.users.update({_id: user._id},
-			{$set: {'profile.hoursLeft': newHoursLeft, 'profile.hoursAssigned': newHoursAssigned}},
-			{multi: false});
-
-	updateGlobalTicketHours(userAdjusted, -hours);
-}
-
-function updateGlobalTicketHours(userHours, ticketHours)
-{
-	Drafts.update({}, {$inc: {
-		remainingUserHours: -userHours,
-		remainingTicketHours: -ticketHours
-	}}, {multi: false});
 }
 
 /**

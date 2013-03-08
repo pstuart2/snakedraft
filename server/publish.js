@@ -53,16 +53,77 @@ Configs.allow({
 	}
 });
 
-// Only admins can modify the tickets.
-Tickets.allow({
+Meteor.users.allow({
 	insert: function (userId, doc) {
+		// No inserts.
 		return false;
 	},
 	update: function (userId, docs, fields, modifier) {
-		return false;
+		// Only allow admins to update configs.
+		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
+		if (user.profile.isAdmin) return true;
+
+		return _.all(docs, function(doc) {
+			return doc._id === userId;
+		});
 	},
 	remove: function (userId, docs) {
+		// No deletes.
 		return false;
+	}
+});
+
+// Only admins can modify the tickets.
+Tickets.allow({
+	insert: function (userId, doc) {
+		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
+		return user.profile.isAdmin;
+	},
+	update: function (userId, docs, fields, modifier) {
+		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}}),
+				draft = Drafts.findOne({});
+
+		// Admins can update.
+		if (user.profile.isAdmin) { return true; }
+
+		// only when it is my turn can I updated assigned and only update it to me.
+		if (draft.isRunning && draft.currentUser == userId) {
+			// It is my turn, I can update assigned user.
+			_.each(fields, function(field) {
+				if (field != "AssignedUserId") {
+					throw new Meteor.Error(100, "You cannot edit field: " + field);
+				}
+
+				// Make sure I am setting it to me.
+				if (modifier.$set.AssignedUserId != userId) {
+					throw new Meteor.Error(100, "You can only assign to yourself!");
+				}
+
+				var totalHours = 0;
+				_.each(docs, function(doc) {
+					totalHours += doc.Hours;
+				});
+
+				// make sure I have the hours.
+				if (user.profile.hoursAvailable < totalHours) {
+					throw new Meteor.Error(302, "User doesn't have enough hours.");
+				}
+			});
+		} else {
+			// It is not my turn, I can update recommends.
+			_.each(fields, function(field) {
+				if (field != "recommends") {
+					throw new Meteor.Error(100, "You cannot edit field: " + field);
+				}
+			});
+		}
+
+		console.log("Tickets returning true");
+		return true;
+	},
+	remove: function (userId, docs) {
+		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
+		return user.profile.isAdmin;
 	}
 });
 
@@ -72,8 +133,24 @@ Drafts.allow({
 		return false;
 	},
 	update: function (userId, docs, fields, modifier) {
-		// Only allow admins to update configs.
-		return false;
+		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
+		// Admin can update.
+		if (user.profile.isAdmin) return true;
+
+		// If it is not running and not my turn I cannot!
+		if(!docs[0].isRunning || docs[0].currentUser != userId) {
+			return false;
+		}
+
+		// I can only update certain fields!
+		_.each(fields, function(field) {
+			if (field != "remainingUserHours" &&
+					field != "remainingTicketHours") {
+				throw new Meteor.Error(100, "You cannot edit field: " + field);
+			}
+		});
+
+		return true;
 	},
 	remove: function (userId, docs) {
 		// No deletes.

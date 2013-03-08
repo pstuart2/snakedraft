@@ -25,13 +25,17 @@ Template.TicketAssigned.JiraLinkUrl = function() {
 Template.TicketAssigned.events = {
 	"click button.unassign-ticket": function(e) {
 		var ticketId = this.Id;
-		Meteor.call("unassignTicket", this._id, function(e, d) {
-			if (e) {
-				alertify.error(e.reason);
-			} else {
-				alertify.success("Ticket " + ticketId + " was unassigned.");
-			}
-		});
+		unassignHoursFromUser(this.AssignedUserId, this.Hours);
+
+		Tickets.update({_id: this._id},
+				{$unset: {AssignedUserId: 1}},
+				{multi: false}, function(e, d) {
+					if (e) {
+						alertify.error(e.reason);
+					} else {
+						alertify.success("Ticket " + ticketId + " was unassigned.");
+					}
+				});
 	},
 	"click button.delete-ticket": function() {
 		deleteTicket(this._id);

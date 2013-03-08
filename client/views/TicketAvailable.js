@@ -1,7 +1,3 @@
-Meteor.subscribe("users");
-Meteor.subscribe("Tickets");
-Meteor.subscribe("Configs");
-
 Template.TicketAvailable.Users = function() {
 	return Meteor.users.find({});
 };
@@ -127,36 +123,79 @@ Template.TicketAvailable.events = {
 	"click button.take-ticket": function(e) {
 		e.preventDefault();
 
-		var ticketId = this.Id;
-		Meteor.call("takeTicket", Meteor.userId(), this._id, function(e, d){
+		if (Meteor.user().profile.hoursAvailable < this.Hours) {
+			throw new Meteor.Error(302, "User doesn't have enough hours.");
+		}
+
+		assignTicketToUser(Meteor.userId(), this._id, this.Hours);
+
+		Meteor.call("draftChangeTurn", function(e, d) {
 			if (e) {
 				alertify.error(e.reason);
-			} else {
-				alertify.success("You were assigned ticket " + ticketId);
 			}
 		});
 	},
 	"click button.assign-ticket": function(e) {
-		var ticketId = this.Id;
-		Meteor.call("assignTicket", getSelectedUserId(), this._id, function(e, d) {
-			if (e) {
-				alertify.error(e.reason);
-			} else {
-				alertify.success("Ticket " + ticketId + " was assigned.");
+		var currentUser, draft;
+
+		if (Meteor.userId()) {
+			currentUser = getUser(Meteor.userId());
+			if (!currentUser.profile.isAdmin) {
+				throw new Meteor.Error(302, "You cannot assign tickets.");
 			}
-		});
+		}
+
+		assignTicketToUser(getSelectedUserId(), this._id, this.Hours);
+		alertify.success("Ticket " + this.Id + " was assigned.");
+
+		// If the draft is running, it is this users turn and we assign it
+		// then switch turns.
+		draft = Drafts.findOne({});
+		if (draft.isRunning && draft.currentUser == Meteor.userId()) {
+			Meteor.call("draftChangeTurn", function(e, d) {
+				if (e) {
+					alertify.error(e.reason);
+				}
+			});
+		}
 	},
 	"change input.sug-checkbox": function(e) {
 		var cb = $(e.currentTarget);
-		Meteor.call("toggleRecTicket", Meteor.userId(), cb.val(), cb.data("ticket-id"), cb.is(":checked"));
+		//Meteor.call("toggleRecTicket", Meteor.userId(), cb.val(), cb.data("ticket-id"), cb.is(":checked"));
+
+		var ticket = Tickets.findOne({_id: cb.data("ticket-id")}),
+				byUser = Meteor.users.findOne({_id: Meteor.userId()}),
+				recUsername = cb.val(),
+				foundUser;
+
+		if (!ticket.recommends) {
+			ticket.recommends = [];
+		}
+
+		foundUser = _.find(ticket.recommends, function(rec) { return rec.user == recUsername; });
+		if (foundUser) {
+			foundUser.by = _.reject(foundUser.by, function(user) { return user.username == byUser.username; });
+			if (cb.is(":checked")) {
+				foundUser.by[foundUser.by.length] = {username: byUser.username};
+			} else {
+				if (foundUser.by.length == 0) {
+					ticket.recommends = _.reject(ticket.recommends, function(rec) { return rec.user == recUsername; });
+				}
+			}
+		} else {
+			ticket.recommends[ticket.recommends.length] =
+			{user: recUsername, by: [{username: byUser.username}]};
+		}
+
+		Tickets.update({_id: ticket._id},
+				{$set: {recommends: ticket.recommends}},
+				{multi: false});
 	},
 	"click button.delete-ticket": function() {
 		deleteTicket(this._id);
 	},
 	"click button.edit-ticket": function() {
-		var currentUser = Meteor.users.findOne({_id: Meteor.userId()});
-
-		if (!currentUser.profile.isAdmin) {
+		if (!Meteor.user().profile.isAdmin) {
 			return;
 		}
 

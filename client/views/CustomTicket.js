@@ -1,6 +1,3 @@
-Meteor.subscribe("Tickets");
-
-
 Template.CustomTicket.rendered = function() {
 	SessionAmplify.setDefault("editTicketId", null);
 };
@@ -56,24 +53,38 @@ Template.CustomTicket.events = {
 		totalHours = hoursDaysToTotalHours(hoursVal, daysVal);
 
 		if (SessionAmplify.get("editTicketId")) {
-			Meteor.call("updateTicket", SessionAmplify.get("editTicketId"), ticket.val(), title.val(), totalHours, desc.val(),
-			function(error, data) {
+			Tickets.update({_id: SessionAmplify.get("editTicketId")}, { $set: {
+				Id: ticket.val(),
+				Title: title.val(),
+				Hours: totalHours,
+				Description: desc.val()
+			}}, {multi: false}, function(error, data) {
 				if (error) {
 					alertify.error(error.reason);
 				} else {
-					alertify.success("Ticket was updated.");
+					alertify.success("Ticket was added.");
 				}
 			});
 		} else {
-			Meteor.call("addTicket", ticket.val(), title.val(), totalHours, desc.val(),
-					function(error, data) {
-						if (error) {
-							alertify.error(error.reason);
-						} else {
-							alertify.success("Ticket was added.");
-						}
-					});
+			Tickets.insert({
+				Id: ticket.val(),
+				Title: title.val(),
+				Hours: totalHours,
+				Description: desc.val()
+			}, function(error, data) {
+				if (error) {
+					alertify.error(error.reason);
+				} else {
+					alertify.success("Ticket was added.");
+				}
+			});
 		}
+
+		Meteor.call("checkHoursVsTicketHours", function(e, d) {
+			if (e) {
+				alertify.error(e.reason);
+			}
+		});
 
 		ticket.val(null);
 		title.val(null);

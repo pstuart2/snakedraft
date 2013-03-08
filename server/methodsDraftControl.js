@@ -77,6 +77,10 @@ Meteor.methods({
 
 			startDraftInterval();
 		}
+	},
+
+	draftChangeTurn: function() {
+		draftChangeTurn();
 	}
 });
 
