@@ -143,6 +143,6 @@ function checkHoursVsTicketHours(currentUserId)
 	var msg = calculateUserHoursTicketHours();
 	if (msg) {
 		// We have a problem.
-		createUserMessage(currentUserId, msg, "alert");
+		//createUserMessage(currentUserId, msg, "alert");
 	}
 }
