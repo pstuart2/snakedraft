@@ -43,6 +43,7 @@ Meteor.methods({
 	},
 
 	draftChangeTurn: function() {
+		console.log("Server draft change turn");
 		draftChangeTurn();
 	}
 });
@@ -92,6 +93,7 @@ function finishDraft(draft)
  */
 function draftChangeTurn()
 {
+	console.log("Chaning turn");
 	// Stop our interval.
 	if(draftTimerInterval != null) {
 		Meteor.clearInterval(draftTimerInterval);
@@ -215,7 +217,7 @@ function checkRemainingTicketsForCurrentUser()
 	console.log("---------------------------------");
 	console.log("MaxHours: " + maxHours + " Number Users: " + usersWhoCan + " MaxHourCount: " + maxHourCount);
 
-	if (usersWhoCan > 1 /*&& usersWhoCan >= maxHourCount*/) {
+	if (usersWhoCan > maxHourCount /*&& usersWhoCan >= maxHourCount*/) {
 		// There are plenty of users left to take a ticket of this size.
 		console.log("Plenty of users.");
 		return user;

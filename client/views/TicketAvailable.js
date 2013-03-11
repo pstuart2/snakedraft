@@ -136,7 +136,7 @@ Template.TicketAvailable.events = {
 		});
 	},
 	"click button.assign-ticket": function(e) {
-		var currentUser, draft;
+		var currentUser, draft, assignedUserId;
 
 		if (Meteor.userId()) {
 			currentUser = getUser(Meteor.userId());
@@ -145,13 +145,14 @@ Template.TicketAvailable.events = {
 			}
 		}
 
-		assignTicketToUser(getSelectedUserId(), this._id, this.Hours);
+		assignedUserId = getSelectedUserId();
+		assignTicketToUser(assignedUserId, this._id, this.Hours);
 		alertify.success("Ticket " + this.Id + " was assigned.");
 
 		// If the draft is running, it is this users turn and we assign it
 		// then switch turns.
 		draft = Drafts.findOne({});
-		if (draft.isRunning && draft.currentUser == Meteor.userId()) {
+		if (draft.isRunning && draft.currentUser == assignedUserId) {
 			Meteor.call("draftChangeTurn", function(e, d) {
 				if (e) {
 					alertify.error(e.reason);
