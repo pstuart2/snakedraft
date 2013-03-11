@@ -50,14 +50,19 @@ function callJira(type, url) {
 function addJiraTicket(ticket)
 {
 	if (ticket) {
-		var hours = 0;
+		var hours = 0,
+				qaHours = 0;
 		if (ticket.fields.timetracking != null) {
 			hours = secondsToHours(ticket.fields.timetracking.originalEstimateSeconds);
 		} else if (ticket.fields.progress != null) {
 			hours = secondsToHours(ticket.fields.progress.total);
 		}
 
-		addTicket(ticket.key, ticket.fields.summary, ticket.fields.description, hours);
+		if (ticket.fields.customfield_10190 != null) {
+			qaHours = ticket.fields.customfield_10190;
+		}
+
+		addTicket(ticket.key, ticket.fields.summary, ticket.fields.description, hours, qaHours);
 	}
 }
 
@@ -109,11 +114,12 @@ function secondsToHours(seconds) {
  * @param Title
  * @param Description
  * @param Hours
+ * @param QaHours
  */
-function addTicket(Id, Title, Description, Hours) {
+function addTicket(Id, Title, Description, Hours, QaHours) {
 	var ticket = Tickets.findOne({Id: Id});
 	if (!ticket) {
-		Tickets.insert({Id: Id, Title: Title, Description: Description, Hours: parseInt(Hours)});
+		Tickets.insert({Id: Id, Title: Title, Description: Description, Hours: parseInt(Hours), QaHours: parseInt(QaHours)});
 	}
 }
 

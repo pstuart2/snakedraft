@@ -19,6 +19,7 @@ Meteor.methods({
 	 * As an admin start the draft.
 	 */
 	startDraft: function() {
+		console.log("Starting draft");
 		checkRemainingTicketsForCurrentUser();
 		startDraftInterval();
 	},
@@ -43,7 +44,6 @@ Meteor.methods({
 	},
 
 	draftChangeTurn: function() {
-		console.log("Server draft change turn");
 		draftChangeTurn();
 	}
 });
@@ -93,7 +93,6 @@ function finishDraft(draft)
  */
 function draftChangeTurn()
 {
-	console.log("Chaning turn");
 	// Stop our interval.
 	if(draftTimerInterval != null) {
 		Meteor.clearInterval(draftTimerInterval);

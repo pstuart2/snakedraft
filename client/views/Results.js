@@ -2,7 +2,7 @@ Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
 
 Template.Results.Users = function() {
-	return Meteor.users.find({}, {sort: {username: 1}});
+	return Meteor.users.find({'profile.isScrumMaster': false}, {sort: {username: 1}});
 };
 
 Template.Results.UserTickets = function() {

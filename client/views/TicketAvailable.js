@@ -1,5 +1,5 @@
 Template.TicketAvailable.Users = function() {
-	return Meteor.users.find({});
+	return Meteor.users.find({'profile.isScrumMaster': false});
 };
 
 Template.TicketAvailable.isAdmin = function() {

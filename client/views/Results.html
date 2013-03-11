@@ -11,7 +11,7 @@
 				</div>
 				<ul>
 					{{#each UserTickets}}
-					<li><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}} ({{formatTotalHours Hours}})</li>
+					<li><a target="blank" href="{{JiraLinkUrl}}{{Id}}">{{Id}}</a> : {{Title}} ({{formatTotalHours Hours}} / QA: {{formatTotalHours QaHours}})</li>
 					{{/each}}
 				</ul>
 			{{/each}}

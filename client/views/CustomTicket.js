@@ -42,6 +42,7 @@ Template.CustomTicket.events = {
 				days = $("#custom-ticket-days"),
 				hours = $("#custom-ticket-hours"),
 				desc = $("#description"),
+				qahours = $("#qahours"),
 				totalHours, hoursVal, daysVal;
 
 		hoursVal = hours.val();
@@ -57,6 +58,7 @@ Template.CustomTicket.events = {
 				Id: ticket.val(),
 				Title: title.val(),
 				Hours: totalHours,
+				QaHours: qahours.val(),
 				Description: desc.val()
 			}}, {multi: false}, function(error, data) {
 				if (error) {
@@ -91,6 +93,7 @@ Template.CustomTicket.events = {
 		days.val(null);
 		hours.val(null);
 		desc.val(null);
+		qahours.val(null);
 
 		SessionAmplify.set("editTicketId", null);
 	}
