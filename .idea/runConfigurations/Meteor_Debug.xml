@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Meteor Debug" type="NodeJSRemoteDebug" factoryName="Node JS Remote Debug">
+  <configuration default="false" name="Meteor Debug" type="NodeJSRemoteDebug" factoryName="Node.js Remote Debug">
     <node-js-remote-debug local-path="$PROJECT_DIR$" remote-path="app" />
     <RunnerSettings RunnerId="NodeJS.debug" />
     <ConfigurationWrapper RunnerId="NodeJS.debug" />

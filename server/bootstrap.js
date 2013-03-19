@@ -32,6 +32,7 @@ Meteor.startup(function () {
 			config = Configs.findOne({Name: "SecondsPerChoice"}),
 			draftType = Configs.findOne({Name: "CycleType"}),
 			defaults = {
+				id: 1,
 				turnTime: parseInt(config.Value),
 				currentTime: parseInt(config.Value),
 				isPaused: false,

@@ -24,7 +24,7 @@ Meteor.methods({
 
 		var config = Configs.findOne({_id: id});
 		if (config.Name == "SecondsPerChoice") {
-			Drafts.update({},
+			Drafts.update({id: 1},
 					{$set: {
 						turnTime: value,
 						currentTime: value
@@ -32,7 +32,7 @@ Meteor.methods({
 					},
 					{multi: false});
 		} else if (config.Name == "CycleType") {
-			Drafts.update({},
+			Drafts.update({id: 1},
 					{$set: {
 						cycleType: parseInt(value)
 					}
@@ -43,9 +43,9 @@ Meteor.methods({
 			var newScrumMaster = Meteor.users.findOne({username: value});
 			if (newScrumMaster) {
 				Meteor.users.update({_id: newScrumMaster._id}, {$set: {'profile.isScrumMaster': true, 'profile.hoursLeft': 0}}, {multi: false});
-				Drafts.update({}, {$set: {scrumMasterId: newScrumMaster._id}}, {multi: false});
+				Drafts.update({id: 1}, {$set: {scrumMasterId: newScrumMaster._id}}, {multi: false});
 			} else {
-				Drafts.update({}, {$set: {scrumMasterId: 0}}, {multi: false});
+				Drafts.update({id: 1}, {$set: {scrumMasterId: 0}}, {multi: false});
 			}
 
 			checkHoursVsTicketHours(Meteor.userId());
@@ -102,6 +102,32 @@ Meteor.methods({
 		});
 
 		checkHoursVsTicketHours(Meteor.userId());
+	},
+
+	/**
+	 * Resets the database.
+	 *
+	 * @param sprintHours
+	 */
+	resetDb: function(sprintHours) {
+		// Remove all tickets.
+		Tickets.remove({});
+		// Remove all messages.
+		Messages.remove({});
+		UserMessages.remove({});
+
+		Drafts.update({id: 1}, {$set: {sprintHours: sprintHours}}, {multi: false});
+
+		Meteor.users.update({'profile.isScrumMaster': false},
+				{
+					$set: {
+						'profile.hoursAvailable': sprintHours,
+						'profile.hoursLeft': sprintHours,
+						'profile.hoursAssigned': 0
+					}
+				}, {multi: true});
+
+		checkHoursVsTicketHours(Meteor.userId());
 	}
 });
 
@@ -124,7 +150,7 @@ function calculateUserHoursTicketHours()
 		}
 	});
 
-	Drafts.update({}, {$set: {
+	Drafts.update({id: 1}, {$set: {
 		totalUserHours: totalUserHours,
 		totalTicketHours: totalTicketHours,
 		remainingUserHours: totalUserHoursLeft,

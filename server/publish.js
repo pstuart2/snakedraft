@@ -42,12 +42,12 @@ Configs.allow({
 		// No inserts.
 		return false;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		// Only allow admins to update configs.
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		return user.profile.isAdmin;
 	},
-	remove: function (userId, docs) {
+	remove: function (userId, doc) {
 		// No deletes.
 		return false;
 	}
@@ -58,16 +58,14 @@ Meteor.users.allow({
 		// No inserts.
 		return false;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		// Only allow admins to update configs.
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		if (user.profile.isAdmin) return true;
 
-		return _.all(docs, function(doc) {
-			return doc._id === userId;
-		});
+		return doc._id === userId;
 	},
-	remove: function (userId, docs) {
+	remove: function (userId, doc) {
 		// No deletes.
 		return false;
 	}
@@ -79,7 +77,7 @@ Tickets.allow({
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		return user.profile.isAdmin;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}}),
 				draft = Drafts.findOne({});
 
@@ -99,13 +97,8 @@ Tickets.allow({
 					throw new Meteor.Error(100, "You can only assign to yourself!");
 				}
 
-				var totalHours = 0;
-				_.each(docs, function(doc) {
-					totalHours += doc.Hours;
-				});
-
 				// make sure I have the hours.
-				if (user.profile.hoursAvailable < totalHours) {
+				if (user.profile.hoursAvailable < doc.Hours) {
 					throw new Meteor.Error(302, "User doesn't have enough hours.");
 				}
 			});
@@ -121,7 +114,7 @@ Tickets.allow({
 		console.log("Tickets returning true");
 		return true;
 	},
-	remove: function (userId, docs) {
+	remove: function (userId, doc) {
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		return user.profile.isAdmin;
 	}
@@ -132,13 +125,13 @@ Drafts.allow({
 		// No inserts.
 		return false;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		var user = Meteor.users.findOne({_id: userId}, {fields: {profile: 1}});
 		// Admin can update.
 		if (user.profile.isAdmin) return true;
 
 		// If it is not running and not my turn I cannot!
-		if(!docs[0].isRunning || docs[0].currentUser != userId) {
+		if(!doc.isRunning || doc.currentUser != userId) {
 			return false;
 		}
 
@@ -163,11 +156,11 @@ Messages.allow({
 		// Any one can insert.
 		return true;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		// No Updates
 		return false;
 	},
-	remove: function (userId, docs) {
+	remove: function (userId, doc) {
 		// No deletes.
 		return false;
 	}
@@ -177,14 +170,11 @@ UserMessages.allow({
 	insert: function (userId, doc) {
 		return false;
 	},
-	update: function (userId, docs, fields, modifier) {
+	update: function (userId, doc, fields, modifier) {
 		// No Updates
 		return false;
 	},
-	remove: function (userId, docs) {
-		return ! _.any(docs, function (message) {
-			// Deny if it is not my message.
-			return message.owner !== userId;
-		});
+	remove: function (userId, doc) {
+		return doc.owner !== userId;
 	}
 });

@@ -125,7 +125,12 @@ function unassignHoursFromUser(userId, hours)
 
 function updateGlobalTicketHours(userHours, ticketHours)
 {
-	Drafts.update({}, {$inc: {
+	var sel = {id: 1};
+	if (Meteor.is_client) {
+		sel = {_id: SessionAmplify.get("draftId")};
+	}
+
+	Drafts.update(sel, {$inc: {
 		remainingUserHours: -userHours,
 		remainingTicketHours: -ticketHours
 	}}, {multi: false},function(error) {
@@ -142,7 +147,7 @@ function resetDraft()
 {
 	var SecondsPerChoice = Configs.findOne({Name: 'SecondsPerChoice'});
 
-	Drafts.update({},
+	Drafts.update({_id: SessionAmplify.get("draftId")},
 			{$set: {
 				turnTime: parseInt(SecondsPerChoice.Value),
 				currentTime: parseInt(SecondsPerChoice.Value),

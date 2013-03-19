@@ -238,7 +238,7 @@ function checkRemainingTicketsForCurrentUser()
 	} else {
 		// I have to take one of the tickets of this size.
 		console.log("I have to take a ticket of this size.")
-		Drafts.update({},
+		Drafts.update({id: 1},
 				{$set:
 				{
 					forcedTicketSize: maxHours

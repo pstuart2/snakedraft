@@ -93,9 +93,9 @@ Template.TicketAvailable.canChooseHours = function (hours) {
 		userId = Meteor.userId();
 	}
 
-	if (!userId) { return cssClass; }
-
 	user = Meteor.users.findOne({_id: userId});
+	if (!user) { return cssClass; }
+
 	if (parseInt(hours) > user.profile.hoursLeft)
 	{
 		cssClass = "label-important";

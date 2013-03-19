@@ -1,13 +1,12 @@
-Meteor.subscribe("Drafts");
-
 Template.DraftControl.rendered = function() {
 	// Make sure our stuff lines up.
-	var draft = Drafts.findOne({}),
+	var draft = Drafts.findOne({id: 1}),
 			wclass;
-	if (draft) {
 
+	if (draft) {
 		// Using sessions here so that templates will update when the session variable
 		// actually changes, not any item on the draft.
+		SessionAmplify.set('draftId', draft._id);
 		SessionAmplify.set('isDraftRunning', draft.isRunning);
 		SessionAmplify.set('isDraftPaused', draft.isPaused);
 		SessionAmplify.set('cycleType', draft.cycleType);
@@ -32,7 +31,7 @@ Template.DraftControl.rendered = function() {
 };
 
 Template.DraftControl.Draft = function() {
-	return Drafts.findOne({});
+	return Drafts.findOne({id: 1});
 };
 
 /**
@@ -66,7 +65,7 @@ Template.DraftControl.WarningClass = function() {
 };
 
 Template.DraftControl.Draft = function() {
-	return Drafts.findOne({});
+	return Drafts.findOne({id: 1});
 };
 
 Template.DraftControl.events({
@@ -78,7 +77,7 @@ Template.DraftControl.events({
 				{sort: {"profile.draftPosition": 1}});
 
 		// Set our starting user in the draft.
-		Drafts.update({}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
+		Drafts.update({_id: SessionAmplify.get("draftId")}, {$set: {currentUser: firstPlayer._id, isRunning: true, currentPosition: firstPlayer.profile.draftPosition, direction: 1}},
 				{multi: false});
 
 		Meteor.call("startDraft", function(error, data) {
@@ -113,13 +112,13 @@ Template.DraftControl.events({
 			});
 		}
 
-		Drafts.update({},
+		Drafts.update({_id: SessionAmplify.get("draftId")},
 				{$set: {isPaused: !SessionAmplify.get('isDraftPaused')}},
 				{multi: false});
 	},
 	"click button#draft-skip": function(e) {
 		e.preventDefault();
-		if (!Drafts.findOne({}).isRunning) { return; }
+		if (!Drafts.findOne({id: 1}).isRunning) { return; }
 
 		Meteor.call("skipTurn");
 	}
