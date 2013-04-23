@@ -4,7 +4,7 @@
 		<div class="container main-area">
 			<div class="row">
 				<div class="span4">
-					<div class="affix span4 group" style="margin-left:0;margin-right:30px;">
+					<div class="{{affixDraftControl}} span4 group" style="margin-left:0;margin-right:30px;">
 						{{> DraftControl}}
 
 
@@ -67,5 +67,7 @@
 			{{> JiraConfig}}
 			{{> Results}}
 		{{/if}}
+
+		{{> UserOptions}}
 	</div>
 </template>

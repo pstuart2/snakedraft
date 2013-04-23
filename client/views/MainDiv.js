@@ -1,5 +1,9 @@
 Template.MainDiv.rendered = function() {
-	console.log(document.body.clientHeight);
+	//console.log(document.body.clientHeight);
+};
+
+Template.MainDiv.affixDraftControl = function() {
+	return SessionAmplify.get("AttachedDraftArea") ? "affix" : "";
 };
 
 Template.MainDiv.activeUserClass = function() {

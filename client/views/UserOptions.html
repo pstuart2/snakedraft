@@ -1,0 +1,20 @@
+<template name="UserOptions">
+	<div id="userOptionsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close close-custom-ticket" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">User Options</h3>
+		</div>
+		<div class="modal-body">
+			<div class="control-group">
+				<label class="control-label" for="AttachedDraftArea">Attached Draft Area</label>
+				<div class="controls">
+					<input type="checkbox" id="AttachedDraftArea" />
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button class="btn btn-primary save-user-options" data-dismiss="modal" aria-hidden="true">Save</button>
+		</div>
+	</div>
+</template>
