@@ -9,7 +9,7 @@ cipherType = 'aes-128-cbc';
  * @param query
  * @return {*}
  */
-function getJiraObject(query)
+getJiraObject = function (query)
 {
 	var JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
 	console.log("JiraRestUrl: " + JiraRestUrl);
@@ -23,7 +23,7 @@ function getJiraObject(query)
  * @param url
  * @return {*}
  */
-function callJira(type, url) {
+callJira = function (type, url) {
 	//var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
 
 	var jiraUser = Configs.findOne({Name: "JiraCredentials"}).Value;
@@ -53,7 +53,7 @@ function callJira(type, url) {
  *
  * @param ticket
  */
-function addJiraTicket(ticket)
+addJiraTicket = function (ticket)
 {
 	if (ticket) {
 		console.log("Ticket: " + ticket.key);
@@ -80,7 +80,7 @@ function addJiraTicket(ticket)
  * @param value
  * @return {*|Progress}
  */
-function encryptValue(value)
+encryptValue = function (value)
 {
 	var crypto = require('crypto'),
 			cipher = crypto.createCipheriv(cipherType, cipherKey, cipherIv),
@@ -95,7 +95,7 @@ function encryptValue(value)
  * @param value
  * @return {*|Progress}
  */
-function decryptValue(value)
+decryptValue = function (value)
 {
 	var crypto = require('crypto'),
 			decipher = crypto.createDecipheriv(cipherType, cipherKey, cipherIv),
@@ -111,7 +111,7 @@ function decryptValue(value)
  * @param seconds
  * @return {Number}
  */
-function secondsToHours(seconds) {
+secondsToHours = function (seconds) {
 	return (seconds / 60 / 60);
 }
 
@@ -124,14 +124,14 @@ function secondsToHours(seconds) {
  * @param Hours
  * @param QaHours
  */
-function addTicket(Id, Title, Description, Hours, QaHours) {
+addTicket = function (Id, Title, Description, Hours, QaHours) {
 	var ticket = Tickets.findOne({Id: Id});
 	if (!ticket) {
 		Tickets.insert({Id: Id, Title: Title, Description: Description, Hours: parseInt(Hours), QaHours: parseInt(QaHours)});
 	}
 }
 
-function createUserMessage(owner, message, type)
+createUserMessage = function (owner, message, type)
 {
 	UserMessages.insert({
 		owner: owner,
