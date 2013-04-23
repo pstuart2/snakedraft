@@ -1,11 +1,11 @@
-var Configs = new Meteor.Collection("Configs");
-var Tickets = new Meteor.Collection("Tickets");
-var Drafts = new Meteor.Collection("Drafts");
-var Messages = new Meteor.Collection("Messages");
-var UserMessages = new Meteor.Collection("UserMessage");
+Configs = new Meteor.Collection("Configs");
+Tickets = new Meteor.Collection("Tickets");
+Drafts = new Meteor.Collection("Drafts");
+Messages = new Meteor.Collection("Messages");
+UserMessages = new Meteor.Collection("UserMessage");
 
 // Used for NodeJs require.
-var require = null;
+require = null;
 
 Meteor.publish("users", function() {
 	return Meteor.users.find({}, {fields: {username: 1, profile: 1}});

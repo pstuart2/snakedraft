@@ -84,19 +84,16 @@ Accounts.onCreateUser(function(options, user) {
 
 	user.profile.isScrumMaster = (scrumMaster.Value == user.username);
 
+	user.profile.draftPosition = userCount + 1;
+	user.profile.hoursAvailable = 0;
+	user.profile.hoursLeft = 0;
+	user.profile.hoursAssigned = 0;
+
 	if (user.profile.isScrumMaster) {
 		user.profile.isAdmin = true;
-		user.profile.hoursAvailable = 0;
-		user.profile.hoursLeft = 0;
-		user.profile.draftPosition = 0;
 	} else {
 		user.profile.isAdmin = (userCount == 0);
-		user.profile.hoursAvailable = draft.sprintHours;
-		user.profile.hoursLeft = draft.sprintHours;
-		user.profile.draftPosition = userCount + 1;
 	}
-
-	user.profile.hoursAssigned = 0;
 
 	Meteor.setTimeout(function() {
 		calculateUserHoursTicketHours();

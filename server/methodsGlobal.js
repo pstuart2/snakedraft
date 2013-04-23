@@ -1,7 +1,7 @@
-var draftTimerInterval = null,
-		cipherKey = 'n33ds0mehintbet1',
-		cipherIv = '5622587455896325',
-		cipherType = 'aes-128-cbc';
+draftTimerInterval = null;
+cipherKey = 'n33ds0mehintbet1';
+cipherIv = '5622587455896325';
+cipherType = 'aes-128-cbc';
 
 /**
  * Gets a json object from Jira.
@@ -12,6 +12,7 @@ var draftTimerInterval = null,
 function getJiraObject(query)
 {
 	var JiraRestUrl = Configs.findOne({Name: "JiraRestUrl"}).Value;
+	console.log("JiraRestUrl: " + JiraRestUrl);
 	return callJira("GET", JiraRestUrl + query);
 }
 
@@ -23,7 +24,12 @@ function getJiraObject(query)
  * @return {*}
  */
 function callJira(type, url) {
-	var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
+	//var jiraUser = decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
+
+	var jiraUser = Configs.findOne({Name: "JiraCredentials"}).Value;
+
+	console.log("Calling Jira: " + jiraUser);
+	console.log("Calling url : " + url);
 
 	var result = Meteor.http.call(type, url, {
 		timeout: 30000,
@@ -38,7 +44,7 @@ function callJira(type, url) {
 		return false;
 	}
 
-
+	console.log("Leaving callJira");
 	return JSON.parse(result.content);
 }
 
@@ -50,6 +56,8 @@ function callJira(type, url) {
 function addJiraTicket(ticket)
 {
 	if (ticket) {
+		console.log("Ticket: " + ticket.key);
+
 		var hours = 0,
 				qaHours = 0;
 		if (ticket.fields.timetracking != null) {

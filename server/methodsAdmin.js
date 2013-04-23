@@ -60,13 +60,14 @@ Meteor.methods({
 	 */
 	updateJiraCredentials: function(username, password) {
 		var currentUser = getUser(Meteor.userId()),
+				jiraValue = username + ":" + password,
 				encryptedValue = encryptValue(username + ":" + password);
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
 		}
 
-		Configs.update({Name: "JiraCredentials"}, {$set: {Value: encryptedValue}}, {multi: false});
+		Configs.update({Name: "JiraCredentials"}, {$set: {Value: jiraValue}}, {multi: false});
 	},
 
 	/**
@@ -87,8 +88,12 @@ Meteor.methods({
 		console.log("FilterId: " + filterId);
 		if (filterId > 0) {
 			result = getJiraObject('/filter/' + filterId);
+			console.log("Got Jira Object: " + result.searchUrl)
+
 			// Now get the search url.
 			result = callJira("GET", decodeURI(result.searchUrl));
+			console.log("Call to Jira Complete.: " + filterId)
+
 			// Loop over my issues and add them.
 			_.each(result.issues, function(issue) {
 				addJiraTicket(issue);
@@ -131,7 +136,7 @@ Meteor.methods({
 	}
 });
 
-function calculateUserHoursTicketHours()
+calculateUserHoursTicketHours = function()
 {
 	var unassignedTickets = Tickets.find({}),
 			users = Meteor.users.find({'profile.isScrumMaster': false}),
@@ -164,7 +169,7 @@ function calculateUserHoursTicketHours()
 	return false;
 }
 
-function checkHoursVsTicketHours(currentUserId)
+checkHoursVsTicketHours = function(currentUserId)
 {
 	var msg = calculateUserHoursTicketHours();
 	if (msg) {

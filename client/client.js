@@ -9,11 +9,11 @@ SessionAmplify = _.extend({}, Session, {
 	}
 });
 
-var Configs = new Meteor.Collection("Configs");
-var Tickets = new Meteor.Collection("Tickets");
-var Drafts = new Meteor.Collection("Drafts");
-var Messages = new Meteor.Collection("Messages");
-var UserMessages = new Meteor.Collection("UserMessage");
+Configs = new Meteor.Collection("Configs");
+Tickets = new Meteor.Collection("Tickets");
+Drafts = new Meteor.Collection("Drafts");
+Messages = new Meteor.Collection("Messages");
+UserMessages = new Meteor.Collection("UserMessage");
 
 Meteor.subscribe("users");
 Meteor.subscribe("Tickets");
@@ -23,37 +23,37 @@ Meteor.subscribe("Messages");
 Meteor.subscribe("UserMessages");
 
 
-function isDraftRunning()
+isDraftRunning = function ()
 {
 	return SessionAmplify.equals('isDraftRunning', true);
 }
 
-function isDraftPaused()
+isDraftPaused = function ()
 {
 	return SessionAmplify.equals('isDraftPaused', true);
 }
 
-function isUserTurn(userId)
+isUserTurn = function (userId)
 {
 	return SessionAmplify.equals('draftCurrentUser', userId);
 }
 
-function isSnake()
+isSnake = function ()
 {
 	return SessionAmplify.equals('cycleType', 1);
 }
 
-function isSequential()
+isSequential = function ()
 {
 	return SessionAmplify.equals('cycleType', 2);
 }
 
-function getDraftTime()
+getDraftTime = function ()
 {
 	return SessionAmplify.get('draftTime');
 }
 
-function deleteTicket(ticketId)
+deleteTicket = function (ticketId)
 {
 	if (confirm("Are you sure you want to delete this ticket?")) {
 		Tickets.remove({_id: ticketId});
@@ -66,12 +66,12 @@ function deleteTicket(ticketId)
 	}
 }
 
-function imaAdmin()
+imaAdmin = function ()
 {
 	return Meteor.user() != null && Meteor.user().profile.isAdmin;
 }
 
-function getSelectedUserId()
+getSelectedUserId = function ()
 {
 	var userId = null;
 	if(!SessionAmplify.equals('selectedUserId', null)) {
@@ -83,7 +83,7 @@ function getSelectedUserId()
 	return userId
 }
 
-function getSelectedUsername()
+getSelectedUsername = function ()
 {
 	var userId = getSelectedUserId(),
 			user;

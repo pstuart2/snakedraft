@@ -1,10 +1,10 @@
 // This is executed in both client and server
-function endsWith(str, suffix) {
+endsWith = function (str, suffix) {
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 var __hoursPerDay = 0;
-function hoursPerDay()
+hoursPerDay = function ()
 {
 	if(__hoursPerDay == 0) {
 		var hpd = Configs.findOne({Name: "HoursPerDay"});
@@ -15,7 +15,7 @@ function hoursPerDay()
 	return __hoursPerDay;
 }
 
-function hoursToDaysHours(totalHours) {
+hoursToDaysHours = function (totalHours) {
 	var hoursInDay = hoursPerDay(),
 			result = {days: 0, hours: 0};
 
@@ -26,12 +26,12 @@ function hoursToDaysHours(totalHours) {
 	return result;
 }
 
-function hoursDaysToTotalHours(hours, days) {
+hoursDaysToTotalHours = function (hours, days) {
 	var hoursInDay = hoursPerDay();
 	return (parseInt(hours) + (parseInt(days) * hoursInDay));
 }
 
-function formatTotalHours(totalHours) {
+formatTotalHours = function (totalHours) {
 	var result = hoursToDaysHours(totalHours);
 	return result.days + "d " + result.hours + "h";
 }
@@ -42,7 +42,7 @@ function formatTotalHours(totalHours) {
  * @param userId
  * @return {*|Cursor}
  */
-function getUser(userId)
+getUser = function (userId)
 {
 	return Meteor.users.findOne({_id: userId}, {fields: {username: 1, profile: 1}});
 }
@@ -53,7 +53,7 @@ function getUser(userId)
  * @param filter
  * @return {*}
  */
-function getUsers(filter)
+getUsers = function (filter)
 {
 	return Meteor.users.find(filter, {fields: {username: 1, profile: 1}})
 }
@@ -65,7 +65,7 @@ function getUsers(filter)
  * @param ticketId
  * @param hours
  */
-function assignTicketToUser(userId, ticketId, hours) {
+assignTicketToUser = function (userId, ticketId, hours) {
 	Tickets.update({_id: ticketId},
 			{$set: {AssignedUserId: userId}},
 			{multi: false},function(error) {
@@ -77,7 +77,7 @@ function assignTicketToUser(userId, ticketId, hours) {
 	assignHoursToUser(userId, hours);
 }
 
-function assignHoursToUser(userId, hours)
+assignHoursToUser = function (userId, hours)
 {
 	var user = Meteor.users.findOne({_id: userId}),
 			newHoursLeft = user.profile.hoursLeft - hours,
@@ -102,7 +102,7 @@ function assignHoursToUser(userId, hours)
 	updateGlobalTicketHours(userAdjusted, hours);
 }
 
-function unassignHoursFromUser(userId, hours)
+unassignHoursFromUser = function (userId, hours)
 {
 	var user = Meteor.users.findOne({_id: userId}),
 			newHoursAssigned = user.profile.hoursAssigned - hours,
@@ -123,7 +123,7 @@ function unassignHoursFromUser(userId, hours)
 	updateGlobalTicketHours(userAdjusted, -hours);
 }
 
-function updateGlobalTicketHours(userHours, ticketHours)
+updateGlobalTicketHours = function (userHours, ticketHours)
 {
 	var sel = {id: 1};
 	if (Meteor.is_client) {
@@ -143,7 +143,7 @@ function updateGlobalTicketHours(userHours, ticketHours)
 /**
  * Resets the draft to the starting point.
  */
-function resetDraft()
+resetDraft = function ()
 {
 	var SecondsPerChoice = Configs.findOne({Name: 'SecondsPerChoice'});
 
@@ -166,7 +166,7 @@ function resetDraft()
  * @param userId
  * @param newDraftPos
  */
-function movePeep(userId, newDraftPos)
+movePeep = function (userId, newDraftPos)
 {
 	var pos,
 			endPos,
@@ -217,7 +217,7 @@ function movePeep(userId, newDraftPos)
  * @param myArray
  * @return {*}
  */
-function fisherYates ( myArray ) {
+fisherYates = function  ( myArray ) {
 	var i = myArray.length, j, tempi, tempj;
 	if ( i == 0 ) return false;
 	while ( --i ) {
