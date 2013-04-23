@@ -22,7 +22,6 @@ Meteor.subscribe("Drafts");
 Meteor.subscribe("Messages");
 Meteor.subscribe("UserMessages");
 
-
 isDraftRunning = function ()
 {
 	return SessionAmplify.equals('isDraftRunning', true);

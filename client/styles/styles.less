@@ -126,6 +126,10 @@ html, body {
   border-radius: @radius;
 }
 
+@media (max-height: 768px) {
+	.affix { position: relative !important;}
+}
+
 /* Large desktop */
 @media (min-width: 980px) {
   //body { background-color: @white; }
@@ -139,21 +143,21 @@ html, body {
 @media (min-width: 768px) and (max-width: 979px) {
   //body { background-color: @yellow; }
 
-  .affix { position: relative !important;}
+  //.affix { position: relative !important;}
 }
 
 /* Landscape phone to portrait tablet */
 @media (max-width: 767px) {
   //body { background-color: @blue; }
 
-  .affix { position: relative !important;}
+  //.affix { position: relative !important;}
 }
 
 /* Landscape phones and down */
 @media (max-width: 480px) {
   //body { background-color: @red; }
 
-  .affix { position: relative !important;}
+  //.affix { position: relative !important;}
 }
 
 div.right-label {
