@@ -228,8 +228,8 @@ function checkRemainingTicketsForCurrentUser()
 		assignTicketToUser(user._id, firstTicket._id, firstTicket.Hours);
 
 		var msg = '<b>' + user.username + '</b> was forced to take ticket <b>' + firstTicket.Id + '</b>.';
-		createUserMessage(user._id, msg, "alert alert-info");
-		createUserMessage(draft.scrumMasterId, msg, "alert alert-info");
+		sd.createUserMessage(user._id, msg, "alert alert-info");
+		sd.createUserMessage(draft.scrumMasterId, msg, "alert alert-info");
 
 		if (AutoAssignChangesTurn.Value > 0 || user.profile.hoursLeft <= firstTicket.Hours) {
 			console.log("Must change turn.");

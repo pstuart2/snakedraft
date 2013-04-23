@@ -17,7 +17,7 @@ Meteor.methods({
 		}
 
 		if (config.Encrypt) {
-			Configs.update(id, {$set: {Value: encryptValue(value)}});
+			Configs.update(id, {$set: {Value: sd.encryptValue(value)}});
 		} else {
 			Configs.update(id, {$set: {Value: value}});
 		}
@@ -61,7 +61,7 @@ Meteor.methods({
 	updateJiraCredentials: function(username, password) {
 		var currentUser = getUser(Meteor.userId()),
 				jiraValue = username + ":" + password,
-				encryptedValue = encryptValue(username + ":" + password);
+				encryptedValue = sd.encryptValue(username + ":" + password);
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
@@ -87,23 +87,23 @@ Meteor.methods({
 
 		console.log("FilterId: " + filterId);
 		if (filterId > 0) {
-			result = getJiraObject('/filter/' + filterId);
+			result = sd.getJiraObject('/filter/' + filterId);
 			console.log("Got Jira Object: " + result.searchUrl)
 
 			// Now get the search url.
-			result = callJira("GET", decodeURI(result.searchUrl));
+			result = sd.callJira("GET", decodeURI(result.searchUrl));
 			console.log("Call to Jira Complete.: " + filterId)
 
 			// Loop over my issues and add them.
 			_.each(result.issues, function(issue) {
-				addJiraTicket(issue);
+				sd.addJiraTicket(issue);
 			});
 		}
 
 		ticketArr = tickets.split(",");
 		_.each(ticketArr, function(ticket) {
-			result = getJiraObject('/issue/' + ticket);
-			addJiraTicket(result);
+			result = sd.getJiraObject('/issue/' + ticket);
+			sd.addJiraTicket(result);
 		});
 
 		checkHoursVsTicketHours(Meteor.userId());
