@@ -1,8 +1,5 @@
 // if the database is empty on server start, create some sample data.
 Meteor.startup(function () {
-	// This solves the issue
-	require = __meteor_bootstrap__.require;
-
 	var data = [
 		{IsVisible: false, Encrypt: true, Name: "JiraCredentials", Value: "", Description: ""},
 		{IsVisible: false, Encrypt: false, Name: "JiraLinkUrl", Value: "http://someurl.com", Description: "Base url for creating ticket links."},

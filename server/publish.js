@@ -4,9 +4,6 @@ Drafts = new Meteor.Collection("Drafts");
 Messages = new Meteor.Collection("Messages");
 UserMessages = new Meteor.Collection("UserMessage");
 
-// Used for NodeJs require.
-require = null;
-
 Meteor.publish("users", function() {
 	return Meteor.users.find({}, {fields: {username: 1, profile: 1}});
 });

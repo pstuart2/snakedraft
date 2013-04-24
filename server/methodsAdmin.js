@@ -61,13 +61,13 @@ Meteor.methods({
 	updateJiraCredentials: function(username, password) {
 		var currentUser = getUser(Meteor.userId()),
 				jiraValue = username + ":" + password,
-				encryptedValue = sd.encryptValue(username + ":" + password);
+				encryptedValue = sd.encryptValue(jiraValue);
 
 		if (!currentUser.profile.isAdmin) {
 			throw new Meteor.Error(404, "User isn't the scrum master.");
 		}
 
-		Configs.update({Name: "JiraCredentials"}, {$set: {Value: jiraValue}}, {multi: false});
+		Configs.update({Name: "JiraCredentials"}, {$set: {Value: encryptedValue}}, {multi: false});
 	},
 
 	/**

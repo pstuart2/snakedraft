@@ -25,9 +25,7 @@ sd = (function (_) {
 	 * @return {*}
 	 */
 	function callJira(type, url) {
-		//var jiraUser = sd.decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
-
-		var jiraUser = Configs.findOne({Name: "JiraCredentials"}).Value;
+		var jiraUser = sd.decryptValue(Configs.findOne({Name: "JiraCredentials"}).Value);
 
 		console.log("Calling Jira: " + jiraUser);
 		console.log("Calling url : " + url);
@@ -83,9 +81,9 @@ sd = (function (_) {
 	 */
 	function encryptValue(value)
 	{
-		var crypto = require('crypto'),
+		var crypto = Npm.require('crypto'),
 				cipher = crypto.createCipheriv(cipherType, cipherKey, cipherIv),
-				crypted = cipher.update(value, 'utf-8', 'hex');
+				crypted = cipher.update(value, 'utf8', 'hex');
 		crypted += cipher.final('hex');
 		return crypted;
 	}
@@ -98,10 +96,10 @@ sd = (function (_) {
 	 */
 	function decryptValue(value)
 	{
-		var crypto = require('crypto'),
+		var crypto = Npm.require('crypto'),
 				decipher = crypto.createDecipheriv(cipherType, cipherKey, cipherIv),
-				decrypted = decipher.update(value, 'hex', 'utf-8');
-		decrypted += decipher.final('utf-8');
+				decrypted = decipher.update(value, 'hex', 'utf8');
+		decrypted += decipher.final('utf8');
 		return decrypted;
 	}
 
